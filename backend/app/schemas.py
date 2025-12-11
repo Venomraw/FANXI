@@ -22,3 +22,22 @@ class Match(BaseModel):
     venue: str | None = None
     round: str | None = None   # e.g. "Matchday 12"
     status: str = "scheduled"  # scheduled, finished, live, etc.
+    
+class PredictionInput(BaseModel):
+    """What a fan sends when submitting a lineup prediction."""
+    username: str          # simple identity for now
+    team_id: int
+    match_id: int
+    formation: str         # e.g. "4-3-3"
+    players: list[str]     # list of 11 player names (for now just strings)
+
+
+class Prediction(BaseModel):
+    """Stored / returned prediction with metadata."""
+    id: int
+    username: str
+    team_id: int
+    match_id: int
+    formation: str
+    players: list[str]
+    created_at: datetime
