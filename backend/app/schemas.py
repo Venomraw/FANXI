@@ -22,7 +22,7 @@ class Match(BaseModel):
     venue: str | None = None
     round: str | None = None   # e.g. "Matchday 12"
     status: str = "scheduled"  # scheduled, finished, live, etc.
-    
+
 class PredictionInput(BaseModel):
     """What a fan sends when submitting a lineup prediction."""
     username: str          # simple identity for now
@@ -41,3 +41,12 @@ class Prediction(BaseModel):
     formation: str
     players: list[str]
     created_at: datetime
+
+class PredictionScore(BaseModel):
+    """Result of comparing a prediction to the official lineup."""
+    prediction_id: int
+    match_id: int
+    username: str
+    correct_players: int
+    total_players: int = 11
+    score: int  # e.g. points, 1 per correct player for now
