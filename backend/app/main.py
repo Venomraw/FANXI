@@ -4,6 +4,7 @@ from app.api.leagues import router as leagues_router
 from app.api.teams import router as teams_router
 from app.api.predictions import router as predictions_router
 from app.api.users import router as users_router
+from app.db import create_db_and_tables
 
 app = FastAPI(
     title="FanXI API",
@@ -11,6 +12,9 @@ app = FastAPI(
     description="Backend for the FanXI football lineup prediction game.",
 )
 
+@app.on_event("startup")
+def on_startup():
+    create_db_and_tables()   
 
 @app.get("/health")
 def health_check():
