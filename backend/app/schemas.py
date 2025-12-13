@@ -50,3 +50,10 @@ class PredictionScore(BaseModel):
     correct_players: int
     total_players: int = 11
     score: int  # e.g. points, 1 per correct player for now
+
+class MatchSummary(BaseModel):
+    match_id: int
+    total_predictions: int
+    unique_users: int
+    best_score: int
+    average_score: float

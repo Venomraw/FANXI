@@ -3,7 +3,7 @@ from datetime import datetime
 from fastapi import APIRouter, HTTPException, Depends
 from sqlmodel import Session, select
 
-from app.schemas import Prediction, PredictionInput, PredictionScore
+from app.schemas import Prediction, PredictionInput, PredictionScore, MatchSummary
 from app.db import get_session
 from app.models import PredictionDB
 
@@ -145,3 +145,56 @@ def list_scores_for_match(
 
     scores.sort(key=lambda s: (-s.score, s.username.lower()))
     return scores
+
+@router.get("/{match_id}/summary", response_model=MatchSummary)
+def get_match_summary(
+    match_id: int,
+    session: Session = Depends(get_session),
+):
+    """
+    Return a quick summary of prediction stats for a match:
+    - how many predictions
+    - how many unique users
+    - best score
+    - average score
+    """
+    if match_id not in OFFICIAL_LINEUPS:
+        raise HTTPException(
+            status_code=404,
+            detail="No official lineup found for this match.",
+        )
+
+    official_players = OFFICIAL_LINEUPS[match_id]
+
+    # grab all predictions for this match
+    result = session.exec(
+        select(PredictionDB).where(PredictionDB.match_id == match_id)
+    )
+    rows = result.all()
+
+    if not rows:
+        return MatchSummary(
+            match_id=match_id,
+            total_predictions=0,
+            unique_users=0,
+            best_score=0,
+            average_score=0.0,
+        )
+
+    scores: list[PredictionScore] = []
+    for row in rows:
+        prediction = to_prediction_model(row)
+        scores.append(score_single_prediction(prediction, official_players))
+
+    total_predictions = len(scores)
+    unique_users = len({s.username for s in scores})
+    best_score = max(s.score for s in scores)
+    average_score = sum(s.score for s in scores) / total_predictions
+
+    return MatchSummary(
+        match_id=match_id,
+        total_predictions=total_predictions,
+        unique_users=unique_users,
+        best_score=best_score,
+        average_score=average_score,
+    )
