@@ -14,6 +14,7 @@
             <th style="text-align:left; padding:0.5rem; border-bottom:1px solid #1f2937;">Opponent</th>
             <th style="text-align:left; padding:0.5rem; border-bottom:1px solid #1f2937;">Venue</th>
             <th style="text-align:left; padding:0.5rem; border-bottom:1px solid #1f2937;">Status</th>
+            <th style="text-align:left; padding:0.5rem; border-bottom:1px solid #1f2937;">Predict</th>
           </tr>
         </thead>
         <tbody>
@@ -26,6 +27,11 @@
               </td>
               <td style="padding:0.5rem; border-bottom:1px solid #111827;">{{ row.venue }}</td>
               <td style="padding:0.5rem; border-bottom:1px solid #111827;">{{ row.status }}</td>
+              <td style="padding:0.5rem; border-bottom:1px solid #111827;">
+                <a href="/teams/{{ team.id }}/matches/{{ row.match_id }}/predict">
+                  Predict XI
+                </a>
+              </td>
             </tr>
           {% endfor %}
         </tbody>

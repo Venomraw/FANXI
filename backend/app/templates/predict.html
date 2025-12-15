@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="card">
+    <span class="pill">Predict XI</span>
+    <h2>
+      {{ team.name }} –
+      {% if home_team and away_team %}
+        {% if team.id == home_team.id %}
+          vs {{ away_team.short_name }}
+        {% else %}
+          vs {{ home_team.short_name }}
+        {% endif %}
+      {% endif %}
+    </h2>
+
+    <p>
+      Round {{ match.round }} · Kickoff: {{ kickoff }} · Venue: {{ match.venue }} · Status: {{ match.status }}
+    </p>
+
+    {% if errors %}
+      <div style="margin:1rem 0; padding:0.75rem; border-radius:0.5rem; background:#7f1d1d;">
+        <ul style="margin:0;">
+          {% for e in errors %}
+            <li>{{ e }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+
+    <form method="post" style="margin-top:1rem;">
+      <div style="margin-bottom:0.75rem;">
+        <label>Username</label><br />
+        <input
+          type="text"
+          name="username"
+          value="{{ username }}"
+          required
+          style="width:100%; padding:0.4rem; border-radius:0.4rem; border:1px solid #374151; background:#020617; color:#f9fafb;"
+        />
+      </div>
+
+      <div style="margin-bottom:0.75rem;">
+        <label>Formation</label><br />
+        <input
+          type="text"
+          name="formation"
+          value="{{ formation }}"
+          placeholder="4-3-3"
+          style="width:100%; padding:0.4rem; border-radius:0.4rem; border:1px solid #374151; background:#020617; color:#f9fafb;"
+        />
+      </div>
+
+      <div style="margin-bottom:0.75rem;">
+        <label>Starting XI (one player per line, 11 total)</label><br />
+        <textarea
+          name="players_text"
+          rows="11"
+          required
+          style="width:100%; padding:0.4rem; border-radius:0.4rem; border:1px solid #374151; background:#020617; color:#f9fafb;"
+        >{{ players_text }}</textarea>
+      </div>
+
+      <button
+        type="submit"
+        style="padding:0.5rem 1.2rem; border-radius:999px; border:none; background:#22c55e; color:#022c22; font-weight:600; cursor:pointer;"
+      >
+        Submit prediction
+      </button>
+    </form>
+
+    {% if score %}
+      <div style="margin-top:1.5rem; padding:0.9rem; border-radius:0.75rem; background:#022c22; border:1px solid #16a34a;">
+        <h3 style="margin-top:0;">Your score</h3>
+        <p>
+          Correct players: {{ score.correct_players }} / {{ score.total_players }}<br />
+          Total score: {{ score.score }}
+        </p>
+      </div>
+    {% endif %}
+
+    <p style="margin-top:1.5rem;">
+      <a href="/teams/{{ team.id }}/fixtures">← Back to fixtures</a>
+    </p>
+  </div>
+{% endblock %}
