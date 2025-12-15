@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="card">
+    <span class="pill">Version 1 · Backend + HTML</span>
+    <h2>Welcome to FanXI</h2>
+    <p>
+      This is a prototype for a football lineup prediction game.
+      Right now we’re focusing on <strong>La Liga</strong>, starting with a few clubs.
+    </p>
+
+    <h3>Leagues</h3>
+    <ul>
+      {% for league in leagues %}
+        <li>
+          <strong>{{ league.name }}</strong>
+          (code: <code>{{ league.code }}</code>)
+          – <a href="/leagues/{{ league.code }}/teams">view teams (JSON)</a>
+        </li>
+      {% endfor %}
+    </ul>
+        <p style="margin-top: 1rem;">
+      Try it out:
+      <a href="/teams/1/fixtures">view FC Barcelona fixtures (HTML)</a>.
+    </p>
+
+
+    <p style="margin-top: 1.5rem;">
+      Next steps: add HTML pages for fixtures, predictions, and leaderboards
+      so fans can play without touching the API docs.
+    </p>
+  </div>
+{% endblock %}

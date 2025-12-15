@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="card">
+    <span class="pill">Fixtures</span>
+    <h2>{{ team.name }} – Fixtures</h2>
+
+    {% if rows %}
+      <table style="width:100%; border-collapse:collapse; margin-top:1rem; font-size:0.9rem;">
+        <thead>
+          <tr>
+            <th style="text-align:left; padding:0.5rem; border-bottom:1px solid #1f2937;">Round</th>
+            <th style="text-align:left; padding:0.5rem; border-bottom:1px solid #1f2937;">Kickoff</th>
+            <th style="text-align:left; padding:0.5rem; border-bottom:1px solid #1f2937;">Opponent</th>
+            <th style="text-align:left; padding:0.5rem; border-bottom:1px solid #1f2937;">Venue</th>
+            <th style="text-align:left; padding:0.5rem; border-bottom:1px solid #1f2937;">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in rows %}
+            <tr>
+              <td style="padding:0.5rem; border-bottom:1px solid #111827;">{{ row.round }}</td>
+              <td style="padding:0.5rem; border-bottom:1px solid #111827;">{{ row.kickoff }}</td>
+              <td style="padding:0.5rem; border-bottom:1px solid #111827;">
+                {{ row.opponent_name }} ({{ row.side }})
+              </td>
+              <td style="padding:0.5rem; border-bottom:1px solid #111827;">{{ row.venue }}</td>
+              <td style="padding:0.5rem; border-bottom:1px solid #111827;">{{ row.status }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p style="margin-top:1rem;">No fixtures available yet for this team.</p>
+    {% endif %}
+
+    <p style="margin-top:1.5rem;">
+      <a href="/">← Back to home</a>
+    </p>
+  </div>
+{% endblock %}
