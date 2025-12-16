@@ -1,15 +1,18 @@
 from datetime import datetime
 
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException, Depends
+from sqlmodel import Session, select
 
 from app.schemas import Team, Match
+from app.db import get_session
+from app.models import TeamDB, MatchDB
 
 router = APIRouter(
     prefix="/teams",
     tags=["teams"],
 )
 
-# Reuse the same teams (duplicated from leagues.py for now)
+# Mock teams & matches kept for seeding / reference (DB now used at runtime)
 MOCK_TEAMS = [
     Team(id=1, name="FC Barcelona",       short_name="Barcelona",   league_code="laliga"),
     Team(id=2, name="Real Madrid CF",     short_name="Real Madrid", league_code="laliga"),
@@ -17,7 +20,6 @@ MOCK_TEAMS = [
     Team(id=4, name="Sevilla FC",         short_name="Sevilla",     league_code="laliga"),
 ]
 
-# Mock fixtures – dates are arbitrary, just examples
 MOCK_MATCHES = [
     Match(
         id=1,
@@ -50,12 +52,19 @@ MOCK_MATCHES = [
 
 
 @router.get("/{team_id}/matches", response_model=list[Match])
-def list_matches_for_team(team_id: int):
-    """List matches where the given team is home or away."""
-    team_matches = [
-        match
-        for match in MOCK_MATCHES
-        if match.home_team_id == team_id or match.away_team_id == team_id
-    ]
-    # Returning [] is fine if team has no fixtures yet
-    return team_matches
+def list_matches_for_team(
+    team_id: int,
+    session: Session = Depends(get_session),
+):
+    """Return all matches where this team is home or away, from the DB."""
+    matches = session.exec(
+        select(MatchDB).where(
+            (MatchDB.home_team_id == team_id)
+            | (MatchDB.away_team_id == team_id)
+        )
+    ).all()
+
+    if not matches:
+        raise HTTPException(status_code=404, detail="No matches found for this team")
+
+    return matches

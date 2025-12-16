@@ -1,15 +1,18 @@
 from fastapi import APIRouter, Request, HTTPException, Form, Depends
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
-from sqlmodel import Session
-from app.api.teams import MOCK_TEAMS, MOCK_MATCHES
+from sqlmodel import Session, select
+
 from app.db import get_session
-from app.models import PredictionDB
+from app.models import TeamDB, MatchDB, PredictionDB
+from app.api.leagues import MOCK_TEAMS 
+from app.api.teams import MOCK_MATCHES
 from app.api.predictions import (
     to_prediction_model,
     score_single_prediction,
     OFFICIAL_LINEUPS,
 )
+
 
 templates = Jinja2Templates(directory="app/templates")
 
