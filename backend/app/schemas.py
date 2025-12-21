@@ -1,5 +1,8 @@
+import re
 from datetime import datetime
-from pydantic import BaseModel
+from typing import List
+
+from pydantic import BaseModel, validator
 
 
 class League(BaseModel):
@@ -13,6 +16,7 @@ class Team(BaseModel):
     short_name: str   # e.g. "Barcelona"
     league_code: str  # link back to League.code
 
+
 class Match(BaseModel):
     id: int
     league_code: str      # e.g. "laliga"
@@ -23,13 +27,26 @@ class Match(BaseModel):
     round: str | None = None   # e.g. "Matchday 12"
     status: str = "scheduled"  # scheduled, finished, live, etc.
 
+
+USERNAME_RE = re.compile(r"^[a-zA-Z0-9_]{3,20}$")
+
+
 class PredictionInput(BaseModel):
     """What a fan sends when submitting a lineup prediction."""
     username: str          # simple identity for now
     team_id: int
     match_id: int
     formation: str         # e.g. "4-3-3"
-    players: list[str]     # list of 11 player names (for now just strings)
+    players: List[str]     # list of 11 player names (for now just strings)
+
+    @validator("username")
+    def validate_username(cls, v: str) -> str:
+        v = v.strip()
+        if not USERNAME_RE.match(v):
+            raise ValueError(
+                "Username must be 3–20 characters, using only letters, numbers, or underscore."
+            )
+        return v.lower()
 
 
 class Prediction(BaseModel):
@@ -39,8 +56,9 @@ class Prediction(BaseModel):
     team_id: int
     match_id: int
     formation: str
-    players: list[str]
+    players: List[str]
     created_at: datetime
+
 
 class PredictionScore(BaseModel):
     """Result of comparing a prediction to the official lineup."""
@@ -50,6 +68,7 @@ class PredictionScore(BaseModel):
     correct_players: int
     total_players: int = 11
     score: int  # e.g. points, 1 per correct player for now
+
 
 class MatchSummary(BaseModel):
     match_id: int
