@@ -76,19 +76,12 @@ def create_prediction(
 ):
     """
     Let a fan submit a lineup prediction for a match.
+    Saves to SQLite and returns the created prediction.
 
-    Security-ish rules:
-    - Username is validated & normalized in PredictionInput
-    - Exactly 11 players required
-    - Only ONE prediction per (username, match_id): later ones overwrite the old one
+    Validation:
+    - username must match USERNAME_RE (enforced by PredictionInput)
+    - players must contain exactly 11 names
     """
-    # Ensure path and body match_id are consistent
-    if payload.match_id != match_id:
-        raise HTTPException(
-            status_code=400,
-            detail="match_id in path and body must match.",
-        )
-
     if len(payload.players) != 11:
         raise HTTPException(
             status_code=400,
@@ -97,31 +90,15 @@ def create_prediction(
 
     players_csv = "|".join(payload.players)
 
-    # Check if this user already has a prediction for this match
-    existing = session.exec(
-        select(PredictionDB).where(
-            (PredictionDB.username == payload.username)
-            & (PredictionDB.match_id == match_id)
-        )
-    ).first()
+    db_obj = PredictionDB(
+        username=payload.username,   # already normalized to lowercase
+        team_id=payload.team_id,
+        match_id=match_id,
+        formation=payload.formation,
+        players_csv=players_csv,
+    )
 
-    if existing:
-        # Update existing prediction
-        existing.formation = payload.formation
-        existing.players_csv = players_csv
-        existing.created_at = datetime.utcnow()
-        db_obj = existing
-    else:
-        # Create new prediction
-        db_obj = PredictionDB(
-            username=payload.username,
-            team_id=payload.team_id,
-            match_id=match_id,
-            formation=payload.formation,
-            players_csv=players_csv,
-        )
-        session.add(db_obj)
-
+    session.add(db_obj)
     session.commit()
     session.refresh(db_obj)
 
@@ -133,13 +110,10 @@ def list_predictions_for_match(
     match_id: int,
     session: Session = Depends(get_session),
 ):
-    """
-    List all predictions for a given match from the database.
-    """
-    result = session.exec(
+    """List all predictions for a given match from the database."""
+    rows = session.exec(
         select(PredictionDB).where(PredictionDB.match_id == match_id)
-    )
-    rows = result.all()
+    ).all()
     return [to_prediction_model(row) for row in rows]
 
 
@@ -160,10 +134,9 @@ def list_scores_for_match(
 
     official_players = OFFICIAL_LINEUPS[match_id]
 
-    result = session.exec(
+    rows = session.exec(
         select(PredictionDB).where(PredictionDB.match_id == match_id)
-    )
-    rows = result.all()
+    ).all()
 
     scores: list[PredictionScore] = []
     for row in rows:
@@ -180,11 +153,7 @@ def get_match_summary(
     session: Session = Depends(get_session),
 ):
     """
-    Return a quick summary of prediction stats for a match:
-    - how many predictions
-    - how many unique users
-    - best score
-    - average score
+    Quick summary of prediction stats for a match.
     """
     if match_id not in OFFICIAL_LINEUPS:
         raise HTTPException(
@@ -194,11 +163,9 @@ def get_match_summary(
 
     official_players = OFFICIAL_LINEUPS[match_id]
 
-    # grab all predictions for this match
-    result = session.exec(
+    rows = session.exec(
         select(PredictionDB).where(PredictionDB.match_id == match_id)
-    )
-    rows = result.all()
+    ).all()
 
     if not rows:
         return MatchSummary(

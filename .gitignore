@@ -5,4 +5,8 @@ __pycache__/
 *.pyc
 .DS_Store
 
+# SQLite dev DB
 backend/fanxi.db
+
+# OS junk
+.DS_Store

@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="card">
+    <span class="pill">My Predictions</span>
+    <h2>Predictions for {{ username }}</h2>
+
+    {% if rows %}
+      <table style="width:100%; border-collapse:collapse; margin-top:1rem; font-size:0.9rem;">
+        <thead>
+          <tr>
+            <th style="text-align:left; padding:0.5rem; border-bottom:1px solid #1f2937;">When</th>
+            <th style="text-align:left; padding:0.5rem; border-bottom:1px solid #1f2937;">Match</th>
+            <th style="text-align:left; padding:0.5rem; border-bottom:1px solid #1f2937;">Side</th>
+            <th style="text-align:left; padding:0.5rem; border-bottom:1px solid #1f2937;">Kickoff</th>
+            <th style="text-align:left; padding:0.5rem; border-bottom:1px solid #1f2937;">Formation</th>
+            <th style="text-align:left; padding:0.5rem; border-bottom:1px solid #1f2937;">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in rows %}
+            <tr>
+              <td style="padding:0.5rem; border-bottom:1px solid #111827;">{{ row.created_at }}</td>
+              <td style="padding:0.5rem; border-bottom:1px solid #111827;">
+                {{ row.team_name }} vs {{ row.opponent_name }}
+              </td>
+              <td style="padding:0.5rem; border-bottom:1px solid #111827;">{{ row.side }}</td>
+              <td style="padding:0.5rem; border-bottom:1px solid #111827;">{{ row.kickoff }}</td>
+              <td style="padding:0.5rem; border-bottom:1px solid #111827;">{{ row.formation }}</td>
+              <td style="padding:0.5rem; border-bottom:1px solid #111827;">
+                <!-- quick link back to predict page for that match -->
+                <a href="/teams/1/matches/{{ row.match_id }}/predict">View / edit</a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p style="margin-top:1rem;">
+        No predictions yet. Go pick a lineup, coach 👀
+      </p>
+    {% endif %}
+
+    <p style="margin-top:1.5rem;">
+      <a href="/">← Back to home</a>
+    </p>
+  </div>
+{% endblock %}
