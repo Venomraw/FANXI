@@ -5,7 +5,7 @@
     <span class="pill">Fixtures</span>
     <h2>{{ team.name }} – Fixtures</h2>
 
-    {% if rows %}
+        {% if rows %}
       <table style="width:100%; border-collapse:collapse; margin-top:1rem; font-size:0.9rem;">
         <thead>
           <tr>
@@ -14,7 +14,7 @@
             <th style="text-align:left; padding:0.5rem; border-bottom:1px solid #1f2937;">Opponent</th>
             <th style="text-align:left; padding:0.5rem; border-bottom:1px solid #1f2937;">Venue</th>
             <th style="text-align:left; padding:0.5rem; border-bottom:1px solid #1f2937;">Status</th>
-            <th style="text-align:left; padding:0.5rem; border-bottom:1px solid #1f2937;">Predict</th>
+            <th style="text-align:left; padding:0.5rem; border-bottom:1px solid #1f2937;">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -28,9 +28,9 @@
               <td style="padding:0.5rem; border-bottom:1px solid #111827;">{{ row.venue }}</td>
               <td style="padding:0.5rem; border-bottom:1px solid #111827;">{{ row.status }}</td>
               <td style="padding:0.5rem; border-bottom:1px solid #111827;">
-                <a href="/teams/{{ team.id }}/matches/{{ row.match_id }}/predict">
-                  Predict XI
-                </a>
+                <a href="/teams/{{ team.id }}/matches/{{ row.match_id }}/predict">Predict XI</a>
+                &nbsp;·&nbsp;
+                <a href="/matches/{{ row.match_id }}/scores/html">Leaderboard</a>
               </td>
             </tr>
           {% endfor %}

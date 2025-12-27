@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="card">
+    <span class="pill">Match leaderboard</span>
+
+    <h2>
+      {% if home_team and away_team %}
+        {{ home_team.short_name }} vs {{ away_team.short_name }}
+      {% else %}
+        Match #{{ match.id }}
+      {% endif %}
+    </h2>
+
+    <p style="margin-top: 0.5rem; font-size: 0.9rem; opacity: 0.85;">
+      Round {{ match.round or "N/A" }} ·
+      Kickoff: {{ kickoff }} ·
+      Venue: {{ match.venue or "TBD" }} ·
+      Status: {{ match.status }}
+    </p>
+
+    {% if not has_official %}
+      <p style="margin-top: 1rem; color: #f97373;">
+        Official lineup for this match is not set yet, so scores are not available.
+      </p>
+    {% endif %}
+
+    {% if rows %}
+      <table style="width:100%; border-collapse:collapse; margin-top:1rem; font-size:0.9rem;">
+        <thead>
+          <tr>
+            <th style="text-align:left; padding:0.5rem; border-bottom:1px solid #1f2937;">Rank</th>
+            <th style="text-align:left; padding:0.5rem; border-bottom:1px solid #1f2937;">Username</th>
+            <th style="text-align:left; padding:0.5rem; border-bottom:1px solid #1f2937;">Team</th>
+            <th style="text-align:left; padding:0.5rem; border-bottom:1px solid #1f2937;">Score</th>
+            <th style="text-align:left; padding:0.5rem; border-bottom:1px solid #1f2937;">Correct players</th>
+            <th style="text-align:left; padding:0.5rem; border-bottom:1px solid #1f2937;">Submitted at</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in rows %}
+            <tr>
+              <td style="padding:0.5rem; border-bottom:1px solid #111827;">
+                {{ loop.index }}
+              </td>
+              <td style="padding:0.5rem; border-bottom:1px solid #111827;">
+                {{ row.username }}
+              </td>
+              <td style="padding:0.5rem; border-bottom:1px solid #111827;">
+                {{ row.team_name }}
+              </td>
+              <td style="padding:0.5rem; border-bottom:1px solid #111827;">
+                {% if row.score is not none %}
+                  {{ row.score }}
+                {% else %}
+                  –
+                {% endif %}
+              </td>
+              <td style="padding:0.5rem; border-bottom:1px solid #111827;">
+                {% if row.correct_players is not none %}
+                  {{ row.correct_players }} / {{ row.total_players }}
+                {% else %}
+                  –
+                {% endif %}
+              </td>
+              <td style="padding:0.5rem; border-bottom:1px solid #111827;">
+                {{ row.created_at }}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p style="margin-top:1rem;">No predictions yet for this match.</p>
+    {% endif %}
+
+    <p style="margin-top:1.5rem;">
+      <a href="/teams/{{ home_team.id if home_team else match.home_team_id }}/fixtures">
+        ← Back to fixtures
+      </a>
+    </p>
+  </div>
+{% endblock %}

@@ -288,3 +288,84 @@ def submit_prediction(
             "score": score,
         },
     )
+
+@router.get(
+    "/matches/{match_id}/scores/html",
+    response_class=HTMLResponse,
+)
+def match_scores_html(
+    match_id: int,
+    request: Request,
+    session: Session = Depends(get_session),
+):
+    # Make sure the match exists
+    match = session.get(MatchDB, match_id)
+    if match is None:
+        raise HTTPException(status_code=404, detail="Match not found")
+
+    # Pull all predictions for this match
+    predictions = session.exec(
+        select(PredictionDB).where(PredictionDB.match_id == match_id)
+    ).all()
+
+    # Fetch teams used in this match (for nicer header + labels)
+    team_ids = {match.home_team_id, match.away_team_id}
+    team_ids.update(p.team_id for p in predictions)
+    teams = session.exec(select(TeamDB).where(TeamDB.id.in_(team_ids))).all()
+    team_map = {t.id: t for t in teams}
+
+    home_team = team_map.get(match.home_team_id)
+    away_team = team_map.get(match.away_team_id)
+
+    kickoff_display = (
+        match.kickoff_time.strftime("%Y-%m-%d %H:%M")
+        if getattr(match, "kickoff_time", None)
+        else "TBD"
+    )
+
+    rows: list[dict] = []
+
+    # Only compute scores if we have an official lineup
+    official = OFFICIAL_LINEUPS.get(match_id)
+
+    for p in predictions:
+        score = None
+        correct_players = None
+        total_players = None
+
+        if official:
+            prediction_model = to_prediction_model(p)
+            score_obj = score_single_prediction(prediction_model, official)
+            score = score_obj.score
+            correct_players = score_obj.correct_players
+            total_players = score_obj.total_players
+
+        team = team_map.get(p.team_id)
+        team_name = team.short_name if team else f"Team #{p.team_id}"
+
+        rows.append(
+            {
+                "username": p.username,
+                "team_name": team_name,
+                "score": score,
+                "correct_players": correct_players,
+                "total_players": total_players,
+                "created_at": p.created_at.strftime("%Y-%m-%d %H:%M"),
+            }
+        )
+
+    # Sort: best score first, then by username
+    rows.sort(key=lambda r: (-(r["score"] or 0), r["username"].lower()))
+
+    return templates.TemplateResponse(
+        "match_scores.html",
+        {
+            "request": request,
+            "match": match,
+            "home_team": home_team,
+            "away_team": away_team,
+            "kickoff": kickoff_display,
+            "rows": rows,
+            "has_official": official is not None,
+        },
+    )
