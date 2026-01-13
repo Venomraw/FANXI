@@ -1,31 +1,42 @@
 from fastapi import FastAPI
-
-
-from app.api.leagues import router as leagues_router
-from app.api.teams import router as teams_router
-from app.api.predictions import router as predictions_router
-from app.api.users import router as users_router
-from app.web import router as web_router
+from fastapi.middleware.cors import CORSMiddleware
+from app.api import users, predictions, leagues, teams # Your existing routers
 from app.db import init_db
 
-init_db()
-
+# 1. Initialize the Ship
 app = FastAPI(
-    title="FanXI API",
-    version="0.1.0",
-    description="Backend for the FanXI football lineup prediction game.",
+    title="FanXI: World Cup 2026 Tactical Hub",
+    description="The world's first tactical-first football prediction engine.",
+    version="1.0.0"
 )
 
+# 2. Cybersecurity Haki: CORS Policy
+# This prevents unauthorized websites from calling your API.
+origins = [
+    "http://localhost:3000", # Your local frontend
+    "https://fanxi.app",     # Your future production domain
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# 3. Connect the Routers (The Fleet)
+app.include_router(users.router)
+app.include_router(predictions.router)
+# app.include_router(leagues.router) # Uncomment when these are ready
+# app.include_router(teams.router)
+
+# 4. Startup Event: Lighting the Engines
 @app.on_event("startup")
 def on_startup():
-    init_db() 
+    print("🚢 FanXI is setting sail...")
+    init_db() # Initializes SQLite and creates tables
 
-@app.get("/health")
-def health_check():
-    return {"status": "ok"}
-
-app.include_router(web_router)
-app.include_router(leagues_router)
-app.include_router(teams_router)
-app.include_router(predictions_router)
-app.include_router(users_router)
+@app.get("/")
+def home():
+    return {"message": "Welcome to FanXI. The Drums of Liberation are beating!"}
