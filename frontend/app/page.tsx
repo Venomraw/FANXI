@@ -1,45 +1,54 @@
-import Image from "next/image";
-// Importing your Tactical Interface
+'use client'; // Needed for the tab switching state
+import { useState } from "react";
+import PitchBoard from "@/src/components/pitch/PitchBoard";
 import TacticalSliders from "@/src/components/TacticalSliders";
 
 export default function Home() {
+  const [activeTab, setActiveTab] = useState<'squad' | 'tactics'>('squad');
+
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-black font-sans text-white p-4">
-      {/* --- HEADER SECTION --- */}
-      <header className="mb-12 flex flex-col items-center gap-4">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={120}
-          height={24}
-          priority
-        />
-        <div className="text-center">
-          <h1 className="text-4xl font-black tracking-tighter text-green-500 uppercase">
-            FanXI: World Cup 2026
-          </h1>
-          <p className="text-zinc-400 mt-2">Tactical Prediction Engine — Gear 5 Edition</p>
+    <div className="flex min-h-screen flex-col items-center bg-black font-sans text-white p-4">
+      <header className="py-8 flex flex-col items-center gap-2">
+        <h1 className="text-4xl font-black tracking-tighter text-green-500 uppercase italic">
+          FanXI Hub
+        </h1>
+        
+        {/* --- THE TAB SWITCHER --- */}
+        <div className="flex bg-zinc-900 p-1 rounded-xl border border-zinc-800 mt-6">
+          <button 
+            onClick={() => setActiveTab('squad')}
+            className={`px-8 py-2 rounded-lg font-bold transition-all ${
+              activeTab === 'squad' ? 'bg-green-600 text-white shadow-lg' : 'text-zinc-500 hover:text-white'
+            }`}
+          >
+            SQUAD
+          </button>
+          <button 
+            onClick={() => setActiveTab('tactics')}
+            className={`px-8 py-2 rounded-lg font-bold transition-all ${
+              activeTab === 'tactics' ? 'bg-green-600 text-white shadow-lg' : 'text-zinc-500 hover:text-white'
+            }`}
+          >
+            TACTICS
+          </button>
         </div>
       </header>
 
-      {/* --- MAIN INTERFACE --- */}
-      <main className="w-full max-w-xl">
-        {/* This is the bridge between your UI and your FastAPI backend */}
-        <TacticalSliders />
+      <main className="w-full max-w-4xl mt-4">
+        {/* --- CONDITIONAL RENDERING --- */}
+        {activeTab === 'squad' ? (
+          <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+             <PitchBoard />
+          </div>
+        ) : (
+          <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-md mx-auto">
+             <TacticalSliders />
+          </div>
+        )}
       </main>
 
-      {/* --- FOOTER / LOGS --- */}
-      <footer className="mt-16 flex gap-6 text-sm text-zinc-500">
-        <a
-          href="https://nextjs.org/docs"
-          target="_blank"
-          className="hover:text-green-400 transition-colors"
-        >
-          Documentation
-        </a>
-        <span>|</span>
-        <p>Cyber-Secure Tactical Vault Active 🔒</p>
+      <footer className="mt-12 text-zinc-600 text-xs font-mono uppercase tracking-widest">
+        Matchday Haki Connection: Secured 🔒
       </footer>
     </div>
   );
