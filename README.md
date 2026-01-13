@@ -1,84 +1,66 @@
-# FanXI (Working Title)
+# FanXI: World Cup 2026 Tactical Hub 🏆
 
-A football matchday prediction game where fans try to guess their team's starting XI before kickoff, get scored on how close they were, and climb leaderboards.
+The world's first tactical-first football prediction engine. Fans don't just pick the XI; they set the "Tactical Haki" for the match, including formation, mentality, and pressing intensity.
 
-## Version 1 – MVP Goals
+## 🚀 Version 1.1 – Current Progress (Tactical Bridge Complete)
 
-For one league (La Liga), fans can:
+We have successfully built the end-to-end bridge from the UI to the Database.
 
-- Browse: League → Team → Upcoming matches
-- On a match page:
-  - See match info & kickoff time
-  - Pick a formation (e.g., 4-3-3, 4-2-3-1)
-  - Pick exactly 11 players from the squad (no duplicates)
-  - Only submit predictions until a cut-off (e.g., 60 minutes before kickoff)
-- After lineups are known:
-  - Compare predicted XI vs official XI
-  - Compute a score per fan for that match
+- **The Scout Office**: Integrated FastAPI backend with a persistent SQLite vault.
+- **Tactical Interface**: Next.js frontend with real-time sliders for Pressing Intensity (0-100) and Team Mentality.
+- **Security Haki**: Implemented Bcrypt password hashing and Pydantic data validation.
+- **Viral Engine**: Backend support for generating shareable lineup cards using the Pillow library.
 
-User experience:
+## 🛠️ Tech Stack
 
-- Simple username-based identity (no passwords in v1)
-- "My predictions" page with past matches & scores
-- Per-team leaderboard (top predictors by total points)
-- Match page shows:
-  - Prediction state: PREDICTION OPEN / CLOSED / RESULTS READY
-  - Countdown to prediction close
-  - Crowd stats while predictions are open (e.g. % of fans picking each player/formation)
+- **Backend**: FastAPI (Python 3.11)
+- **Database**: SQLModel + SQLite (Persistent Vault)
+- **Frontend**: Next.js 15+, TypeScript, Tailwind CSS
+- **Security**: Bcrypt password hashing & CORS protection
+- **Data Integrity**: Pydantic v2 for strict schema validation
 
-## Tech Stack (planned)
+## 🏗️ Architecture Flow
 
-- Backend: FastAPI (Python)
-- Database: SQLite for dev (designed to move to Postgres later)
-- Frontend: React/Next.js
-- Football Data: external API for leagues, teams, matches, and lineups
 
-## API Overview (v1 backend)
 
-Base URL (dev): `http://127.0.0.1:8000`
+1. **Frontend (Port 3000)**: React components capture tactical sliders and player selections.
+2. **API Handshake (CORS)**: Secure bridge allows cross-origin requests to the backend.
+3. **Backend (Port 8000)**: FastAPI validates the payload against Pydantic schemas.
+4. **Database (fanxi.db)**: SQLModel commits the "Tactical Row" to the MatchPrediction table.
 
-### Health
+## 📡 API Endpoints (Current)
 
-- `GET /health`  
-  - Simple heartbeat to confirm the API is running.
+### Authentication & Users
+- `POST /register`: Onboard a new Scout with secure password hashing.
+- `GET /users/{username}`: Fetch public profile and Football IQ stats.
 
-### Leagues & Teams
+### Tactical Predictions
+- `POST /matches/{match_id}/predictions`: Submit a full tactical lineup.
+  - **Body**: `user_id`, `team_id`, `formation`, `mentality`, `pressing_intensity`, `players` (List of 11).
+- `GET /matches/{match_id}/leaderboard`: Real-time ranking of the best tactical minds.
 
-- `GET /leagues`  
-  - Returns available leagues (v1: La Liga only).
+### Matchday Data
+- `GET /teams/{team_id}/matches`: Returns fixtures with 2026 World Cup timestamps.
 
-- `GET /leagues/{league_code}/teams`  
-  - Returns teams in a league.  
-  - Example: `/leagues/laliga/teams`
+## 🧪 Quick Start
 
-### Teams & Matches
+1. **Launch the Vault (Backend)**:
+   ```bash
+   cd backend
+   source .venv/bin/activate
+   pip install -r requirements.txt
+   uvicorn app.main:app --reload
 
-- `GET /teams/{team_id}/matches`  
-  - Returns mock fixtures for a team.  
-  - Example: `/teams/1/matches` for FC Barcelona.
 
-### Predictions
+   ---
 
-- `POST /matches/{match_id}/predictions`  
-  - Body: `PredictionInput`
-    - `username`: string
-    - `team_id`: int
-    - `match_id`: int
-    - `formation`: string (e.g. "4-3-3")
-    - `players`: list of 11 player names
-  - Creates a prediction for that match.
+## 👨‍💻 Author
 
-- `GET /matches/{match_id}/predictions`  
-  - Lists all predictions for a match.
+**Venomraw** (Your Name)
+*Cybersecurity Student & Lead Developer*
+- [LinkedIn](https://www.linkedin.com/in/binamra-sigdel-377553156/)
+- [GitHub](https://github.com/venomraw)
 
-### Scoring & Leaderboard
+## ⚖️ License
 
-- `GET /matches/{match_id}/scores`  
-  - Compares predictions to a mocked “official XI” for that match (v1: match_id = 1).
-  - Returns a simple leaderboard:
-    - `prediction_id`, `username`, `correct_players`, `total_players`, `score`.
-
-### User History
-
-- `GET /users/{username}/predictions`  
-  - Returns all predictions submitted by a given user.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
