@@ -1,9 +1,16 @@
 from datetime import datetime
+from typing import List
 
 from fastapi import APIRouter, HTTPException, Depends
 from sqlmodel import Session, select
 
-from app.schemas import Prediction, PredictionInput, PredictionScore, MatchSummary
+from app.schemas import (
+    Prediction,
+    PredictionInput,
+    PredictionScore,
+    MatchSummary,
+    USERNAME_RE,
+)
 from app.db import get_session
 from app.models import PredictionDB
 
@@ -77,21 +84,31 @@ def create_prediction(
     """
     Let a fan submit a lineup prediction for a match.
     Saves to SQLite and returns the created prediction.
-
-    Validation:
-    - username must match USERNAME_RE (enforced by PredictionInput)
-    - players must contain exactly 11 names
     """
-    if len(payload.players) != 11:
+
+    # --- Validate username (same rules as elsewhere) ---
+    username_clean = payload.username.strip()
+    if not USERNAME_RE.match(username_clean):
         raise HTTPException(
-            status_code=400,
-            detail="Prediction must contain exactly 11 players.",
+            status_code=422,
+            detail=(
+                "Username must be 3–20 characters, using only letters, "
+                "numbers, or underscore."
+            ),
         )
 
-    players_csv = "|".join(payload.players)
+    # --- Validate and clean players list ---
+    players_clean = [p.strip() for p in payload.players if p.strip()]
+    if len(players_clean) != 11:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Prediction must contain exactly 11 non-empty player names; got {len(players_clean)}.",
+        )
+
+    players_csv = "|".join(players_clean)
 
     db_obj = PredictionDB(
-        username=payload.username,   # already normalized to lowercase
+        username=username_clean.lower(),
         team_id=payload.team_id,
         match_id=match_id,
         formation=payload.formation,
@@ -110,10 +127,13 @@ def list_predictions_for_match(
     match_id: int,
     session: Session = Depends(get_session),
 ):
-    """List all predictions for a given match from the database."""
-    rows = session.exec(
+    """
+    List all predictions for a given match from the database.
+    """
+    result = session.exec(
         select(PredictionDB).where(PredictionDB.match_id == match_id)
-    ).all()
+    )
+    rows = result.all()
     return [to_prediction_model(row) for row in rows]
 
 
@@ -134,15 +154,17 @@ def list_scores_for_match(
 
     official_players = OFFICIAL_LINEUPS[match_id]
 
-    rows = session.exec(
+    result = session.exec(
         select(PredictionDB).where(PredictionDB.match_id == match_id)
-    ).all()
+    )
+    rows = result.all()
 
     scores: list[PredictionScore] = []
     for row in rows:
         prediction = to_prediction_model(row)
         scores.append(score_single_prediction(prediction, official_players))
 
+    # Sort leaderboard: highest score first, then username A–Z
     scores.sort(key=lambda s: (-s.score, s.username.lower()))
     return scores
 
@@ -153,7 +175,11 @@ def get_match_summary(
     session: Session = Depends(get_session),
 ):
     """
-    Quick summary of prediction stats for a match.
+    Return a quick summary of prediction stats for a match:
+    - how many predictions
+    - how many unique users
+    - best score
+    - average score
     """
     if match_id not in OFFICIAL_LINEUPS:
         raise HTTPException(
@@ -163,9 +189,11 @@ def get_match_summary(
 
     official_players = OFFICIAL_LINEUPS[match_id]
 
-    rows = session.exec(
+    # grab all predictions for this match
+    result = session.exec(
         select(PredictionDB).where(PredictionDB.match_id == match_id)
-    ).all()
+    )
+    rows = result.all()
 
     if not rows:
         return MatchSummary(

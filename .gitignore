@@ -10,3 +10,5 @@ backend/fanxi.db
 
 # OS junk
 .DS_Store
+
+backend/.env

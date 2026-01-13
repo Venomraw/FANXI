@@ -17,7 +17,7 @@ def list_predictions_for_user(
     username: str,
     session: Session = Depends(get_session),
 ):
-    """
+    """git rm --cached backend/fanxi
     Return all predictions made by a given user.
     Matching is case-sensitive for now; client should send consistent usernames.
     """
