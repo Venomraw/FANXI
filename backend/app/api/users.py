@@ -1,31 +1,34 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import Session, select
-
-from app.schemas import Prediction
 from app.db import get_session
-from app.models import PredictionDB
-from app.api.predictions import to_prediction_model
+from app.models import User
+from app.core.security import get_password_hash
 
-router = APIRouter(
-    prefix="/users",
-    tags=["users"],
-)
+router = APIRouter()
 
-
-@router.get("/{username}/predictions", response_model=list[Prediction])
-def list_predictions_for_user(
-    username: str,
-    session: Session = Depends(get_session),
-):
-    """git rm --cached backend/fanxi
-    Return all predictions made by a given user.
-    Matching is case-sensitive for now; client should send consistent usernames.
-    """
-    username_clean = username.strip()
-
-    result = session.exec(
-        select(PredictionDB).where(PredictionDB.username == username_clean)
+@router.post("/register")
+def register_user(user_data: User, session: Session = Depends(get_session)):
+    # 1. Check if user already exists
+    statement = select(User).where(User.username == user_data.username)
+    existing_user = session.exec(statement).first()
+    
+    if existing_user:
+        raise HTTPException(status_code=400, detail="Username already taken")
+    
+    # 2. Cyber-Security Haki: Hash the password
+    hashed_pwd = get_password_hash(user_data.hashed_password)
+    
+    # 3. Save the new 'Scout' to the database
+    new_user = User(
+        username=user_data.username,
+        email=user_data.email,
+        hashed_password=hashed_pwd, # Store the hash, not the secret!
+        country_allegiance=user_data.country_allegiance,
+        rank_title="Scout" # Every legend starts as a Scout
     )
-    rows = result.all()
-
-    return [to_prediction_model(row) for row in rows]
+    
+    session.add(new_user)
+    session.commit()
+    session.refresh(new_user)
+    
+    return {"message": f"Welcome to FanXI, {new_user.username}! Your journey begins."}
