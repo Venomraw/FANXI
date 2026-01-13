@@ -1,14 +1,21 @@
+# Python environment and cache
 .venv/
 __pycache__/
+*.pyc
+
+# Database files (The Vault)
 *.db
 *.sqlite
-*.pyc
-.DS_Store
-
-# SQLite dev DB
 backend/fanxi.db
 
-# OS junk
-.DS_Store
-
+# Secrets (The Haki) - VERY IMPORTANT
 backend/.env
+.env
+
+# Generated Media (The Viral Lab)
+# This ignores everything inside the folder so your GitHub stays clean
+backend/generated_cards/
+
+# OS Specific junk
+.DS_Store
+Thumbs.db
