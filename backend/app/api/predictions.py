@@ -29,41 +29,29 @@ def calculate_tactical_bonus(prediction: MatchPrediction, real_tactics: dict) ->
     
     return bonus
 
-@router.post("/{match_id}/predictions", status_code=201)
+@router.post("/{match_id}/predictions")
 def create_prediction(
     match_id: int,
-    payload: PredictionInput,
-    session: Session = Depends(get_session),
+    prediction_data: PredictionInput, # The Pydantic schema we updated
+    session: Session = Depends(get_session)
 ):
-    """
-    Submits a tactical lineup. 
-    Includes Cybersecurity 'Time-Gate' check.
-    """
-    # 1. CYBERSECURITY: Prevent late entries
-    # In a real scenario, you'd fetch the match kickoff time from your DB
-    # if datetime.now(timezone.utc) > match.kickoff_time:
-    #    raise HTTPException(status_code=403, detail="The match has already started!")
-
-    # 2. DATA INTEGRITY: Validate player count
-    players_list = [p.strip() for p in payload.players if p.strip()]
-    if len(players_list) != 11:
-        raise HTTPException(status_code=400, detail="Must select exactly 11 players.")
-
-    # 3. SAVE TO VAULT
-    db_obj = MatchPrediction(
-        user_id=payload.user_id, # Link to real User ID
-        match_id=match_id,
-        formation=payload.formation,
-        mentality=payload.mentality, # New Slider
-        pressing_intensity=payload.pressing_intensity, # New Slider
-        players_csv="|".join(players_list)
+    # Ensure team_id is explicitly mapped from prediction_data
+    new_prediction = MatchPrediction(
+        user_id=prediction_data.user_id,
+        match_id=match_id, # From URL path
+        team_id=prediction_data.team_id, # CRITICAL: Must match the schema
+        formation=prediction_data.formation,
+        mentality=prediction_data.mentality,
+        pressing_intensity=prediction_data.pressing_intensity,
+        players_csv="|".join(prediction_data.players),
+        created_at=datetime.utcnow()
     )
-
-    session.add(db_obj)
-    session.commit()
-    session.refresh(db_obj)
-
-    return {"message": "Tactical orders locked in!", "id": db_obj.id}
+    
+    session.add(new_prediction)
+    session.commit() # This is where the crash happened
+    session.refresh(new_prediction)
+    
+    return {"message": "Tactical orders locked in!", "id": new_prediction.id}   
 
 @router.get("/{match_id}/leaderboard", response_model=List[PredictionScore])
 def get_leaderboard(match_id: int, session: Session = Depends(get_session)):

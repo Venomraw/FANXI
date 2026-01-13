@@ -8,6 +8,19 @@ from pydantic import BaseModel, EmailStr, Field, field_validator
 # --------------------
 USERNAME_RE = re.compile(r"^[a-zA-Z0-9_]{3,20}$")
 
+# --- League & Team Schemas (Restored to fix ImportError) ---
+class League(BaseModel):
+    """Schema for league data."""
+    code: str         # e.g. "worldcup"
+    name: str         # e.g. "FIFA World Cup 2026"
+
+class Team(BaseModel):
+    """Schema for team data."""
+    id: int           
+    name: str         
+    short_name: str   
+    league_code: str  
+
 # --- User & Auth Schemas ---
 class UserBase(BaseModel):
     """Base fields for a user."""
@@ -42,7 +55,7 @@ class PredictionInput(BaseModel):
     user_id: int
     team_id: int
     formation: str = "4-3-3"
-    mentality: str = "Balanced" # New slider
+    mentality: str = "Balanced" 
     pressing_intensity: int = Field(50, ge=0, le=100) # 0-100 constraint
     players: List[str]
 
@@ -60,10 +73,10 @@ class PredictionScore(BaseModel):
     match_id: int
     username: str
     correct_players: int
-    tactical_bonus: int = 0 # Points for slider accuracy
+    tactical_bonus: int = 0 
     total_score: int
 
-# --- Match & League Schemas ---
+# --- Match Schemas ---
 class Match(BaseModel):
     """World Cup fixture data."""
     id: int

@@ -26,6 +26,8 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        // This line tells React: "I know extensions might mess with my attributes, ignore it"
+        suppressHydrationWarning={true} 
       >
         {children}
       </body>
