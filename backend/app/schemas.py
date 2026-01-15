@@ -1,6 +1,6 @@
 import re
 from datetime import datetime
-from typing import List, Optional
+from typing import List, Optional, Dict
 from pydantic import BaseModel, EmailStr, Field, field_validator
 
 # --------------------
@@ -8,14 +8,12 @@ from pydantic import BaseModel, EmailStr, Field, field_validator
 # --------------------
 USERNAME_RE = re.compile(r"^[a-zA-Z0-9_]{3,20}$")
 
-# --- League & Team Schemas (Restored to fix ImportError) ---
+# --- League & Team Schemas ---
 class League(BaseModel):
-    """Schema for league data."""
-    code: str         # e.g. "worldcup"
-    name: str         # e.g. "FIFA World Cup 2026"
+    code: str
+    name: str
 
 class Team(BaseModel):
-    """Schema for team data."""
     id: int           
     name: str         
     short_name: str   
@@ -23,13 +21,11 @@ class Team(BaseModel):
 
 # --- User & Auth Schemas ---
 class UserBase(BaseModel):
-    """Base fields for a user."""
     username: str
     email: EmailStr
     country_allegiance: str
 
 class UserCreate(UserBase):
-    """What is required to register a new Scout."""
     password: str = Field(..., min_length=8)
 
     @field_validator("username")
@@ -41,7 +37,6 @@ class UserCreate(UserBase):
         return v.lower()
 
 class UserRead(UserBase):
-    """Public profile data returned by the API."""
     id: int
     football_iq_points: int
     rank_title: str
@@ -49,26 +44,39 @@ class UserRead(UserBase):
     class Config:
         from_attributes = True
 
-# --- Prediction Schemas (The Tactical Engine) ---
-class PredictionInput(BaseModel):
-    """JSON payload for submitting tactical lineups."""
-    user_id: int
-    team_id: int
-    formation: str = "4-3-3"
-    mentality: str = "Balanced" 
-    pressing_intensity: int = Field(50, ge=0, le=100) # 0-100 constraint
-    players: List[str]
+# --- NEW: Tactical Engine Schemas ---
 
-    @field_validator("players")
+class PlayerInfo(BaseModel):
+    """Schema for individual players within the lineup."""
+    name: str
+    number: int
+
+class TacticsInfo(BaseModel):
+    """Matches the three sliders from our PitchBoard."""
+    mentality: int = Field(50, ge=0, le=100)
+    lineHeight: int = Field(50, ge=0, le=100)
+    width: int = Field(50, ge=0, le=100)
+
+class LockSelectionRequest(BaseModel):
+    """
+    Matches the 'finalData' object sent from Next.js.
+    Replaces the old PredictionInput.
+    """
+    lineup: Dict[str, PlayerInfo] # Maps position (e.g., 'ST') to PlayerInfo
+    tactics: TacticsInfo
+    timestamp: str
+    status: str
+
+    @field_validator("lineup")
     @classmethod
-    def validate_players(cls, v: List[str]) -> List[str]:
-        cleaned = [p.strip() for p in v if p.strip()]
-        if len(cleaned) != 11:
-            raise ValueError("A full squad requires exactly 11 players.")
-        return cleaned
+    def validate_lineup_size(cls, v: Dict) -> Dict:
+        if len(v) != 11:
+            # Note: During testing, you might want to lower this to 1 or more
+            raise ValueError("A complete lineup requires 11 players.")
+        return v
 
+# --- Leaderboard & Stats ---
 class PredictionScore(BaseModel):
-    """Leaderboard entry showing tactical accuracy."""
     prediction_id: int
     match_id: int
     username: str
@@ -76,9 +84,7 @@ class PredictionScore(BaseModel):
     tactical_bonus: int = 0 
     total_score: int
 
-# --- Match Schemas ---
 class Match(BaseModel):
-    """World Cup fixture data."""
     id: int
     external_id: int
     home_team_id: int
@@ -88,7 +94,6 @@ class Match(BaseModel):
     status: str = "scheduled"
 
 class MatchSummary(BaseModel):
-    """Aggregated stats for the global map."""
     match_id: int
     total_predictions: int
     unique_users: int

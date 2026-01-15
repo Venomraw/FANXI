@@ -1,66 +1,85 @@
 from datetime import datetime, timezone
 from typing import List
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, status
 from sqlmodel import Session, select
 
 from app.db import get_session
-from app.models import MatchPrediction, User # Using our new World Cup models
-# Note: You will update your schemas.py to include 'mentality' and 'pressing_intensity'
-from app.schemas import PredictionInput, PredictionScore, MatchSummary
+from app.models import MatchPrediction
+from app.schemas import LockSelectionRequest
 
 router = APIRouter(
-    prefix="/matches",
+    prefix="/predictions",
     tags=["predictions"],
 )
 
-def calculate_tactical_bonus(prediction: MatchPrediction, real_tactics: dict) -> int:
-    """
-    The 'Tactical Haki': Calculates bonus points based on slider accuracy.
-    """
-    bonus = 0
-    # Check if formation matches exactly
-    if prediction.formation == real_tactics.get("formation"):
-        bonus += 10
-    
-    # Proximity scoring for Pressing Intensity slider (0-100)
-    diff = abs(prediction.pressing_intensity - real_tactics.get("pressing", 50))
-    if diff <= 10: bonus += 20
-    elif diff <= 25: bonus += 10
-    
-    return bonus
-
-@router.post("/{match_id}/predictions")
-def create_prediction(
+@router.post("/lock/{match_id}", status_code=status.HTTP_201_CREATED)
+async def lock_prediction(
     match_id: int,
-    prediction_data: PredictionInput, # The Pydantic schema we updated
+    prediction_data: LockSelectionRequest,
     session: Session = Depends(get_session)
 ):
-    # Ensure team_id is explicitly mapped from prediction_data
-    new_prediction = MatchPrediction(
-        user_id=prediction_data.user_id,
-        match_id=match_id, # From URL path
-        team_id=prediction_data.team_id, # CRITICAL: Must match the schema
-        formation=prediction_data.formation,
-        mentality=prediction_data.mentality,
-        pressing_intensity=prediction_data.pressing_intensity,
-        players_csv="|".join(prediction_data.players),
-        created_at=datetime.utcnow()
-    )
-    
-    session.add(new_prediction)
-    session.commit() # This is where the crash happened
-    session.refresh(new_prediction)
-    
-    return {"message": "Tactical orders locked in!", "id": new_prediction.id}   
+    """
+    ⚓ The Port of Call for your Next.js 'Lock Selection' button.
+    Saves the full tactical snapshot (Lineup + Sliders) to the database.
+    """
+    try:
+        # 🛡️ SECURITY: Check if a prediction already exists for this user/match
+        # (Using user_id=1 as a placeholder until Auth is implemented)
+        existing = session.exec(
+            select(MatchPrediction).where(
+                MatchPrediction.match_id == match_id,
+                MatchPrediction.user_id == 1 
+            )
+        ).first()
 
-@router.get("/{match_id}/leaderboard", response_model=List[PredictionScore])
-def get_leaderboard(match_id: int, session: Session = Depends(get_session)):
+        if existing:
+            # Update the existing record instead of creating a duplicate
+            existing.lineup_data = prediction_data.lineup
+            existing.tactics_data = prediction_data.tactics.model_dump() # Updated from .dict()
+            existing.created_at = datetime.now(timezone.utc)
+            new_prediction = existing
+        else:
+            # Create a fresh tactical record
+            new_prediction = MatchPrediction(
+                user_id=1, 
+                match_id=match_id,
+                lineup_data=prediction_data.lineup,
+                tactics_data=prediction_data.tactics.model_dump(),
+                status="LOCKED",
+                created_at=datetime.now(timezone.utc)
+            )
+            session.add(new_prediction)
+        
+        session.commit()
+        session.refresh(new_prediction)
+        
+        return {
+            "status": "success", 
+            "message": "Tactical orders locked in!", 
+            "prediction_id": new_prediction.id,
+            "timestamp": new_prediction.created_at
+        }
+        
+    except Exception as e:
+        session.rollback() # Protect database integrity
+        print(f"❌ DATABASE ERROR: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
+            detail="Failed to save tactical orders."
+        )
+
+@router.get("/match/{match_id}")
+def get_match_lineup(match_id: int, session: Session = Depends(get_session)):
     """
-    Ranks users by their total 'Football IQ' points.
+    Retrieves the user's locked lineup for a specific match.
     """
-    # Logic to fetch all predictions and apply scoring
     statement = select(MatchPrediction).where(MatchPrediction.match_id == match_id)
-    results = session.exec(statement).all()
+    result = session.exec(statement).first()
     
-    # Sorting and mapping logic would go here
-    return []
+    if not result:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, 
+            detail="No prediction found for this match."
+        )
+        
+    return result
