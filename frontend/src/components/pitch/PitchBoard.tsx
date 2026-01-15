@@ -35,7 +35,7 @@ export default function PitchBoard() {
   const fetchHistory = async () => {
     try {
       // Endpoint matches our FastAPI router
-      const response = await fetch("http://localhost:8000/predictions/history/1");
+      const response = await fetch("http://127.0.0.1:8000/predictions/history/1");
       if (response.ok) {
         const data = await response.json();
         setHistory(data);

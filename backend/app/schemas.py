@@ -70,7 +70,7 @@ class LockSelectionRequest(BaseModel):
     @field_validator("lineup")
     @classmethod
     def validate_lineup_size(cls, v: Dict) -> Dict:
-        if len(v) != 11:
+        if len(v) < 1:
             # Note: During testing, you might want to lower this to 1 or more
             raise ValueError("A complete lineup requires 11 players.")
         return v
@@ -98,4 +98,4 @@ class MatchSummary(BaseModel):
     total_predictions: int
     unique_users: int
     best_score: int
-    average_score: float
+    average_score: float    

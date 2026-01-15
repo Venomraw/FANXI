@@ -18,13 +18,15 @@ async def lock_prediction(
     prediction_data: LockSelectionRequest,
     session: Session = Depends(get_session)
 ):
-    """
-    ⚓ The Port of Call for your Next.js 'Lock Selection' button.
-    Saves the full tactical snapshot (Lineup + Sliders) to the database.
-    """
     try:
-        # 🛡️ SECURITY: Check if a prediction already exists for this user/match
-        # (Using user_id=1 as a placeholder until Auth is implemented)
+        # 1. Convert nested Pydantic objects to plain dictionaries
+        # This solves the "Object of type PlayerInfo is not JSON serializable" error.
+        clean_lineup = {
+            pos: player.model_dump() 
+            for pos, player in prediction_data.lineup.items()
+        }
+        clean_tactics = prediction_data.tactics.model_dump()
+
         existing = session.exec(
             select(MatchPrediction).where(
                 MatchPrediction.match_id == match_id,
@@ -33,18 +35,16 @@ async def lock_prediction(
         ).first()
 
         if existing:
-            # Update the existing record instead of creating a duplicate
-            existing.lineup_data = prediction_data.lineup
-            existing.tactics_data = prediction_data.tactics.model_dump() # Updated from .dict()
+            existing.lineup_data = clean_lineup # Use clean dicts
+            existing.tactics_data = clean_tactics
             existing.created_at = datetime.now(timezone.utc)
             new_prediction = existing
         else:
-            # Create a fresh tactical record
             new_prediction = MatchPrediction(
                 user_id=1, 
                 match_id=match_id,
-                lineup_data=prediction_data.lineup,
-                tactics_data=prediction_data.tactics.model_dump(),
+                lineup_data=clean_lineup, # Use clean dicts
+                tactics_data=clean_tactics,
                 status="LOCKED",
                 created_at=datetime.now(timezone.utc)
             )
@@ -56,16 +56,15 @@ async def lock_prediction(
         return {
             "status": "success", 
             "message": "Tactical orders locked in!", 
-            "prediction_id": new_prediction.id,
-            "timestamp": new_prediction.created_at
+            "prediction_id": new_prediction.id
         }
         
     except Exception as e:
-        session.rollback() # Protect database integrity
+        session.rollback()
         print(f"❌ DATABASE ERROR: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
-            detail="Failed to save tactical orders."
+            detail=f"Serialization Error: {str(e)}"
         )
 
 @router.get("/match/{match_id}")

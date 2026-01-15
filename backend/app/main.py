@@ -14,7 +14,7 @@ app = FastAPI(
 # This prevents unauthorized websites from calling your API.
 origins = [
     "http://localhost:3000", # Your local frontend
-    "https://fanxi.app",     # Your future production domain
+    "http://127.0.0.1:3000",     # Your future production domain
 ]
 
 app.add_middleware(
