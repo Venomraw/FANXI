@@ -1,6 +1,6 @@
 from datetime import datetime
-from typing import Optional, List, Dict
-from sqlmodel import SQLModel, Field, JSON
+from typing import Optional, List, Dict, Any
+from sqlmodel import SQLModel, Field, JSON, Column
 
 
 # ---------------------------------------------------------------------------
@@ -97,6 +97,7 @@ class MatchDB(SQLModel, table=True):
     away_team_id: int
     kickoff_time: datetime
     venue: str
+<<<<<<< HEAD
     round: str
     status: str = Field(default="scheduled")
 
@@ -125,3 +126,19 @@ class PredictionDB(SQLModel, table=True):
     formation: str                       # e.g. "4-3-3"
     players_csv: str                     # pipe-separated player names
     created_at: datetime = Field(default_factory=datetime.utcnow)
+
+
+# ---------------------------------------------------------------------------
+# Squad Caching — API Quota Protection
+# ---------------------------------------------------------------------------
+
+class TeamSquadCache(SQLModel, table=True):
+    """
+    Cache for Squad Data.
+    Prevents redundant API calls and saves your daily quota.
+    """
+    id: Optional[int] = Field(default=None, primary_key=True)
+    team_name: str = Field(index=True, unique=True)
+    players_data: Dict[str, Any] = Field(default={}, sa_column=Column(JSON))
+    last_updated: datetime = Field(default_factory=datetime.utcnow)
+    expires_at: datetime  # Time-based expiration

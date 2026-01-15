@@ -1,7 +1,12 @@
 from __future__ import annotations
 from typing import Any, Dict, List
+from sqlmodel import Session, select
+from app.models import TeamSquadCache
 import httpx
+from app.db import engine
+from datetime import datetime, timedelta
 from app.config import settings
+from .football_api import _get # Your existing helpers
 
 class FootballAPIError(Exception):
     """Raised when the external football API returns an error."""
@@ -93,3 +98,38 @@ def fetch_world_cup_squads(league_id: int = WORLD_CUT_ID, season: int = SEASON) 
 def test_connection() -> dict[str, Any]:
     """Sanity check to verify API key and connectivity."""
     return _get("/status") # Calling /status is better for verifying API Key health
+
+def get_cached_squad(team_name: str, session: Session) -> list | None:
+    """Checks if we have a valid, non-expired squad in the DB."""
+    statement = select(TeamSquadCache).where(TeamSquadCache.team_name == team_name)
+    cache = session.exec(statement).first()
+    
+    if cache and cache.expires_at > datetime.utcnow():
+        print(f"⚡ CACHE HIT: Loading {team_name} from local storage.")
+        return cache.players_data
+    return None
+
+def fetch_and_cache_squad(team_name: str, team_id: int, session: Session):
+    """Hits the real API and saves result to DB for 24 hours."""
+    print(f"📡 API CALL: Scouting real players for {team_name}...")
+    
+    # Using your existing _get helper
+    data = _get("/players/squads", params={"team": team_id})
+    
+    players = [
+        {"name": p.get("name"), "number": p.get("number") or 0}
+        for p in data.get("response", [{}])[0].get("players", [])
+    ]
+    
+    # Save/Update Cache
+    cache = session.exec(select(TeamSquadCache).where(TeamSquadCache.team_name == team_name)).first()
+    if not cache:
+        cache = TeamSquadCache(team_name=team_name, expires_at=datetime.utcnow() + timedelta(hours=24))
+    
+    cache.players_data = players
+    cache.last_updated = datetime.utcnow()
+    cache.expires_at = datetime.utcnow() + timedelta(hours=24)
+    
+    session.add(cache)
+    session.commit()
+    return players
