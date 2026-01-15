@@ -83,3 +83,16 @@ def get_match_lineup(match_id: int, session: Session = Depends(get_session)):
         )
         
     return result
+
+@router.get("/history/{user_id}", response_model=List[MatchPrediction])
+def get_prediction_history(user_id: int, session: Session = Depends(get_session)):
+    """
+    Fetches all historical tactical locks for a specific scout.
+    """
+    statement = select(MatchPrediction).where(MatchPrediction.user_id == user_id).order_by(MatchPrediction.created_at.desc())
+    results = session.exec(statement).all()
+    
+    if not results:
+        return [] # Return empty list if no history exists
+        
+    return results
