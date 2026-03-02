@@ -1,12 +1,12 @@
 'use client';
 import React, { useState } from 'react';
 import { useTheme } from '@/src/context/ThemeContext';
-import { WC2026_TEAMS, WCTeam } from '@/src/data/teamColors';
+import { WC2026_TEAMS } from '@/src/data/teamColors';
 
 const CONFEDERATIONS = ['UEFA', 'CONMEBOL', 'CONCACAF', 'CAF', 'AFC', 'OFC'] as const;
 
 export default function TeamPicker() {
-  const { setTeam, showPicker, setShowPicker, team: currentTeam } = useTheme();
+  const { setTeam, showPicker, setShowPicker, team: currentTeam, primary } = useTheme();
   const [filter, setFilter] = useState<string>('ALL');
   const [search, setSearch] = useState('');
 
@@ -14,29 +14,40 @@ export default function TeamPicker() {
 
   const filtered = WC2026_TEAMS.filter(t => {
     const matchesConf = filter === 'ALL' || t.confederation === filter;
-    const matchesSearch = t.name.toLowerCase().includes(search.toLowerCase()) ||
-                          t.shortName.toLowerCase().includes(search.toLowerCase());
+    const matchesSearch =
+      t.name.toLowerCase().includes(search.toLowerCase()) ||
+      t.shortName.toLowerCase().includes(search.toLowerCase());
     return matchesConf && matchesSearch;
   });
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-      <div className="w-full max-w-2xl bg-zinc-950 border border-zinc-800 rounded-3xl shadow-2xl overflow-hidden">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4"
+      style={{ background: 'rgba(0,0,0,0.95)', backdropFilter: 'blur(24px)' }}>
+      <div className="w-full max-w-2xl border shadow-2xl overflow-hidden"
+        style={{
+          background: 'var(--dark3)',
+          borderColor: `color-mix(in srgb, ${primary} 20%, transparent)`,
+        }}>
 
         {/* Header */}
-        <div className="p-6 border-b border-zinc-800">
+        <div className="p-6 border-b"
+          style={{ borderColor: `color-mix(in srgb, ${primary} 12%, transparent)` }}>
           <div className="flex items-center justify-between mb-1">
-            <h2 className="text-xl font-black uppercase tracking-tighter text-white">
+            <h2 className="font-display text-3xl tracking-widest uppercase theme-transition"
+              style={{ color: primary }}>
               Pick Your Nation
             </h2>
             {currentTeam && (
               <button onClick={() => setShowPicker(false)}
-                className="text-zinc-500 hover:text-white text-xs uppercase font-bold transition-colors">
+                className="font-mono text-[11px] tracking-widest uppercase transition-colors"
+                style={{ color: 'var(--muted)' }}
+                onMouseEnter={e => (e.currentTarget.style.color = primary)}
+                onMouseLeave={e => (e.currentTarget.style.color = 'var(--muted)')}>
                 Cancel
               </button>
             )}
           </div>
-          <p className="text-zinc-500 text-xs uppercase tracking-widest">
+          <p className="font-mono text-[11px] uppercase tracking-[4px]" style={{ color: 'var(--muted)' }}>
             FIFA World Cup 2026 · 48 Nations
           </p>
 
@@ -46,18 +57,27 @@ export default function TeamPicker() {
             placeholder="Search team..."
             value={search}
             onChange={e => setSearch(e.target.value)}
-            className="mt-4 w-full bg-zinc-900 border border-zinc-700 rounded-xl px-4 py-2 text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-zinc-500"
+            className="mt-4 w-full border px-4 py-2.5 font-mono text-sm placeholder-[var(--muted)] focus:outline-none transition-colors text-[var(--text)]"
+            style={{
+              background: 'var(--dark2)',
+              borderColor: `color-mix(in srgb, ${primary} 20%, transparent)`,
+            }}
+            onFocus={e => (e.target.style.borderColor = primary)}
+            onBlur={e => (e.target.style.borderColor = `color-mix(in srgb, ${primary} 20%, transparent)`)}
           />
 
           {/* Confederation filter */}
-          <div className="flex flex-wrap gap-2 mt-3">
+          <div className="flex flex-wrap gap-1.5 mt-3">
             {(['ALL', ...CONFEDERATIONS] as const).map(conf => (
               <button key={conf} onClick={() => setFilter(conf)}
-                className={`px-3 py-1 text-[10px] font-black uppercase rounded-lg border transition-all ${
-                  filter === conf
-                    ? 'bg-white text-black border-white'
-                    : 'border-zinc-700 text-zinc-500 hover:border-zinc-500 hover:text-white'
-                }`}>
+                className="px-3 py-1.5 font-mono text-[10px] tracking-widest uppercase border transition-all theme-transition"
+                style={filter === conf
+                  ? { background: primary, color: 'var(--dark)', borderColor: primary }
+                  : {
+                      borderColor: `color-mix(in srgb, ${primary} 15%, transparent)`,
+                      color: 'var(--muted)',
+                      background: 'transparent',
+                    }}>
                 {conf}
               </button>
             ))}
@@ -65,31 +85,53 @@ export default function TeamPicker() {
         </div>
 
         {/* Team Grid */}
-        <div className="p-4 max-h-[420px] overflow-y-auto grid grid-cols-2 sm:grid-cols-3 gap-2">
+        <div className="p-4 max-h-[400px] overflow-y-auto grid grid-cols-2 sm:grid-cols-3 gap-1.5 custom-scrollbar">
           {filtered.map(t => (
             <button key={t.id} onClick={() => setTeam(t)}
-              className={`flex items-center gap-3 p-3 rounded-xl border transition-all text-left group ${
-                currentTeam?.id === t.id
-                  ? 'border-white bg-white/10'
-                  : 'border-zinc-800 hover:border-zinc-600 bg-zinc-900 hover:bg-zinc-800'
-              }`}
-            >
-              {/* Color swatch */}
-              <div className="w-8 h-8 rounded-lg flex-shrink-0 flex items-center justify-center text-lg"
-                style={{ backgroundColor: t.primary, border: `2px solid ${t.accent}` }}>
-                <span>{t.flag}</span>
+              className="flex items-center gap-3 p-3 border transition-all text-left group theme-transition"
+              style={currentTeam?.id === t.id
+                ? {
+                    background: `color-mix(in srgb, ${t.primary} 15%, transparent)`,
+                    borderColor: t.primary,
+                  }
+                : {
+                    background: 'var(--dark2)',
+                    borderColor: `color-mix(in srgb, ${t.primary} 12%, transparent)`,
+                  }}
+              onMouseEnter={e => {
+                if (currentTeam?.id !== t.id) {
+                  (e.currentTarget as HTMLElement).style.borderColor = t.primary;
+                  (e.currentTarget as HTMLElement).style.background = `color-mix(in srgb, ${t.primary} 8%, transparent)`;
+                }
+              }}
+              onMouseLeave={e => {
+                if (currentTeam?.id !== t.id) {
+                  (e.currentTarget as HTMLElement).style.borderColor = `color-mix(in srgb, ${t.primary} 12%, transparent)`;
+                  (e.currentTarget as HTMLElement).style.background = 'var(--dark2)';
+                }
+              }}>
+              {/* Flag circle */}
+              <div className="w-9 h-9 flex-shrink-0 flex items-center justify-center text-xl"
+                style={{
+                  background: `${t.primary}18`,
+                  border: `1.5px solid ${t.primary}40`,
+                }}>
+                {t.flag}
               </div>
               <div className="min-w-0">
-                <div className="text-white text-[11px] font-bold truncate">{t.name}</div>
-                <div className="text-zinc-500 text-[9px] uppercase">{t.confederation}</div>
+                <div className="text-[var(--text)] text-xs font-bold truncate">{t.name}</div>
+                <div className="font-mono text-[10px] uppercase tracking-wider" style={{ color: 'var(--muted)' }}>
+                  {t.confederation}
+                </div>
               </div>
             </button>
           ))}
         </div>
 
         {/* Footer */}
-        <div className="p-4 border-t border-zinc-800 text-center">
-          <p className="text-zinc-600 text-[10px] uppercase tracking-widest">
+        <div className="p-4 border-t text-center"
+          style={{ borderColor: `color-mix(in srgb, ${primary} 12%, transparent)` }}>
+          <p className="font-mono text-[11px] uppercase tracking-[3px]" style={{ color: 'var(--muted)' }}>
             Colors adapt to your chosen nation
           </p>
         </div>

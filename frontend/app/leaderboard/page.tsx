@@ -37,21 +37,26 @@ export default function LeaderboardPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-black text-white p-4">
-      <div className="max-w-2xl mx-auto">
+    <div className="min-h-screen bg-black text-white relative overflow-hidden">
+      <div className="grid-bg opacity-30" />
+
+      <div className="max-w-2xl mx-auto px-5 py-8 relative z-10">
 
         {/* Header */}
-        <div className="flex items-center justify-between py-6 mb-6">
+        <div className="flex items-end justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-black uppercase tracking-tighter" style={{ color: primary }}>
-              Leaderboard
-            </h1>
-            <p className="text-zinc-500 text-xs uppercase tracking-widest mt-1">
+            <p className="font-mono text-[11px] tracking-[4px] uppercase mb-3 theme-transition"
+              style={{ color: primary }}>
               World Cup 2026 · Global Rankings
             </p>
+            <h1 className="font-display leading-none"
+              style={{ fontSize: 'clamp(3.5rem, 10vw, 6rem)' }}>
+              Leader<span className="theme-transition" style={{ color: primary }}>board</span>
+            </h1>
           </div>
           <button onClick={() => router.push('/')}
-            className="px-4 py-2 text-[10px] font-black uppercase rounded-xl border border-zinc-800 bg-zinc-900 hover:bg-zinc-800 transition-all text-zinc-400 hover:text-white">
+            className="font-mono text-xs tracking-[2px] uppercase px-5 py-3 border transition-all hover:border-white/30 hover:text-white btn-cut"
+            style={{ borderColor: 'rgba(255,255,255,0.12)', color: 'rgba(255,255,255,0.4)', background: '#111' }}>
             ← Hub
           </button>
         </div>
@@ -59,72 +64,92 @@ export default function LeaderboardPage() {
         {/* Rank legend */}
         <div className="flex flex-wrap gap-2 mb-6">
           {Object.entries(RANK_COLORS).map(([title, color]) => (
-            <div key={title} className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-zinc-900 border border-zinc-800">
-              <div className="w-2 h-2 rounded-full" style={{ backgroundColor: color }} />
-              <span className="text-[9px] font-bold uppercase text-zinc-400">{title}</span>
+            <div key={title} className="flex items-center gap-2 px-3 py-1.5 border"
+              style={{ background: `${color}0d`, borderColor: `${color}30` }}>
+              <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: color }} />
+              <span className="font-mono text-[10px] tracking-widest uppercase font-bold" style={{ color }}>
+                {title}
+              </span>
             </div>
           ))}
         </div>
 
         {/* Table */}
-        <div className="bg-zinc-950 rounded-3xl border border-zinc-800 overflow-hidden shadow-2xl">
+        <div className="border overflow-hidden" style={{ borderColor: 'rgba(255,255,255,0.1)', background: '#0a0a0a' }}>
+
+          {/* Column headers */}
+          <div className="flex items-center gap-4 px-5 py-3 border-b"
+            style={{ borderColor: 'rgba(255,255,255,0.06)', background: 'rgba(255,255,255,0.02)' }}>
+            <div className="w-8 font-mono text-[10px] tracking-widest uppercase theme-transition" style={{ color: primary }}>#</div>
+            <div className="w-9" />
+            <div className="flex-1 font-mono text-[10px] tracking-widest uppercase theme-transition" style={{ color: primary }}>Scout</div>
+            <div className="font-mono text-[10px] tracking-widest uppercase text-right theme-transition" style={{ color: primary }}>IQ Pts</div>
+          </div>
+
           {loading ? (
-            <div className="p-12 text-center text-zinc-600 text-sm">Loading scouts...</div>
+            <div className="py-16 text-center font-mono text-sm tracking-widest"
+              style={{ color: 'rgba(255,255,255,0.25)' }}>
+              Loading scouts...
+            </div>
           ) : entries.length === 0 ? (
-            <div className="p-12 text-center">
-              <p className="text-zinc-500 text-sm">No scouts on the board yet.</p>
-              <p className="text-zinc-700 text-xs mt-1">Lock a prediction to appear here.</p>
+            <div className="py-16 text-center">
+              <p className="font-mono text-sm" style={{ color: 'rgba(255,255,255,0.3)' }}>
+                No scouts on the board yet.
+              </p>
             </div>
           ) : (
-            <div className="divide-y divide-zinc-800/60">
-              {entries.map((entry) => {
+            <div>
+              {entries.map(entry => {
                 const isMe = user?.username === entry.username;
                 const rankColor = RANK_COLORS[entry.rank_title] ?? '#9CA3AF';
                 return (
                   <div key={entry.rank}
-                    className={`flex items-center gap-4 px-5 py-4 transition-colors ${
-                      isMe ? 'bg-white/5' : 'hover:bg-zinc-900/60'
-                    }`}
-                  >
+                    className="flex items-center gap-4 px-5 py-4 border-b transition-all theme-transition"
+                    style={{
+                      borderColor: 'rgba(255,255,255,0.05)',
+                      background: isMe ? `${primary}0c` : 'transparent',
+                      borderLeft: isMe ? `3px solid ${primary}` : '3px solid transparent',
+                    }}>
+
                     {/* Rank */}
                     <div className="w-8 text-center flex-shrink-0">
-                      {RANK_MEDALS[entry.rank] ? (
-                        <span className="text-xl">{RANK_MEDALS[entry.rank]}</span>
-                      ) : (
-                        <span className="text-zinc-600 font-black text-sm">#{entry.rank}</span>
-                      )}
+                      {RANK_MEDALS[entry.rank]
+                        ? <span className="text-xl">{RANK_MEDALS[entry.rank]}</span>
+                        : <span className="font-display text-3xl leading-none"
+                            style={{ color: 'rgba(255,255,255,0.2)' }}>{entry.rank}</span>
+                      }
                     </div>
 
-                    {/* Avatar placeholder */}
-                    <div className="w-9 h-9 rounded-full flex items-center justify-center font-black text-sm flex-shrink-0"
-                      style={{ backgroundColor: `${primary}25`, color: primary, border: `1.5px solid ${primary}40` }}>
+                    {/* Avatar */}
+                    <div className="w-10 h-10 flex items-center justify-center font-display text-2xl flex-shrink-0 theme-transition"
+                      style={{ background: `${primary}20`, color: primary, border: `1px solid ${primary}35` }}>
                       {entry.username[0].toUpperCase()}
                     </div>
 
                     {/* Info */}
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <span className={`font-bold text-sm ${isMe ? 'text-white' : 'text-zinc-200'}`}>
-                          {entry.username}
-                        </span>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="font-bold text-base text-white">{entry.username}</span>
                         {isMe && (
-                          <span className="text-[8px] font-black uppercase px-1.5 py-0.5 rounded"
-                            style={{ backgroundColor: `${primary}30`, color: primary }}>
+                          <span className="font-mono text-[10px] tracking-widest uppercase px-2 py-0.5 font-bold theme-transition"
+                            style={{ background: `${primary}25`, color: primary }}>
                             You
                           </span>
                         )}
                       </div>
-                      <div className="text-zinc-600 text-[10px] uppercase">{entry.country_allegiance}</div>
+                      <div className="font-mono text-[11px] uppercase tracking-widest mt-0.5"
+                        style={{ color: 'rgba(255,255,255,0.3)' }}>
+                        {entry.country_allegiance}
+                      </div>
                     </div>
 
-                    {/* Rank title */}
+                    {/* Points */}
                     <div className="text-right flex-shrink-0">
-                      <div className="text-[10px] font-black uppercase" style={{ color: rankColor }}>
-                        {entry.rank_title}
-                      </div>
-                      <div className="text-white font-black text-sm">
+                      <div className="font-display text-3xl leading-none" style={{ color: rankColor }}>
                         {entry.football_iq_points.toLocaleString()}
-                        <span className="text-zinc-600 font-normal text-[10px] ml-1">pts</span>
+                      </div>
+                      <div className="font-mono text-[10px] uppercase tracking-wider" style={{ color: rankColor }}>
+                        {entry.rank_title}
                       </div>
                     </div>
                   </div>
@@ -134,7 +159,8 @@ export default function LeaderboardPage() {
           )}
         </div>
 
-        <p className="text-center text-zinc-700 text-[10px] uppercase tracking-widest mt-8">
+        <p className="text-center font-mono text-[11px] uppercase tracking-[3px] mt-8 pb-6"
+          style={{ color: 'rgba(255,255,255,0.2)' }}>
           Points awarded after each match result is confirmed
         </p>
       </div>

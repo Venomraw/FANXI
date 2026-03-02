@@ -51,7 +51,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     if (!res.ok) {
       const err = await res.json();
-      return err.detail ?? 'Login failed';
+      const detail = err.detail;
+      if (Array.isArray(detail)) return detail.map((e: any) => e.msg).join(', ');
+      return typeof detail === 'string' ? detail : 'Login failed';
     }
 
     const data = await res.json();

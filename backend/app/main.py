@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.api import users, predictions, leagues, teams, intel
+from app.api import users, predictions, leagues, teams, intel, squads, matches
 from app import web
 from app.db import init_db
 
@@ -65,6 +65,8 @@ app.include_router(predictions.router)
 app.include_router(leagues.router)
 app.include_router(teams.router)
 app.include_router(intel.router)
+app.include_router(squads.router)
+app.include_router(matches.router)
 
 # HTML interface (Jinja2 templates — the original La Liga prototype)
 app.include_router(web.router)

@@ -15,15 +15,28 @@ export default function PitchSlot({ id, player }: PitchSlotProps) {
   return (
     <div
       ref={setNodeRef}
-      className="w-20 h-24 flex flex-col items-center justify-center transition-all"
-      style={isOver ? { transform: 'scale(1.1)', backgroundColor: `${primary}15`, borderRadius: '50%' } : {}}
-    >
+      className="w-20 h-20 flex flex-col items-center justify-center transition-all duration-150"
+      style={isOver
+        ? {
+            transform: 'scale(1.08)',
+            background: `color-mix(in srgb, ${primary} 15%, transparent)`,
+            boxShadow: `0 0 16px color-mix(in srgb, ${primary} 35%, transparent)`,
+          }
+        : {}}>
       {player ? (
-        <DraggablePlayer id={player.name} name={player.name} number={player.number} />
+        <div className="w-full">
+          <DraggablePlayer id={player.name} name={player.name} number={player.number} />
+        </div>
       ) : (
-        <div className="w-12 h-12 rounded-full border-2 border-dashed flex items-center justify-center"
-          style={{ borderColor: `${primary}40` }}>
-          <span className="text-[9px] font-bold" style={{ color: `${primary}60` }}>{id}</span>
+        <div className="w-12 h-12 rounded-full border-2 border-dashed flex items-center justify-center transition-all theme-transition"
+          style={{
+            borderColor: isOver ? primary : `color-mix(in srgb, ${primary} 30%, transparent)`,
+            background: isOver ? `color-mix(in srgb, ${primary} 8%, transparent)` : 'transparent',
+          }}>
+          <span className="font-mono text-[9px] uppercase tracking-wider theme-transition"
+            style={{ color: `color-mix(in srgb, ${primary} 60%, transparent)` }}>
+            {id}
+          </span>
         </div>
       )}
     </div>

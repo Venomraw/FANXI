@@ -1,34 +1,418 @@
 @import "tailwindcss";
 
+/* ═══════════════════════════════════════════
+   DESIGN TOKENS — reference: fanxi-ultra-merged
+═══════════════════════════════════════════ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-  --team-primary: #16a34a;
-  --team-accent: #22c55e;
-  --team-text: #ffffff;
+  /* Backgrounds — user preference: true black stack */
+  --dark:  #000000;
+  --dark2: #090909;
+  --dark3: #0f0f0f;
+  --mid:   #171717;
+
+  /* Text — reference: slightly warm/green-tinted white */
+  --text:  #E8F5E8;
+  --muted: #5A7A5A;
+
+  /* Accent */
+  --gold:  #FFD23F;
+  --red:   #FF2D55;
+  --blue:  #0A84FF;
+
+  /* Team-dynamic (overridden by ThemeContext) */
+  --team-primary: #00E87C;
+  --team-accent:  #FFD23F;
+  --team-text:    #000000;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-bebas);
+  --font-sans:    var(--font-syne);
+  --font-mono:    var(--font-jetbrains);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+/* ═══════════════════════════════════════════
+   BASE
+═══════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: #000;
+  color: var(--text);
+  font-family: var(--font-syne, 'Syne', sans-serif);
+  font-size: 15px;
+  line-height: 1.6;
+  overflow-x: hidden;
+  cursor: none;
 }
 
-/* Custom scrollbar */
-.custom-scrollbar::-webkit-scrollbar { width: 4px; }
+a, button, input, select, textarea, [role="button"] { cursor: none; }
+
+/* Noise overlay — exact from reference */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.45;
+}
+
+/* ═══════════════════════════════════════════
+   SCROLLBAR
+═══════════════════════════════════════════ */
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-track { background: #000; }
+::-webkit-scrollbar-thumb { background: var(--team-primary); border-radius: 2px; }
+
+.custom-scrollbar::-webkit-scrollbar { width: 3px; }
 .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
 .custom-scrollbar::-webkit-scrollbar-thumb { background: var(--team-primary); border-radius: 2px; }
+
+/* ═══════════════════════════════════════════
+   CUSTOM CURSOR — reference exact
+═══════════════════════════════════════════ */
+.cursor {
+  width: 10px; height: 10px;
+  background: var(--team-primary);
+  border-radius: 50%;
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  transition: transform 0.12s ease, background 0.4s ease;
+  mix-blend-mode: screen;
+  transform: translate(-50%, -50%);
+}
+.cursor-ring {
+  width: 34px; height: 34px;
+  border: 1px solid var(--team-primary);
+  border-radius: 50%;
+  position: fixed;
+  pointer-events: none;
+  z-index: 9998;
+  transition: left 0.18s ease, top 0.18s ease, border-color 0.4s ease;
+  opacity: 0.55;
+  transform: translate(-50%, -50%);
+}
+
+/* ═══════════════════════════════════════════
+   ANIMATED GRID BACKGROUND — reference exact
+═══════════════════════════════════════════ */
+.grid-bg {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+  background-size: 60px 60px;
+  animation: gridShift 22s linear infinite;
+  pointer-events: none;
+}
+/* Team-primary-tinted grid (use on hero/banner areas) */
+.grid-bg-primary {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(color-mix(in srgb, var(--team-primary) 4%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--team-primary) 3%, transparent) 1px, transparent 1px);
+  background-size: 48px 48px;
+  animation: gridShift 22s linear infinite;
+  pointer-events: none;
+}
+@keyframes gridShift {
+  0%   { transform: translateY(0); }
+  100% { transform: translateY(60px); }
+}
+
+/* ═══════════════════════════════════════════
+   ANIMATIONS — reference keyframes
+═══════════════════════════════════════════ */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes pageIn {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes orbPulse {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.1); }
+}
+@keyframes hakiPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: 0.3; transform: scale(0.6); }
+}
+@keyframes colonBlink {
+  0%, 100% { opacity: 0.7; }
+  50%      { opacity: 0.1; }
+}
+@keyframes scanline {
+  0%   { top: -10%; }
+  100% { top: 110%; }
+}
+@keyframes tickerScroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+@keyframes goldPulse {
+  0%, 100% { box-shadow: 0 0 16px rgba(255,210,63,0.35); }
+  50%      { box-shadow: 0 0 28px rgba(255,210,63,0.55); }
+}
+@keyframes firePulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.6; }
+}
+@keyframes vprogress {
+  from { width: 0%; }
+  to   { width: 100%; }
+}
+
+/* Reveal on scroll */
+.reveal {
+  opacity: 0;
+  transform: translateY(36px);
+  transition: opacity 0.65s ease, transform 0.65s ease;
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* Staggered fade-up helpers */
+.fade-up-1 { animation: fadeUp 0.8s ease 0.1s both; }
+.fade-up-2 { animation: fadeUp 0.8s ease 0.25s both; }
+.fade-up-3 { animation: fadeUp 0.8s ease 0.4s both; }
+.fade-up-4 { animation: fadeUp 0.8s ease 0.55s both; }
+.fade-up-5 { animation: fadeUp 0.8s ease 0.7s both; }
+
+/* ═══════════════════════════════════════════
+   CLIP-PATH BUTTONS — reference exact
+═══════════════════════════════════════════ */
+.btn-cut {
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+}
+.btn-cut-lg {
+  clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px));
+}
+
+/* Shimmer sweep on hover — reference tactics-submit pattern */
+.btn-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+.btn-shimmer::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%; width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.45s;
+  pointer-events: none;
+}
+.btn-shimmer:hover::before { left: 100%; }
+
+/* ═══════════════════════════════════════════
+   TICKER — reference exact
+═══════════════════════════════════════════ */
+.ticker-inner {
+  display: inline-flex;
+  gap: 60px;
+  animation: tickerScroll 24s linear infinite;
+  font-family: var(--font-mono, monospace);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* ═══════════════════════════════════════════
+   HAKI BADGE — reference live indicator
+═══════════════════════════════════════════ */
+.haki-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: color-mix(in srgb, var(--team-primary) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--team-primary) 25%, transparent);
+  color: var(--team-primary);
+  font-family: var(--font-mono, monospace);
+  font-size: 9px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  padding: 5px 14px;
+}
+.haki-dot {
+  width: 6px; height: 6px;
+  background: var(--team-primary);
+  border-radius: 50%;
+  animation: hakiPulse 1.8s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+/* ═══════════════════════════════════════════
+   PANEL TITLE — reference pattern (title + trailing line)
+═══════════════════════════════════════════ */
+.panel-title-line {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-bebas, 'Bebas Neue');
+  font-size: 20px;
+  letter-spacing: 1px;
+  color: var(--team-primary);
+  margin-bottom: 14px;
+}
+.panel-title-line::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: color-mix(in srgb, var(--team-primary) 15%, transparent);
+}
+
+/* ═══════════════════════════════════════════
+   SECTION LABEL — reference exact
+═══════════════════════════════════════════ */
+.section-label {
+  font-family: var(--font-mono, monospace);
+  font-size: 10px;
+  letter-spacing: 4px;
+  color: var(--team-primary);
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+
+/* ═══════════════════════════════════════════
+   COUNTDOWN — reference exact layout
+═══════════════════════════════════════════ */
+.countdown-display {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.countdown-block {
+  text-align: center;
+  padding: 0 32px;
+  border-right: 1px solid color-mix(in srgb, var(--team-primary) 15%, transparent);
+}
+.countdown-block:last-child { border-right: none; }
+.countdown-num {
+  font-family: var(--font-bebas, 'Bebas Neue');
+  font-size: clamp(56px, 8vw, 100px);
+  line-height: 1;
+  color: var(--text);
+  letter-spacing: -1px;
+}
+.countdown-unit {
+  font-family: var(--font-mono, monospace);
+  font-size: 9px;
+  letter-spacing: 3px;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-top: 4px;
+}
+
+/* ═══════════════════════════════════════════
+   FEATURE CARD — reference hover top-line reveal
+═══════════════════════════════════════════ */
+.feature-card {
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.25s ease, border-color 0.25s ease;
+}
+.feature-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--team-primary), transparent);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+.feature-card:hover { transform: translateY(-4px); }
+.feature-card:hover::before { opacity: 1; }
+
+/* Step card — reference top-line scale */
+.step-card {
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease;
+}
+.step-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 3px;
+  background: var(--team-primary);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease;
+}
+.step-card:hover { transform: translateY(-4px); }
+.step-card:hover::before { transform: scaleX(1); }
+
+/* ═══════════════════════════════════════════
+   THEME TRANSITIONS
+═══════════════════════════════════════════ */
+.theme-transition {
+  transition: background-color 0.55s ease, border-color 0.55s ease,
+              color 0.55s ease, box-shadow 0.55s ease;
+}
+
+/* ═══════════════════════════════════════════
+   BORDER UTILITIES
+═══════════════════════════════════════════ */
+.border-subtle  { border: 1px solid rgba(255,255,255,0.06); }
+.border-medium  { border: 1px solid rgba(255,255,255,0.12); }
+.border-strong  { border: 1px solid rgba(255,255,255,0.22); }
+.border-primary { border: 1px solid color-mix(in srgb, var(--team-primary) 15%, transparent); }
+
+/* ═══════════════════════════════════════════
+   TYPOGRAPHY UTILITIES — reference scale
+═══════════════════════════════════════════ */
+/* Labels — JetBrains Mono */
+.label-xs  { font-family: var(--font-mono); font-size: 9px;  letter-spacing: 2px; text-transform: uppercase; color: var(--muted); }
+.label-sm  { font-family: var(--font-mono); font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); }
+.label-md  { font-family: var(--font-mono); font-size: 11px; letter-spacing: 2px; text-transform: uppercase; }
+
+/* Numbers — Bebas Neue */
+.num-md    { font-family: var(--font-bebas); font-size: 2.4rem; line-height: 1; }
+.num-lg    { font-family: var(--font-bebas); font-size: 3.5rem; line-height: 1; }
+.num-xl    { font-family: var(--font-bebas); font-size: clamp(44px,6vw,64px); line-height: 1; }
+.num-2xl   { font-family: var(--font-bebas); font-size: clamp(60px,10vw,100px); line-height: 1; }
+.num-hero  { font-family: var(--font-bebas); font-size: clamp(72px,12vw,180px); line-height: 0.88; letter-spacing: -1px; }
+
+/* ═══════════════════════════════════════════
+   CARD
+═══════════════════════════════════════════ */
+.card {
+  background: var(--dark3);
+  border: 1px solid rgba(255,255,255,0.06);
+}
+.card-hover:hover {
+  border-color: rgba(255,255,255,0.14);
+}
+
+/* ═══════════════════════════════════════════
+   TOAST — reference
+═══════════════════════════════════════════ */
+.toast {
+  position: fixed;
+  bottom: 72px; left: 50%;
+  transform: translateX(-50%) translateY(18px);
+  background: var(--dark3);
+  border: 1px solid var(--team-primary);
+  padding: 11px 22px;
+  font-family: var(--font-mono, monospace);
+  font-size: 11px; letter-spacing: 1px;
+  color: var(--team-primary);
+  z-index: 9990;
+  opacity: 0;
+  transition: all 0.3s;
+  pointer-events: none;
+  white-space: nowrap;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ═══════════════════════════════════════════
+   PAGE TRANSITION
+═══════════════════════════════════════════ */
+.page-in { animation: pageIn 0.4s ease forwards; }
