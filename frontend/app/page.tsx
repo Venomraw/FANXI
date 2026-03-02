@@ -29,6 +29,12 @@ export default function Home() {
 
         {/* Right side: nav + team + user */}
         <div className="flex items-center gap-3">
+          {team && (
+            <button onClick={() => router.push('/nation')}
+              className="flex items-center gap-1.5 px-3 py-2 text-[10px] font-black uppercase rounded-xl border border-zinc-800 bg-zinc-900 hover:bg-zinc-800 transition-all text-zinc-400 hover:text-white">
+              {team.flag} Intel
+            </button>
+          )}
           <button onClick={() => router.push('/leaderboard')}
             className="px-3 py-2 text-[10px] font-black uppercase rounded-xl border border-zinc-800 bg-zinc-900 hover:bg-zinc-800 transition-all text-zinc-400 hover:text-white">
             🏆 Board

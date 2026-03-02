@@ -12,11 +12,16 @@ class Settings(BaseSettings):
     football_laliga_id: int = 140
     football_season: int = 2024
 
+    # Nation Intel APIs
+    guardian_api_key: str = ""
+    newsdata_api_key: str = ""
+    youtube_api_key: str = ""
+
     # Tell Pydantic where to read env vars from
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
-        extra="ignore",   # ignore any extra env vars you might have
+        extra="ignore",
     )
 
 
