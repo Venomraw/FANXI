@@ -18,7 +18,7 @@ def init_db() -> None:
     Initializes the database and tables. 
     Seed logic is now moved to a separate sync service to keep db.py clean.
     """
-    from app.models import User, Player, MatchPrediction # Standardized models
+    from app.models import User, Player, MatchPrediction, PredictionDB, TeamDB, MatchDB
     
     # Create all tables if they don't exist
     SQLModel.metadata.create_all(engine)

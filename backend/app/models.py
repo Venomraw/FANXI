@@ -54,5 +54,20 @@ class MatchDB(SQLModel, table=True):
     away_team_id: int
     kickoff_time: datetime
     venue: str
-    round: str 
+    round: str
     status: str = Field(default="scheduled")
+
+
+# --- HTML Interface Predictions (used by web.py / Jinja2 templates) ---
+class PredictionDB(SQLModel, table=True):
+    """
+    Stores predictions submitted via the HTML form interface.
+    Separate from MatchPrediction which is used by the React/JSON API.
+    """
+    id: Optional[int] = Field(default=None, primary_key=True)
+    username: str = Field(index=True)
+    team_id: int
+    match_id: int = Field(index=True)
+    formation: str
+    players_csv: str  # pipe-separated player names, e.g. "Messi|Ronaldo|..."
+    created_at: datetime = Field(default_factory=datetime.utcnow)
