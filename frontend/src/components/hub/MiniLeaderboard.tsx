@@ -44,7 +44,7 @@ export default function MiniLeaderboard() {
         style={{ background: `linear-gradient(90deg, transparent, ${primary})` }} />
 
       {/* Header */}
-      <div className="flex items-center justify-between px-5 pt-5 pb-3 border-b"
+      <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b"
         style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
         <span className="font-mono text-[10px] tracking-[3px] uppercase"
           style={{ color: 'rgba(255,255,255,0.35)' }}>Top Scouts</span>
@@ -67,7 +67,7 @@ export default function MiniLeaderboard() {
           const rankColor = RANK_COLORS[e.rank_title] ?? '#9CA3AF';
           return (
             <div key={e.rank}
-              className="flex items-center gap-4 px-5 py-3 transition-colors theme-transition"
+              className="flex items-center gap-4 px-6 py-4 transition-colors theme-transition"
               style={{
                 background: isMe ? `${primary}0d` : 'transparent',
                 borderLeft: isMe ? `2px solid ${primary}` : '2px solid transparent',

@@ -84,7 +84,7 @@ def init_db() -> None:
     # All table-backed models must be imported before create_all()
     from app.models import (  # noqa: F401
         User, Player, MatchPrediction, PredictionDB,
-        TeamDB, MatchDB, TeamSquadCache,
+        TeamDB, MatchDB, TeamSquadCache, PasswordResetToken,
     )
 
     SQLModel.metadata.create_all(engine)

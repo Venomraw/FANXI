@@ -221,7 +221,7 @@ export default function PitchBoard() {
 
       case 'squad':
         return (
-          <div className="flex flex-col gap-2 max-h-[460px] overflow-y-auto pr-1 custom-scrollbar">
+          <div className="flex flex-col gap-2.5 max-h-[460px] overflow-y-auto pr-1 custom-scrollbar">
             {squadLoading && (
               <p className="font-mono text-[11px] uppercase tracking-widest text-center py-4 theme-transition"
                 style={{ color: primary }}>
@@ -245,7 +245,7 @@ export default function PitchBoard() {
             {/* Formation Selector */}
             <div className="p-4 border theme-transition"
               style={{
-                background: 'var(--dark2)',
+                background: 'var(--dark3)',
                 borderColor: `color-mix(in srgb, ${primary} 12%, transparent)`,
               }}>
               <h3 className="font-mono text-[11px] uppercase tracking-[3px] mb-3 theme-transition"
@@ -255,7 +255,12 @@ export default function PitchBoard() {
                   <button key={f.name} onClick={() => handleFormationChange(f)}
                     className="py-2 px-1 font-mono text-[10px] uppercase tracking-wider border transition-all theme-transition btn-cut"
                     style={formation.name === f.name
-                      ? { background: primary, borderColor: primary, color: 'var(--dark)' }
+                      ? {
+                          background: primary,
+                          borderColor: primary,
+                          color: 'var(--dark)',
+                          boxShadow: `0 0 10px color-mix(in srgb, ${primary} 45%, transparent)`,
+                        }
                       : { borderColor: `color-mix(in srgb, ${primary} 15%, transparent)`, color: 'var(--muted)' }}>
                     {f.label}
                   </button>
@@ -284,7 +289,7 @@ export default function PitchBoard() {
             {/* Strategy Sliders */}
             <div className="p-4 border theme-transition"
               style={{
-                background: 'var(--dark2)',
+                background: 'var(--dark3)',
                 borderColor: `color-mix(in srgb, ${primary} 12%, transparent)`,
               }}>
               <h3 className="font-mono text-[11px] uppercase tracking-[3px] mb-4 theme-transition"
@@ -309,7 +314,7 @@ export default function PitchBoard() {
 
       case 'history':
         return (
-          <div className="flex flex-col gap-2 max-h-[460px] overflow-y-auto pr-1 custom-scrollbar">
+          <div className="flex flex-col gap-2.5 max-h-[460px] overflow-y-auto pr-1 custom-scrollbar">
             <div className="flex justify-between items-center mb-2">
               <h3 className="font-mono text-[11px] uppercase tracking-[3px] theme-transition"
                 style={{ color: primary }}>Past Locks</h3>
@@ -330,7 +335,7 @@ export default function PitchBoard() {
                 <div key={save.id} onClick={() => loadSavedPrediction(save)}
                   className="p-3 border transition-all theme-transition"
                   style={{
-                    background: 'var(--dark2)',
+                    background: 'var(--dark3)',
                     borderColor: `color-mix(in srgb, ${primary} 12%, transparent)`,
                   }}
                   onMouseEnter={e => (e.currentTarget as HTMLElement).style.borderColor = primary}
@@ -375,10 +380,9 @@ export default function PitchBoard() {
     <div className="flex flex-col gap-4">
 
       {/* ── MATCH SELECTOR ────────────────────────────────────────────────── */}
-      <div className="border theme-transition p-4"
+      <div className="theme-transition p-4 glass-panel"
         style={{
-          background: 'var(--dark3)',
-          borderColor: `color-mix(in srgb, ${primary} 15%, transparent)`,
+          borderColor: `color-mix(in srgb, ${primary} 20%, transparent)`,
         }}>
         <div className="flex items-center justify-between mb-4">
           <p className="font-mono text-[11px] uppercase tracking-[3px]" style={{ color: 'var(--muted)' }}>
@@ -405,10 +409,9 @@ export default function PitchBoard() {
         <DndContext onDragEnd={handleDragEnd}>
 
           {/* SIDEBAR */}
-          <div className="w-full lg:w-72 border theme-transition flex flex-col justify-between p-4"
+          <div className="w-full lg:w-72 theme-transition flex flex-col justify-between p-4 glass-panel"
             style={{
-              background: 'var(--dark2)',
-              borderColor: `color-mix(in srgb, ${primary} 12%, transparent)`,
+              borderColor: `color-mix(in srgb, ${primary} 18%, transparent)`,
             }}>
             <div>
               {/* Tabs */}
@@ -419,7 +422,11 @@ export default function PitchBoard() {
                     onClick={() => { setActiveTab(tab); if (tab === 'history') fetchHistory(); }}
                     className="flex-1 py-2.5 font-mono text-[10px] uppercase tracking-widest transition-all theme-transition"
                     style={activeTab === tab
-                      ? { background: primary, color: 'var(--dark)' }
+                      ? {
+                          background: primary,
+                          color: 'var(--dark)',
+                          boxShadow: `0 0 14px color-mix(in srgb, ${primary} 55%, transparent)`,
+                        }
                       : { color: 'var(--muted)' }}>
                     {tab}
                   </button>
@@ -432,11 +439,11 @@ export default function PitchBoard() {
             {lockMsg && (
               <div className="mt-3 py-2 px-3 font-mono text-xs text-center border theme-transition"
                 style={{
-                  borderColor: lockMsg.ok ? primary : '#FF2D55',
-                  color: lockMsg.ok ? primary : '#FF2D55',
-                  background: lockMsg.ok
-                    ? `color-mix(in srgb, ${primary} 8%, transparent)`
-                    : 'rgba(255,45,85,0.08)',
+                  borderColor: lockMsg.ok ? 'var(--success)' : 'var(--red)',
+                  color:       lockMsg.ok ? 'var(--success)' : 'var(--red)',
+                  background:  lockMsg.ok
+                    ? 'rgba(0, 255, 133, 0.07)'
+                    : 'rgba(255, 45, 85, 0.07)',
                 }}>
                 {lockMsg.text}
               </div>
@@ -457,7 +464,11 @@ export default function PitchBoard() {
               </button>
               <button onClick={handleLockSelection}
                 className="w-full py-3 font-display text-2xl uppercase tracking-widest btn-cut-lg transition-all active:scale-95 theme-transition"
-                style={{ background: primary, color: 'var(--dark)' }}>
+                style={{
+                  background: primary,
+                  color: 'var(--dark)',
+                  boxShadow: `0 0 24px color-mix(in srgb, ${primary} 55%, transparent)`,
+                }}>
                 Lock Selection 🔒
               </button>
             </div>
@@ -466,12 +477,12 @@ export default function PitchBoard() {
           {/* PITCH */}
           <div className="relative w-full max-w-[440px] aspect-[2/3] mx-auto p-5 border"
             style={{
-              background: `linear-gradient(160deg, #071207 0%, #0a1a0a 50%, #071207 100%)`,
+              background: '#060A06',
               borderColor: `color-mix(in srgb, ${primary} 20%, transparent)`,
               backgroundImage: [
                 `linear-gradient(color-mix(in srgb, ${primary} 3%, transparent) 1px, transparent 1px)`,
                 `linear-gradient(90deg, color-mix(in srgb, ${primary} 2.5%, transparent) 1px, transparent 1px)`,
-                `linear-gradient(160deg, #071207 0%, #0a1a0a 50%, #071207 100%)`,
+                `radial-gradient(ellipse 110% 70% at 50% 0%, #0d2010 0%, #060A06 70%)`,
               ].join(', '),
               backgroundSize: '36px 36px, 36px 36px, 100% 100%',
             }}>

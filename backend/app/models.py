@@ -145,6 +145,19 @@ class PredictionDB(SQLModel, table=True):
 # Squad Caching — API Quota Protection
 # ---------------------------------------------------------------------------
 
+class PasswordResetToken(SQLModel, table=True):
+    """
+    Single-use, time-limited token for password reset flows.
+    Generated when a user requests /auth/forgot-password.
+    Invalidated (used=True) immediately after /auth/reset-password succeeds.
+    """
+    id: Optional[int] = Field(default=None, primary_key=True)
+    user_id: int = Field(foreign_key="user.id", index=True)
+    token: str = Field(unique=True, index=True)   # secrets.token_urlsafe(32)
+    expires_at: datetime                           # utcnow + 1 hour
+    used: bool = Field(default=False)
+
+
 class TeamSquadCache(SQLModel, table=True):
     """
     Cache for Squad Data.

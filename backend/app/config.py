@@ -17,6 +17,10 @@ class Settings(BaseSettings):
     newsdata_api_key: str = ""
     youtube_api_key: str = ""
 
+    # Password reset via Resend (resend.com)
+    resend_api_key: str = ""
+    frontend_url: str = "http://localhost:3000"
+
     # Tell Pydantic where to read env vars from
     model_config = SettingsConfigDict(
         env_file=".env",

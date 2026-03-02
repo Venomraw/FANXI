@@ -4,31 +4,37 @@
    DESIGN TOKENS — reference: fanxi-ultra-merged
 ═══════════════════════════════════════════ */
 :root {
-  /* Backgrounds — user preference: true black stack */
-  --dark:  #000000;
-  --dark2: #090909;
-  --dark3: #0f0f0f;
-  --mid:   #171717;
+  /* ── Backgrounds — Obsidian Tactical palette ── */
+  --dark:        #060A06;   /* base — pure pitch dark         */
+  --dark2:       #060A06;   /* same base layer                */
+  --dark3:       #0D130D;   /* card surface — distinct elevation (spec exact) */
+  --mid:         #152018;   /* hover / active surface          */
+  --border:      #1E2D1E;   /* structural wireframe — pitch green tint */
+  --slot-empty:  #1E2D1E;   /* empty pitch slot fill           */
 
-  /* Text — reference: slightly warm/green-tinted white */
+  /* ── Text ── */
   --text:  #E8F5E8;
-  --muted: #5A7A5A;
+  --muted: #5A7A5A;         /* spec: Muted Green labels        */
 
-  /* Accent */
-  --gold:  #FFD23F;
-  --red:   #FF2D55;
-  --blue:  #0A84FF;
+  /* ── Accent ── */
+  --gold:    #FFD23F;        /* Captain / Premium highlight     */
+  --red:     #FF2D55;
+  --blue:    #00D1FF;        /* Electric Blue — interactive     */
+  --success: #00FF85;        /* Locked state                    */
 
-  /* Team-dynamic (overridden by ThemeContext) */
+  /* ── Layout ── */
+  --container: 1200px;
+
+  /* ── Team-dynamic (overridden by ThemeContext) ── */
   --team-primary: #00E87C;
   --team-accent:  #FFD23F;
   --team-text:    #000000;
 }
 
 @theme inline {
-  --font-display: var(--font-bebas);
+  --font-display: var(--font-grotesk);  /* Space Grotesk 600 — killed Bebas */
   --font-sans:    var(--font-syne);
-  --font-mono:    var(--font-jetbrains);
+  --font-mono:    var(--font-jetbrains); /* Mono = micro labels only         */
 }
 
 /* ═══════════════════════════════════════════
@@ -38,7 +44,7 @@
 html { scroll-behavior: smooth; }
 
 body {
-  background: #000;
+  background: var(--dark);
   color: var(--text);
   font-family: var(--font-syne, 'Syne', sans-serif);
   font-size: 15px;
@@ -49,15 +55,15 @@ body {
 
 a, button, input, select, textarea, [role="button"] { cursor: none; }
 
-/* Noise overlay — exact from reference */
+/* Noise overlay — 4% grain per spec */
 body::before {
   content: '';
   position: fixed;
   inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
   pointer-events: none;
   z-index: 1;
-  opacity: 0.45;
+  opacity: 0.04;
 }
 
 /* ═══════════════════════════════════════════
@@ -236,8 +242,8 @@ body::before {
   border: 1px solid color-mix(in srgb, var(--team-primary) 25%, transparent);
   color: var(--team-primary);
   font-family: var(--font-mono, monospace);
-  font-size: 9px;
-  letter-spacing: 3px;
+  font-size: 11px;
+  letter-spacing: 1.5px;    /* was 3px */
   text-transform: uppercase;
   padding: 5px 14px;
 }
@@ -256,7 +262,7 @@ body::before {
   display: flex;
   align-items: center;
   gap: 10px;
-  font-family: var(--font-bebas, 'Bebas Neue');
+  font-family: var(--font-display, 'Space Grotesk', sans-serif);
   font-size: 20px;
   letter-spacing: 1px;
   color: var(--team-primary);
@@ -274,8 +280,8 @@ body::before {
 ═══════════════════════════════════════════ */
 .section-label {
   font-family: var(--font-mono, monospace);
-  font-size: 10px;
-  letter-spacing: 4px;
+  font-size: 11px;
+  letter-spacing: 1.5px;    /* was 4px — "2015 stretched" */
   color: var(--team-primary);
   text-transform: uppercase;
   margin-bottom: 14px;
@@ -297,19 +303,22 @@ body::before {
 }
 .countdown-block:last-child { border-right: none; }
 .countdown-num {
-  font-family: var(--font-bebas, 'Bebas Neue');
-  font-size: clamp(56px, 8vw, 100px);
+  font-family: var(--font-display, 'Space Grotesk', sans-serif);
+  font-weight: 600;
+  font-size: clamp(60px, 10vw, 110px);
   line-height: 1;
   color: var(--text);
   letter-spacing: -1px;
+  text-shadow: 0 0 40px rgba(0, 232, 124, 0.12);
 }
 .countdown-unit {
   font-family: var(--font-mono, monospace);
-  font-size: 9px;
-  letter-spacing: 3px;
+  font-size: 12px;           /* spec: minimum 11px+          */
+  letter-spacing: 2px;       /* widespaced but not stretched  */
   color: var(--muted);
   text-transform: uppercase;
-  margin-top: 4px;
+  margin-top: 6px;
+  opacity: 0.6;
 }
 
 /* ═══════════════════════════════════════════
@@ -360,7 +369,7 @@ body::before {
 /* ═══════════════════════════════════════════
    BORDER UTILITIES
 ═══════════════════════════════════════════ */
-.border-subtle  { border: 1px solid rgba(255,255,255,0.06); }
+.border-subtle  { border: 1px solid var(--border); }
 .border-medium  { border: 1px solid rgba(255,255,255,0.12); }
 .border-strong  { border: 1px solid rgba(255,255,255,0.22); }
 .border-primary { border: 1px solid color-mix(in srgb, var(--team-primary) 15%, transparent); }
@@ -368,27 +377,93 @@ body::before {
 /* ═══════════════════════════════════════════
    TYPOGRAPHY UTILITIES — reference scale
 ═══════════════════════════════════════════ */
-/* Labels — JetBrains Mono */
-.label-xs  { font-family: var(--font-mono); font-size: 9px;  letter-spacing: 2px; text-transform: uppercase; color: var(--muted); }
-.label-sm  { font-family: var(--font-mono); font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); }
-.label-md  { font-family: var(--font-mono); font-size: 11px; letter-spacing: 2px; text-transform: uppercase; }
+/* Labels — JetBrains Mono @ spec: 9px / 0.2em tracking / muted green */
+.label-xs  { font-family: var(--font-mono); font-size: 9px;  letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); }
+.label-sm  { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); }
+.label-md  { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; }
 
-/* Numbers — Bebas Neue */
-.num-md    { font-family: var(--font-bebas); font-size: 2.4rem; line-height: 1; }
-.num-lg    { font-family: var(--font-bebas); font-size: 3.5rem; line-height: 1; }
-.num-xl    { font-family: var(--font-bebas); font-size: clamp(44px,6vw,64px); line-height: 1; }
-.num-2xl   { font-family: var(--font-bebas); font-size: clamp(60px,10vw,100px); line-height: 1; }
-.num-hero  { font-family: var(--font-bebas); font-size: clamp(72px,12vw,180px); line-height: 0.88; letter-spacing: -1px; }
+/* Numbers — Space Grotesk (font-display) */
+.num-md    { font-family: var(--font-display); font-size: 2.4rem; line-height: 1; }
+.num-lg    { font-family: var(--font-display); font-size: 3.5rem; line-height: 1; }
+.num-xl    { font-family: var(--font-display); font-size: clamp(44px,6vw,64px); line-height: 1; }
+.num-2xl   { font-family: var(--font-display); font-size: clamp(60px,10vw,100px); line-height: 1; }
+.num-hero  { font-family: var(--font-display); font-size: clamp(72px,12vw,180px); line-height: 0.88; letter-spacing: -1px; }
 
 /* ═══════════════════════════════════════════
    CARD
 ═══════════════════════════════════════════ */
 .card {
   background: var(--dark3);
-  border: 1px solid rgba(255,255,255,0.06);
+  border: 1px solid var(--border);
 }
 .card-hover:hover {
-  border-color: rgba(255,255,255,0.14);
+  border-color: rgba(255,255,255,0.22);
+}
+
+/* ═══════════════════════════════════════════
+   GLASSMORPHISM — sidebar & panel surfaces (Obsidian Tactical spec)
+═══════════════════════════════════════════ */
+.glass-panel {
+  background: rgba(6, 10, 6, 0.90);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(0, 232, 124, 0.15);
+}
+/* Heavier variant for modal/overlay surfaces */
+.glass-panel-strong {
+  background: rgba(6, 10, 6, 0.95);
+  backdrop-filter: blur(32px);
+  -webkit-backdrop-filter: blur(32px);
+  border: 1px solid rgba(0, 232, 124, 0.2);
+}
+
+/* ═══════════════════════════════════════════
+   GLOW UTILITIES — emissive state design
+═══════════════════════════════════════════ */
+/* Pitch Green — interactive elements, active states */
+.glow-primary {
+  box-shadow: 0 0 16px rgba(0, 232, 124, 0.40);
+  transition: box-shadow 0.55s ease;
+}
+.glow-primary-sm {
+  box-shadow: 0 0 10px rgba(0, 232, 124, 0.30);
+  transition: box-shadow 0.55s ease;
+}
+/* Gold — captain / premium */
+.glow-gold {
+  box-shadow: 0 0 16px rgba(255, 210, 63, 0.45);
+  transition: box-shadow 0.55s ease;
+}
+/* Input focus ring — spec: emissive border on focus */
+.input-tactical {
+  background: var(--dark3);
+  border: 1px solid var(--border);
+  color: var(--text);
+  transition: border-color 0.55s ease, box-shadow 0.55s ease;
+  outline: none;
+}
+.input-tactical:focus {
+  border-color: var(--team-primary);
+  box-shadow: 0 0 14px rgba(0, 232, 124, 0.18);
+}
+
+/* ═══════════════════════════════════════════
+   PITCH — surface & slot states
+═══════════════════════════════════════════ */
+.pitch-surface {
+  background: radial-gradient(ellipse 110% 70% at 50% 0%, #0d2010 0%, #060A06 70%);
+}
+/* Filled pitch slot — Pitch Green glow */
+.pitch-slot-filled {
+  box-shadow: 0 0 16px rgba(0, 232, 124, 0.35);
+  transition: box-shadow 0.55s ease;
+}
+/* Captain badge — Gold pulse */
+.captain-badge {
+  color: var(--gold);
+  border-color: rgba(255, 210, 63, 0.4);
+  box-shadow: 0 0 12px rgba(255, 210, 63, 0.25);
+  animation: goldPulse 2.5s ease-in-out infinite;
 }
 
 /* ═══════════════════════════════════════════

@@ -18,9 +18,10 @@ function calc(): TimeLeft {
 
 export default function Countdown() {
   const { primary } = useTheme();
-  const [time, setTime] = useState<TimeLeft>(calc());
+  const [time, setTime] = useState<TimeLeft>({ days: 0, hours: 0, minutes: 0, seconds: 0 });
 
   useEffect(() => {
+    setTime(calc());
     const id = setInterval(() => setTime(calc()), 1000);
     return () => clearInterval(id);
   }, []);
@@ -41,7 +42,7 @@ export default function Countdown() {
         style={{ background: `linear-gradient(90deg, transparent, ${primary}, transparent)` }} />
 
       {/* Header */}
-      <div className="flex items-center justify-between px-6 pt-5 pb-3 border-b"
+      <div className="flex items-center justify-between px-8 pt-7 pb-4 border-b"
         style={{ borderColor: `color-mix(in srgb, ${primary} 10%, transparent)` }}>
         {/* Haki live badge */}
         <div className="haki-badge theme-transition">
@@ -54,17 +55,17 @@ export default function Countdown() {
       </div>
 
       {/* Section label */}
-      <div className="px-6 pt-4 pb-1">
+      <div className="px-8 pt-6 pb-1">
         <p className="section-label theme-transition">⚡ Kickoff Countdown</p>
       </div>
 
       {/* Numbers — reference exact: border-right dividers */}
-      <div className="countdown-display px-4 py-4">
+      <div className="countdown-display px-4 py-8">
         {units.map((u, i) => (
           <div key={u.label}
             className="countdown-block theme-transition"
             style={i === 0 ? { paddingLeft: '8px' } : i === 3 ? { paddingRight: '8px' } : {}}>
-            <div className="countdown-num" style={{ fontSize: 'clamp(36px,5vw,64px)' }}>
+            <div className="countdown-num">
               {String(u.value).padStart(2, '0')}
             </div>
             <div className="countdown-unit">{u.label}</div>

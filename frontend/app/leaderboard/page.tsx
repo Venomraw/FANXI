@@ -37,7 +37,7 @@ export default function LeaderboardPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-black text-white relative overflow-hidden">
+    <div className="min-h-screen text-white relative overflow-hidden" style={{ background: 'var(--dark)' }}>
       <div className="grid-bg opacity-30" />
 
       <div className="max-w-2xl mx-auto px-5 py-8 relative z-10">
@@ -45,7 +45,7 @@ export default function LeaderboardPage() {
         {/* Header */}
         <div className="flex items-end justify-between mb-8">
           <div>
-            <p className="font-mono text-[11px] tracking-[4px] uppercase mb-3 theme-transition"
+            <p className="font-mono text-[11px] tracking-[1.5px] uppercase mb-3 theme-transition"
               style={{ color: primary }}>
               World Cup 2026 · Global Rankings
             </p>
@@ -55,7 +55,7 @@ export default function LeaderboardPage() {
             </h1>
           </div>
           <button onClick={() => router.push('/')}
-            className="font-mono text-xs tracking-[2px] uppercase px-5 py-3 border transition-all hover:border-white/30 hover:text-white btn-cut"
+            className="font-sans font-semibold text-[13px] px-5 py-3 border transition-all hover:border-white/30 hover:text-white btn-cut"
             style={{ borderColor: 'rgba(255,255,255,0.12)', color: 'rgba(255,255,255,0.4)', background: '#111' }}>
             ← Hub
           </button>

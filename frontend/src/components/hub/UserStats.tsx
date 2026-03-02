@@ -40,7 +40,7 @@ export default function UserStats() {
         style={{ background: `linear-gradient(90deg, ${primary}, transparent)` }} />
 
       {/* Header row */}
-      <div className="flex items-center justify-between px-5 pt-5 pb-3 border-b"
+      <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b"
         style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
         <span className="font-mono text-[10px] tracking-[3px] uppercase"
           style={{ color: 'rgba(255,255,255,0.35)' }}>Your Profile</span>
@@ -51,9 +51,9 @@ export default function UserStats() {
       </div>
 
       {/* Main content */}
-      <div className="px-5 py-4 flex items-center gap-4">
+      <div className="px-6 py-5 flex items-center gap-5">
         {/* Avatar */}
-        <div className="w-14 h-14 flex items-center justify-center font-display text-3xl flex-shrink-0 theme-transition"
+        <div className="w-16 h-16 flex items-center justify-center font-display text-3xl flex-shrink-0 theme-transition"
           style={{ background: `${primary}18`, color: primary, border: `2px solid ${primary}40` }}>
           {user.username[0].toUpperCase()}
         </div>
@@ -79,7 +79,7 @@ export default function UserStats() {
       </div>
 
       {/* Progress bar */}
-      <div className="px-5 pb-5">
+      <div className="px-6 pb-6">
         <div className="flex justify-between font-mono text-[10px] uppercase tracking-wider mb-2">
           <span className="font-bold" style={{ color: rankColor }}>{currentRank.title}</span>
           {nextRank && (

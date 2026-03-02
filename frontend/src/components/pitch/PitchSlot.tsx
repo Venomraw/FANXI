@@ -12,29 +12,41 @@ export default function PitchSlot({ id, player }: PitchSlotProps) {
   const { primary } = useTheme();
   const { setNodeRef, isOver } = useDroppable({ id });
 
+  // Outer slot style — glow when filled, highlight when dragging over
+  const slotStyle = isOver
+    ? {
+        transform: 'scale(1.08)',
+        background: `color-mix(in srgb, ${primary} 15%, transparent)`,
+        boxShadow: `0 0 20px color-mix(in srgb, ${primary} 45%, transparent)`,
+      }
+    : player
+      ? { boxShadow: '0 0 16px rgba(0, 232, 124, 0.35)' }
+      : {};
+
   return (
     <div
       ref={setNodeRef}
-      className="w-20 h-20 flex flex-col items-center justify-center transition-all duration-150"
-      style={isOver
-        ? {
-            transform: 'scale(1.08)',
-            background: `color-mix(in srgb, ${primary} 15%, transparent)`,
-            boxShadow: `0 0 16px color-mix(in srgb, ${primary} 35%, transparent)`,
-          }
-        : {}}>
+      className="w-20 h-20 flex flex-col items-center justify-center theme-transition"
+      style={slotStyle}>
       {player ? (
         <div className="w-full">
           <DraggablePlayer id={player.name} name={player.name} number={player.number} />
         </div>
       ) : (
-        <div className="w-12 h-12 rounded-full border-2 border-dashed flex items-center justify-center transition-all theme-transition"
+        <div
+          className="w-12 h-12 rounded-full border-2 border-dashed flex items-center justify-center theme-transition"
           style={{
-            borderColor: isOver ? primary : `color-mix(in srgb, ${primary} 30%, transparent)`,
-            background: isOver ? `color-mix(in srgb, ${primary} 8%, transparent)` : 'transparent',
+            borderColor: isOver ? primary : `color-mix(in srgb, ${primary} 35%, transparent)`,
+            background:  isOver
+              ? `color-mix(in srgb, ${primary} 10%, transparent)`
+              : 'var(--slot-empty)',
           }}>
-          <span className="font-mono text-[9px] uppercase tracking-wider theme-transition"
-            style={{ color: `color-mix(in srgb, ${primary} 60%, transparent)` }}>
+          <span
+            className="font-mono text-[9px] uppercase theme-transition"
+            style={{
+              letterSpacing: '0.2em',
+              color: isOver ? primary : `color-mix(in srgb, ${primary} 55%, transparent)`,
+            }}>
             {id}
           </span>
         </div>

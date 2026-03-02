@@ -1,15 +1,16 @@
 import type { Metadata } from "next";
-import { Bebas_Neue, Syne, JetBrains_Mono } from "next/font/google";
+import { Space_Grotesk, Syne, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/src/context/ThemeContext";
 import { AuthProvider } from "@/src/context/AuthContext";
 import TeamPicker from "@/src/components/TeamPicker";
 import CustomCursor from "@/src/components/CustomCursor";
 
-const bebasNeue = Bebas_Neue({
-  weight: "400",
+// Primary display — Space Grotesk 600 replaces Bebas Neue
+const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
-  variable: "--font-bebas",
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-grotesk",
 });
 
 const syne = Syne({
@@ -17,6 +18,7 @@ const syne = Syne({
   variable: "--font-syne",
 });
 
+// Mono — used ONLY for micro labels, countdown units, small tactical tags
 const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
   variable: "--font-jetbrains",
@@ -35,7 +37,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${bebasNeue.variable} ${syne.variable} ${jetbrainsMono.variable} antialiased`}
+        className={`${spaceGrotesk.variable} ${syne.variable} ${jetbrainsMono.variable} antialiased`}
         suppressHydrationWarning={true}
       >
         <AuthProvider>

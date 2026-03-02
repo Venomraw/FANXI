@@ -93,7 +93,7 @@ export default function LoginPage() {
   const borderSubtle  = `color-mix(in srgb, ${primary} 10%, transparent)`;
 
   return (
-    <div className="min-h-screen bg-black flex relative overflow-hidden" style={{ color: 'var(--text)' }}>
+    <div className="min-h-screen flex relative overflow-hidden" style={{ background: 'var(--dark)', color: 'var(--text)' }}>
 
       {/* Animated grid bg — reference exact */}
       <div className="grid-bg-primary opacity-100" />
@@ -139,7 +139,7 @@ export default function LoginPage() {
             Fan<span style={{ color: 'var(--gold)' }}>XI</span>
           </h1>
           <p className="font-mono mt-3"
-            style={{ fontSize: '11px', letterSpacing: '4px', color: 'var(--muted)', textTransform: 'uppercase' }}>
+            style={{ fontSize: '11px', letterSpacing: '1.5px', color: 'var(--muted)', textTransform: 'uppercase' }}>
             World Cup 2026 · Tactical Hub
           </p>
         </div>
@@ -242,7 +242,7 @@ export default function LoginPage() {
             <h1 className="font-display leading-none theme-transition" style={{ fontSize: '5rem', color: primary }}>
               Fan<span style={{ color: 'var(--gold)' }}>XI</span>
             </h1>
-            <p className="font-mono mt-2" style={{ fontSize: '10px', letterSpacing: '4px', color: 'var(--muted)', textTransform: 'uppercase' }}>
+            <p className="font-mono mt-2" style={{ fontSize: '11px', letterSpacing: '1.5px', color: 'var(--muted)', textTransform: 'uppercase' }}>
               World Cup 2026 Tactical Hub
             </p>
           </div>
@@ -299,9 +299,9 @@ export default function LoginPage() {
             {(['login', 'register'] as const).map(m => (
               <button key={m}
                 onClick={() => { setMode(m); setError(''); }}
-                className="flex-1 py-3 font-mono transition-all theme-transition"
+                className="flex-1 py-3 font-sans font-semibold transition-all theme-transition"
                 style={{
-                  fontSize: '10px', letterSpacing: '2px', textTransform: 'uppercase',
+                  fontSize: '13px', letterSpacing: '0.5px',
                   ...(mode === m
                     ? { background: primary, color: '#000', fontWeight: 700 }
                     : { color: 'var(--muted)', background: 'transparent' }),
@@ -312,36 +312,43 @@ export default function LoginPage() {
           </div>
 
           <form onSubmit={mode === 'login' ? handleLogin : handleRegister}
-            className="flex flex-col gap-5">
+            className="flex flex-col gap-5"
+            suppressHydrationWarning>
 
             {/* Username — reference .form-group style */}
-            <div>
+            <div suppressHydrationWarning>
               <label className="block mb-2 theme-transition"
                 style={{ fontFamily: 'var(--font-mono)', fontSize: '9px', letterSpacing: '2px', textTransform: 'uppercase', color: primary }}>
                 Username
               </label>
               <input value={username} onChange={e => setUsername(e.target.value)}
-                required placeholder="your_username"
+                required placeholder="your_username" suppressHydrationWarning
                 className="w-full px-4 py-3 font-mono text-sm outline-none transition-colors theme-transition"
                 style={{
                   background: 'var(--dark3)', color: 'var(--text)',
                   border: `1px solid ${borderPrimary}`,
                   fontSize: '13px', letterSpacing: '0.5px',
                 }}
-                onFocus={e => (e.target.style.borderColor = primary)}
-                onBlur={e => (e.target.style.borderColor = borderPrimary)}
+                onFocus={e => {
+                  e.target.style.borderColor = primary;
+                  e.target.style.boxShadow = `0 0 14px color-mix(in srgb, ${primary} 20%, transparent)`;
+                }}
+                onBlur={e => {
+                  e.target.style.borderColor = borderPrimary;
+                  e.target.style.boxShadow = 'none';
+                }}
               />
             </div>
 
             {mode === 'register' && (
               <>
-                <div>
+                <div suppressHydrationWarning>
                   <label className="block mb-2 theme-transition"
                     style={{ fontFamily: 'var(--font-mono)', fontSize: '9px', letterSpacing: '2px', textTransform: 'uppercase', color: primary }}>
                     Email
                   </label>
                   <input value={email} onChange={e => setEmail(e.target.value)}
-                    required type="email" placeholder="you@example.com"
+                    required type="email" placeholder="you@example.com" suppressHydrationWarning
                     className="w-full px-4 py-3 font-mono text-sm outline-none transition-colors theme-transition"
                     style={{
                       background: 'var(--dark3)', color: 'var(--text)',
@@ -352,7 +359,7 @@ export default function LoginPage() {
                     onBlur={e => (e.target.style.borderColor = borderPrimary)}
                   />
                 </div>
-                <div>
+                <div suppressHydrationWarning>
                   <label className="block mb-2 theme-transition"
                     style={{ fontFamily: 'var(--font-mono)', fontSize: '9px', letterSpacing: '2px', textTransform: 'uppercase', color: primary }}>
                     Country
@@ -372,22 +379,39 @@ export default function LoginPage() {
               </>
             )}
 
-            <div>
+            <div suppressHydrationWarning>
               <label className="block mb-2 theme-transition"
                 style={{ fontFamily: 'var(--font-mono)', fontSize: '9px', letterSpacing: '2px', textTransform: 'uppercase', color: primary }}>
                 Password
               </label>
               <input value={password} onChange={e => setPassword(e.target.value)}
-                required type="password" placeholder="••••••••"
+                required type="password" placeholder="••••••••" suppressHydrationWarning
                 className="w-full px-4 py-3 font-mono text-sm outline-none transition-colors theme-transition"
                 style={{
                   background: 'var(--dark3)', color: 'var(--text)',
                   border: `1px solid ${borderPrimary}`,
                   fontSize: '13px',
                 }}
-                onFocus={e => (e.target.style.borderColor = primary)}
-                onBlur={e => (e.target.style.borderColor = borderPrimary)}
+                onFocus={e => {
+                  e.target.style.borderColor = primary;
+                  e.target.style.boxShadow = `0 0 14px color-mix(in srgb, ${primary} 20%, transparent)`;
+                }}
+                onBlur={e => {
+                  e.target.style.borderColor = borderPrimary;
+                  e.target.style.boxShadow = 'none';
+                }}
               />
+              {mode === 'login' && (
+                <div className="text-right mt-2">
+                  <button type="button" onClick={() => router.push('/forgot-password')}
+                    className="font-sans font-semibold transition-colors"
+                    style={{ fontSize: '12px', letterSpacing: '0.3px', color: 'var(--muted)', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+                    onMouseEnter={e => (e.currentTarget.style.color = primary)}
+                    onMouseLeave={e => (e.currentTarget.style.color = 'var(--muted)')}>
+                    Forgot password?
+                  </button>
+                </div>
+              )}
             </div>
 
             {error && (
@@ -400,8 +424,9 @@ export default function LoginPage() {
             <button type="submit" disabled={loading}
               className="w-full py-4 font-display transition-all active:scale-95 disabled:opacity-40 btn-cut-lg btn-shimmer theme-transition mt-2"
               style={{
-                fontSize: '22px', letterSpacing: '4px', textTransform: 'uppercase',
+                fontSize: '22px', letterSpacing: '1.5px', textTransform: 'uppercase',
                 background: primary, color: '#000',
+                boxShadow: `0 0 28px color-mix(in srgb, ${primary} 50%, transparent)`,
               }}>
               {loading ? '...' : mode === 'login' ? 'Enter the Hub' : 'Join the Hunt'}
             </button>
