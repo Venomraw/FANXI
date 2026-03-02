@@ -1,9 +1,10 @@
 fastapi
 uvicorn[standard]
 sqlmodel
-pydantic
+pydantic[email]
 pydantic-settings
 passlib[bcrypt]
+python-jose[cryptography]
 httpx
 pillow
 python-multipart

@@ -6,7 +6,6 @@ import httpx
 from app.db import engine
 from datetime import datetime, timedelta
 from app.config import settings
-from .football_api import _get # Your existing helpers
 
 class FootballAPIError(Exception):
     """Raised when the external football API returns an error."""

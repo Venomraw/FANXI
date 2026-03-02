@@ -7,8 +7,8 @@ from fastapi import APIRouter, HTTPException, Depends, Query, status
 from sqlmodel import Session, select
 
 from app.db import get_session
-from app.models import MatchPrediction
-from app.schemas import LockSelectionRequest
+from app.models import MatchPrediction, User
+from app.schemas import LockSelectionRequest, LeaderboardEntry, MatchResultInput
 
 # Module-level logger — errors are written to the server log, never to HTTP
 # responses, so internal details are never exposed to clients.
@@ -309,3 +309,130 @@ def get_prediction_history(user_id: int, session: Session = Depends(get_session)
     ).all()
 
     return results
+
+
+# ---------------------------------------------------------------------------
+# Rank title helper
+# ---------------------------------------------------------------------------
+
+RANK_THRESHOLDS = [
+    (1000, "Legend"),
+    (600,  "Commander"),
+    (300,  "Tactician"),
+    (100,  "Analyst"),
+    (0,    "Scout"),
+]
+
+def rank_title_for(points: int) -> str:
+    for threshold, title in RANK_THRESHOLDS:
+        if points >= threshold:
+            return title
+    return "Scout"
+
+
+# ---------------------------------------------------------------------------
+# Leaderboard
+# ---------------------------------------------------------------------------
+
+@router.get("/leaderboard", response_model=List[LeaderboardEntry])
+def get_leaderboard(session: Session = Depends(get_session)):
+    """Return all users ranked by football_iq_points descending."""
+    users = session.exec(
+        select(User).order_by(User.football_iq_points.desc())
+    ).all()
+
+    return [
+        LeaderboardEntry(
+            rank=i + 1,
+            username=u.username,
+            country_allegiance=u.country_allegiance,
+            football_iq_points=u.football_iq_points,
+            rank_title=u.rank_title,
+        )
+        for i, u in enumerate(users)
+    ]
+
+
+# ---------------------------------------------------------------------------
+# Admin: submit real match result → score all predictions → award IQ points
+# ---------------------------------------------------------------------------
+
+@router.post("/admin/score/{match_id}")
+def score_match(
+    match_id: int,
+    result: MatchResultInput,
+    session: Session = Depends(get_session),
+):
+    """
+    Admin endpoint: submit the real result for a match.
+    Scores every locked prediction for that match and awards IQ points to users.
+    """
+    predictions = session.exec(
+        select(MatchPrediction).where(
+            MatchPrediction.match_id == match_id,
+            MatchPrediction.status == "LOCKED",
+        )
+    ).all()
+
+    if not predictions:
+        raise HTTPException(status_code=404, detail="No locked predictions for this match.")
+
+    scored = []
+    for pred in predictions:
+        pts = 0
+
+        # Match result
+        if pred.match_result:
+            pts += score_match_result(pred.match_result, result.home_goals, result.away_goals)
+
+        # Correct score
+        if pred.correct_score:
+            pts += score_correct_score(pred.correct_score, result.home_goals, result.away_goals)
+
+        # BTTS
+        if pred.btts_prediction is not None:
+            pts += score_btts(pred.btts_prediction, result.home_goals, result.away_goals)
+
+        # Over/under
+        if pred.over_under:
+            pts += score_over_under(pred.over_under, result.home_goals, result.away_goals)
+
+        # HT/FT
+        if pred.ht_ft:
+            pts += score_ht_ft(
+                pred.ht_ft,
+                result.ht_home_goals, result.ht_away_goals,
+                result.home_goals, result.away_goals,
+            )
+
+        # Player predictions
+        pp = pred.player_predictions or {}
+        if pp.get("first_goalscorer") and result.first_goalscorer:
+            pts += score_first_goalscorer(pp["first_goalscorer"], result.first_goalscorer)
+        if pp.get("anytime_goalscorer") and result.scorers:
+            pts += score_anytime_goalscorer(pp["anytime_goalscorer"], result.scorers)
+        if pp.get("player_assist") and result.assisters:
+            pts += score_player_assist(pp["player_assist"], result.assisters)
+        if pp.get("player_carded") and result.carded:
+            pts += score_player_carded(pp["player_carded"], result.carded)
+        if pp.get("shots_on_target") and result.player_shots:
+            pts += score_shots_on_target(pp["shots_on_target"], result.player_shots)
+        if pp.get("man_of_the_match") and result.man_of_the_match:
+            pts += score_man_of_the_match(pp["man_of_the_match"], result.man_of_the_match)
+
+        # Mark prediction as scored
+        pred.status = "SCORED"
+        session.add(pred)
+
+        # Award IQ points to user
+        if pred.user_id:
+            user = session.get(User, pred.user_id)
+            if user:
+                user.football_iq_points += pts
+                user.rank_title = rank_title_for(user.football_iq_points)
+                session.add(user)
+
+        scored.append({"prediction_id": pred.id, "user_id": pred.user_id, "points_awarded": pts})
+
+    session.commit()
+    return {"match_id": match_id, "scored": len(scored), "results": scored}

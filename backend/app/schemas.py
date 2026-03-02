@@ -116,12 +116,32 @@ class LockSelectionRequest(BaseModel):
         return v
 
 # --- Leaderboard & Stats ---
+class LeaderboardEntry(BaseModel):
+    rank: int
+    username: str
+    country_allegiance: str
+    football_iq_points: int
+    rank_title: str
+
+class MatchResultInput(BaseModel):
+    """Admin submits this after a match to trigger scoring."""
+    home_goals: int
+    away_goals: int
+    ht_home_goals: int
+    ht_away_goals: int
+    first_goalscorer: Optional[str] = None
+    scorers: List[str] = []
+    assisters: List[str] = []
+    carded: List[str] = []
+    player_shots: dict = {}       # {"messi": 3, "ronaldo": 2}
+    man_of_the_match: Optional[str] = None
+
 class PredictionScore(BaseModel):
     prediction_id: int
     match_id: int
     username: str
     correct_players: int
-    tactical_bonus: int = 0 
+    tactical_bonus: int = 0
     total_score: int
 
 class Match(BaseModel):

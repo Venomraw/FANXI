@@ -1,5 +1,6 @@
 'use client';
 import React from 'react';
+import { useTheme } from '@/src/context/ThemeContext';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -50,6 +51,7 @@ function PillGroup<T extends string>({
   onSelect: (v: T) => void;
   labels?: Record<T, string>;
 }) {
+  const { primary } = useTheme();
   return (
     <div className="flex gap-2">
       {options.map((opt) => (
@@ -58,9 +60,10 @@ function PillGroup<T extends string>({
           onClick={() => onSelect(opt)}
           className={`flex-1 py-2 text-[10px] font-black uppercase rounded-lg border transition-all ${
             value === opt
-              ? 'bg-green-600 border-green-600 text-black shadow-md shadow-green-900/30'
+              ? 'text-black shadow-md'
               : 'bg-zinc-900 border-zinc-700 text-zinc-400 hover:border-zinc-500 hover:text-white'
           }`}
+          style={value === opt ? { backgroundColor: primary, borderColor: primary } : {}}
         >
           {labels ? labels[opt] : opt}
         </button>
@@ -70,9 +73,10 @@ function PillGroup<T extends string>({
 }
 
 function SectionHeader({ label, pts }: { label: string; pts?: string }) {
+  const { primary } = useTheme();
   return (
     <div className="flex items-center justify-between mb-2">
-      <p className="text-[10px] font-black text-green-500 uppercase tracking-widest">
+      <p className="text-[10px] font-black uppercase tracking-widest" style={{ color: primary }}>
         {label}
       </p>
       {pts && (
@@ -120,6 +124,7 @@ export default function MatchEvents({
   onPlayerChange,
   allPlayers,
 }: MatchEventsProps) {
+  const { primary } = useTheme();
   const set = (patch: Partial<OutcomesState>) => onChange({ ...outcomes, ...patch });
   const setPlayer = (patch: Partial<PlayerPredictionsState>) =>
     onPlayerChange({ ...playerPredictions, ...patch });
