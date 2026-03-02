@@ -81,6 +81,102 @@ def score_single_prediction(prediction: dict, official_lineup: List[str]) -> Sco
 
 
 # ---------------------------------------------------------------------------
+# Outcome scoring helpers
+# ---------------------------------------------------------------------------
+
+def _result_from_goals(home: int, away: int) -> str:
+    """Derive 'home' | 'draw' | 'away' from final goal counts."""
+    if home > away:
+        return "home"
+    if away > home:
+        return "away"
+    return "draw"
+
+
+def score_match_result(predicted: str, home_goals: int, away_goals: int) -> int:
+    """3 points for correct 1X2 result."""
+    actual = _result_from_goals(home_goals, away_goals)
+    return 3 if predicted == actual else 0
+
+
+def score_correct_score(predicted: dict, home_goals: int, away_goals: int) -> int:
+    """10 points for exact scoreline."""
+    if predicted.get("home") == home_goals and predicted.get("away") == away_goals:
+        return 10
+    return 0
+
+
+def score_btts(predicted: bool, home_goals: int, away_goals: int) -> int:
+    """5 points if BTTS prediction matches reality."""
+    actual = home_goals > 0 and away_goals > 0
+    return 5 if predicted == actual else 0
+
+
+def score_over_under(predicted: dict, home_goals: int, away_goals: int) -> int:
+    """4 points for correct over/under pick."""
+    total = home_goals + away_goals
+    line = predicted.get("line", 2.5)
+    pick = predicted.get("pick", "")
+    if pick == "over" and total > line:
+        return 4
+    if pick == "under" and total < line:
+        return 4
+    return 0
+
+
+def score_ht_ft(predicted: dict, ht_home: int, ht_away: int, ft_home: int, ft_away: int) -> int:
+    """6 points for both HT and FT correct; 3 points for one correct."""
+    actual_ht = _result_from_goals(ht_home, ht_away)
+    actual_ft = _result_from_goals(ft_home, ft_away)
+    ht_correct = predicted.get("ht") == actual_ht
+    ft_correct = predicted.get("ft") == actual_ft
+    if ht_correct and ft_correct:
+        return 6
+    if ht_correct or ft_correct:
+        return 3
+    return 0
+
+
+# ---------------------------------------------------------------------------
+# Player prediction scoring helpers
+# ---------------------------------------------------------------------------
+
+def score_first_goalscorer(predicted: str, actual_first_scorer: str) -> int:
+    """10 points for correctly predicting the first goalscorer."""
+    return 10 if predicted.lower() == actual_first_scorer.lower() else 0
+
+
+def score_anytime_goalscorer(predicted: str, scorers: List[str]) -> int:
+    """5 points if predicted player scored at any point in the match."""
+    return 5 if predicted.lower() in {s.lower() for s in scorers} else 0
+
+
+def score_player_assist(predicted: str, assisters: List[str]) -> int:
+    """5 points if predicted player provided an assist."""
+    return 5 if predicted.lower() in {a.lower() for a in assisters} else 0
+
+
+def score_player_carded(predicted: str, carded: List[str]) -> int:
+    """4 points if predicted player received a card."""
+    return 4 if predicted.lower() in {c.lower() for c in carded} else 0
+
+
+def score_shots_on_target(predicted: dict, player_shots: dict) -> int:
+    """4 points if predicted player met or exceeded the shots-on-target threshold.
+
+    player_shots maps player name (lower-case) -> shot count.
+    """
+    player = predicted.get("player", "").lower()
+    threshold = predicted.get("threshold", 1)
+    return 4 if player_shots.get(player, 0) >= threshold else 0
+
+
+def score_man_of_the_match(predicted: str, actual_motm: str) -> int:
+    """8 points for correctly predicting the man of the match."""
+    return 8 if predicted.lower() == actual_motm.lower() else 0
+
+
+# ---------------------------------------------------------------------------
 # API endpoints
 # ---------------------------------------------------------------------------
 
@@ -112,6 +208,16 @@ async def lock_prediction(
         }
         clean_tactics = prediction_data.tactics.model_dump()
 
+        # Serialize outcomes (all 5 core outcome prediction fields)
+        outcomes = prediction_data.outcomes
+        clean_outcomes = outcomes.model_dump() if outcomes else {}
+
+        # Serialize player predictions
+        clean_players = (
+            prediction_data.player_predictions.model_dump()
+            if prediction_data.player_predictions else {}
+        )
+
         # Check for an existing prediction to update (upsert)
         existing = session.exec(
             select(MatchPrediction).where(
@@ -125,6 +231,12 @@ async def lock_prediction(
             # references and keeps the history table tidy.
             existing.lineup_data = clean_lineup
             existing.tactics_data = clean_tactics
+            existing.match_result = clean_outcomes.get("match_result")
+            existing.btts_prediction = clean_outcomes.get("btts")
+            existing.correct_score = clean_outcomes.get("correct_score")
+            existing.over_under = clean_outcomes.get("over_under")
+            existing.ht_ft = clean_outcomes.get("ht_ft")
+            existing.player_predictions = clean_players or None
             existing.created_at = datetime.now(timezone.utc)
             new_prediction = existing
         else:
@@ -133,6 +245,12 @@ async def lock_prediction(
                 match_id=match_id,
                 lineup_data=clean_lineup,
                 tactics_data=clean_tactics,
+                match_result=clean_outcomes.get("match_result"),
+                btts_prediction=clean_outcomes.get("btts"),
+                correct_score=clean_outcomes.get("correct_score"),
+                over_under=clean_outcomes.get("over_under"),
+                ht_ft=clean_outcomes.get("ht_ft"),
+                player_predictions=clean_players or None,
                 status="LOCKED",
                 created_at=datetime.now(timezone.utc),
             )

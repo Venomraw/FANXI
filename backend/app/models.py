@@ -31,6 +31,16 @@ class MatchPrediction(SQLModel, table=True):
     lineup_data: Dict = Field(default_factory=dict, sa_type=JSON)
     tactics_data: Dict = Field(default_factory=dict, sa_type=JSON)
 
+    # Core match outcome predictions
+    match_result: Optional[str] = None          # "home" | "draw" | "away"
+    btts_prediction: Optional[bool] = None      # Both Teams To Score
+    correct_score: Optional[Dict] = Field(default=None, sa_type=JSON)   # {"home": 2, "away": 1}
+    over_under: Optional[Dict] = Field(default=None, sa_type=JSON)      # {"line": 2.5, "pick": "over"}
+    ht_ft: Optional[Dict] = Field(default=None, sa_type=JSON)           # {"ht": "home", "ft": "draw"}
+    player_predictions: Optional[Dict] = Field(default=None, sa_type=JSON)
+    # Stores: { first_goalscorer, anytime_goalscorer, player_assist,
+    #           player_carded, shots_on_target, man_of_the_match }
+
     status: str = Field(default="LOCKED")
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
@@ -97,9 +107,12 @@ class MatchDB(SQLModel, table=True):
     away_team_id: int
     kickoff_time: datetime
     venue: str
-<<<<<<< HEAD
     round: str
     status: str = Field(default="scheduled")
+    home_goals: Optional[int] = None
+    away_goals: Optional[int] = None
+    ht_home_goals: Optional[int] = None
+    ht_away_goals: Optional[int] = None
 
 
 # ---------------------------------------------------------------------------

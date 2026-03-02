@@ -1,4 +1,5 @@
 from typing import Iterator
+from sqlalchemy import text
 from sqlmodel import SQLModel, create_engine, Session, select
 
 # ---------------------------------------------------------------------------
@@ -37,9 +38,42 @@ def get_session() -> Iterator[Session]:
 # Initialisation
 # ---------------------------------------------------------------------------
 
+def run_migrations() -> None:
+    """
+    Add new columns to existing tables without dropping data.
+
+    SQLite does not support DROP COLUMN or complex ALTER TABLE, but it does
+    allow ADD COLUMN.  We wrap each statement in a try/except so this is safe
+    to call on every startup — columns that already exist raise an
+    OperationalError which we silently ignore.
+    """
+    new_columns = [
+        # MatchPrediction — 5 core outcome prediction fields
+        ("matchprediction", "match_result",    "TEXT"),
+        ("matchprediction", "btts_prediction", "INTEGER"),
+        ("matchprediction", "correct_score",   "JSON"),
+        ("matchprediction", "over_under",      "JSON"),
+        ("matchprediction", "ht_ft",           "JSON"),
+        ("matchprediction", "player_predictions", "JSON"),
+        # MatchDB — real result columns for scoring
+        ("matchdb", "home_goals",    "INTEGER"),
+        ("matchdb", "away_goals",    "INTEGER"),
+        ("matchdb", "ht_home_goals", "INTEGER"),
+        ("matchdb", "ht_away_goals", "INTEGER"),
+    ]
+    with engine.connect() as conn:
+        for table, col, col_type in new_columns:
+            try:
+                conn.execute(text(f"ALTER TABLE {table} ADD COLUMN {col} {col_type}"))
+                conn.commit()
+            except Exception:
+                pass  # Column already exists — safe to ignore
+
+
 def init_db() -> None:
     """
-    Create all database tables if they do not already exist.
+    Create all database tables if they do not already exist, then run
+    any pending column migrations.
 
     We import every model class here so SQLModel's metadata registry is
     populated before create_all() runs.  If a model is never imported,
@@ -48,9 +82,13 @@ def init_db() -> None:
     This function is idempotent — safe to call on every server startup.
     """
     # All table-backed models must be imported before create_all()
-    from app.models import User, Player, MatchPrediction, PredictionDB, TeamDB, MatchDB  # noqa: F401
+    from app.models import (  # noqa: F401
+        User, Player, MatchPrediction, PredictionDB,
+        TeamDB, MatchDB, TeamSquadCache,
+    )
 
     SQLModel.metadata.create_all(engine)
+    run_migrations()
 
 
 # ---------------------------------------------------------------------------

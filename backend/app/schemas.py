@@ -1,7 +1,7 @@
 import re
 from datetime import datetime
 from typing import List, Optional, Dict
-from pydantic import BaseModel, EmailStr, Field, field_validator
+from pydantic import BaseModel, EmailStr, Field, field_validator, model_validator
 
 # --------------------
 # Shared validation
@@ -44,6 +44,44 @@ class UserRead(UserBase):
     class Config:
         from_attributes = True
 
+# --- Match Outcome Sub-Schemas ---
+
+class ScorePrediction(BaseModel):
+    """Exact scoreline prediction."""
+    home: int = Field(ge=0, le=20)
+    away: int = Field(ge=0, le=20)
+
+class OverUnderPrediction(BaseModel):
+    """Over/under goals prediction with a line and a pick."""
+    line: float = Field(ge=0.5, le=9.5)
+    pick: str = Field(pattern="^(over|under)$")
+
+class HTFTPrediction(BaseModel):
+    """Half-time / Full-time double result prediction."""
+    ht: str = Field(pattern="^(home|draw|away)$")
+    ft: str = Field(pattern="^(home|draw|away)$")
+
+class ShotsOnTargetPrediction(BaseModel):
+    player: str
+    threshold: int = Field(ge=1, le=10)  # "at least N shots"
+
+class PlayerPredictions(BaseModel):
+    first_goalscorer: Optional[str] = None
+    anytime_goalscorer: Optional[str] = None
+    player_assist: Optional[str] = None
+    player_carded: Optional[str] = None
+    shots_on_target: Optional[ShotsOnTargetPrediction] = None
+    man_of_the_match: Optional[str] = None
+
+class OutcomesPrediction(BaseModel):
+    """Container for all 5 core match outcome predictions. All fields are optional."""
+    match_result: Optional[str] = Field(default=None, pattern="^(home|draw|away)$")
+    correct_score: Optional[ScorePrediction] = None
+    btts: Optional[bool] = None
+    over_under: Optional[OverUnderPrediction] = None
+    ht_ft: Optional[HTFTPrediction] = None
+
+
 # --- NEW: Tactical Engine Schemas ---
 
 class PlayerInfo(BaseModel):
@@ -64,6 +102,8 @@ class LockSelectionRequest(BaseModel):
     """
     lineup: Dict[str, PlayerInfo] # Maps position (e.g., 'ST') to PlayerInfo
     tactics: TacticsInfo
+    outcomes: Optional[OutcomesPrediction] = None
+    player_predictions: Optional[PlayerPredictions] = None
     timestamp: str
     status: str
 

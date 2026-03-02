@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { DndContext, DragEndEvent } from '@dnd-kit/core';
 import PitchSlot from './PitchSlot';
 import DraggablePlayer from './DraggablePlayer';
-import MatchEvents from './MatchEvents';
+import MatchEvents, { OutcomesState, PlayerPredictionsState } from './MatchEvents';
 
 interface Player {
   name: string;
@@ -26,6 +26,21 @@ export default function PitchBoard() {
   ]);
   const [lineup, setLineup] = useState<Record<string, Player>>({});
   const [history, setHistory] = useState<any[]>([]);
+  const [outcomes, setOutcomes] = useState<OutcomesState>({
+    matchResult: null,
+    correctScore: { home: 0, away: 0 },
+    btts: null,
+    overUnder: null,
+    htFt: null,
+  });
+  const [playerPredictions, setPlayerPredictions] = useState<PlayerPredictionsState>({
+    firstGoalscorer: null,
+    anytimeGoalscorer: null,
+    playerAssist: null,
+    playerCarded: null,
+    shotsOnTarget: null,
+    manOfTheMatch: null,
+  });
 
   useEffect(() => {
     setIsMounted(true);
@@ -57,6 +72,21 @@ export default function PitchBoard() {
     const finalData = {
       lineup,
       tactics,
+      outcomes: {
+        match_result: outcomes.matchResult,
+        correct_score: outcomes.correctScore,
+        btts: outcomes.btts,
+        over_under: outcomes.overUnder,
+        ht_ft: outcomes.htFt,
+      },
+      player_predictions: {
+        first_goalscorer: playerPredictions.firstGoalscorer,
+        anytime_goalscorer: playerPredictions.anytimeGoalscorer,
+        player_assist: playerPredictions.playerAssist,
+        player_carded: playerPredictions.playerCarded,
+        shots_on_target: playerPredictions.shotsOnTarget,
+        man_of_the_match: playerPredictions.manOfTheMatch,
+      },
       timestamp: new Date().toISOString(),
       status: "LOCKED"
     };
@@ -171,8 +201,18 @@ export default function PitchBoard() {
             )}
           </div>
         );
-      case 'events':
-        return <MatchEvents />;
+      case 'events': {
+        const allPlayers = [...squad, ...Object.values(lineup)];
+        return (
+          <MatchEvents
+            outcomes={outcomes}
+            onChange={setOutcomes}
+            playerPredictions={playerPredictions}
+            onPlayerChange={setPlayerPredictions}
+            allPlayers={allPlayers}
+          />
+        );
+      }
       default: return null;
     }
   };
