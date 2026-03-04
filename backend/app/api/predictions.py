@@ -3,8 +3,9 @@ from dataclasses import dataclass
 from datetime import datetime, timezone
 from typing import Dict, List
 
-from fastapi import APIRouter, HTTPException, Depends, status
+from fastapi import APIRouter, HTTPException, Depends, Request, status
 from sqlmodel import Session, select
+from app.limiter import limiter
 
 from app.db import get_session
 from app.models import MatchPrediction, User
@@ -181,8 +182,12 @@ def score_man_of_the_match(predicted: str, actual_motm: str) -> int:
 # API endpoints
 # ---------------------------------------------------------------------------
 
+# 20/minute — a real user submits one prediction per match.
+# 20/min catches accidental double-submits but blocks spam bots.
 @router.post("/lock/{match_id}", status_code=status.HTTP_201_CREATED)
+@limiter.limit("20/minute")
 async def lock_prediction(
+    request: Request,
     match_id: int,
     prediction_data: LockSelectionRequest,
     session: Session = Depends(get_session),
@@ -331,8 +336,11 @@ def rank_title_for(points: int) -> str:
 # Leaderboard
 # ---------------------------------------------------------------------------
 
+# 60/minute — read endpoint polled for live leaderboard updates.
+# Once per second is plenty for real clients; blocks scrapers and hammering.
 @router.get("/leaderboard", response_model=List[LeaderboardEntry])
-def get_leaderboard(session: Session = Depends(get_session)):
+@limiter.limit("60/minute")
+def get_leaderboard(request: Request, session: Session = Depends(get_session)):
     """Return all users ranked by football_iq_points descending."""
     users = session.exec(
         select(User).order_by(User.football_iq_points.desc())

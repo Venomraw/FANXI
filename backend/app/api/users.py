@@ -1,10 +1,11 @@
 import secrets
 from datetime import datetime, timedelta
 
-from fastapi import APIRouter, Cookie, Depends, HTTPException, Response, status
+from fastapi import APIRouter, Cookie, Depends, HTTPException, Request, Response, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from pydantic import BaseModel
 from sqlmodel import Session, select
+from app.limiter import limiter
 
 from app.db import get_session
 from app.models import User, PasswordResetToken
@@ -48,8 +49,11 @@ def get_current_user(
 # Register
 # ---------------------------------------------------------------------------
 
+# 5/minute — prevents mass account creation and bot signups.
+# Low ceiling because legitimate users register at most once.
 @router.post("/register", response_model=UserRead, status_code=status.HTTP_201_CREATED)
-def register_user(user_data: UserCreate, session: Session = Depends(get_session)):
+@limiter.limit("5/minute")
+def register_user(request: Request, user_data: UserCreate, session: Session = Depends(get_session)):
     existing = session.exec(
         select(User).where(
             (User.username == user_data.username) | (User.email == user_data.email)
@@ -76,8 +80,12 @@ def register_user(user_data: UserCreate, session: Session = Depends(get_session)
 # Login — returns JWT access token
 # ---------------------------------------------------------------------------
 
+# 10/minute — brute force protection. Generous enough for real users
+# (a typo or two is fine) but blocks automated credential stuffing attacks.
 @router.post("/login")
+@limiter.limit("10/minute")
 def login(
+    request: Request,
     response: Response,
     form_data: OAuth2PasswordRequestForm = Depends(),
     session: Session = Depends(get_session),
@@ -126,8 +134,11 @@ def login(
 # Me — returns current logged-in user
 # ---------------------------------------------------------------------------
 
+# 60/minute — polled on page load for profile data.
+# Generous for real use but blocks scrapers cycling through the endpoint.
 @router.get("/me", response_model=UserRead)
-def get_me(current_user: User = Depends(get_current_user)):
+@limiter.limit("60/minute")
+def get_me(request: Request, current_user: User = Depends(get_current_user)):
     return current_user
 
 
@@ -137,8 +148,12 @@ def get_me(current_user: User = Depends(get_current_user)):
 # → return new short-lived access token. No credentials needed.
 # ---------------------------------------------------------------------------
 
+# 30/minute — clients refresh tokens often (every 15 min expiry),
+# but 30/min per IP is ample for legitimate use and blocks token-grinding attempts.
 @router.post("/auth/refresh")
+@limiter.limit("30/minute")
 def refresh_token(
+    request: Request,
     fanxi_refresh: str = Cookie(default=None),
     session: Session = Depends(get_session),
 ):

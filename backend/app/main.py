@@ -1,8 +1,38 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from app.api import users, predictions, leagues, teams, intel, squads, matches, ai
 from app import web
 from app.db import init_db
+
+# ---------------------------------------------------------------------------
+# Rate limiting — slowapi (wraps limits library, compatible with FastAPI)
+# ---------------------------------------------------------------------------
+from slowapi.errors import RateLimitExceeded
+from app.limiter import limiter
+
+# key_func=get_remote_address — rate limits are tracked per client IP.
+# In production behind a proxy (nginx, Cloudflare), set USE_X_FORWARDED_FOR=1
+# so the real client IP is read from the X-Forwarded-For header.
+
+# ---------------------------------------------------------------------------
+# Custom 429 handler — returns structured JSON the frontend can parse.
+# The Retry-After header tells compliant clients (and browsers) exactly how
+# many seconds to wait before retrying — prevents pointless immediate retries.
+# ---------------------------------------------------------------------------
+async def custom_rate_limit_handler(request: Request, exc: RateLimitExceeded) -> JSONResponse:
+    # exc.limit.limit is the RateLimitItem from the `limits` library.
+    # get_expiry() returns the window size in seconds (e.g. 60 for "10/minute").
+    retry_after = str(exc.limit.limit.get_expiry())
+    return JSONResponse(
+        status_code=429,
+        content={
+            "error": "rate_limit_exceeded",
+            "message": "Too many requests. Please slow down.",
+            "retry_after": retry_after,
+        },
+        headers={"Retry-After": retry_after},
+    )
 
 # ---------------------------------------------------------------------------
 # Application factory
@@ -13,6 +43,13 @@ app = FastAPI(
     description="The world's first tactical-first football prediction engine.",
     version="1.0.0",
 )
+
+# Attach limiter to app state — slowapi reads it from here via the @limiter.limit
+# decorator on individual routes. Without this, limits are silently ignored.
+app.state.limiter = limiter
+
+# Return HTTP 429 Too Many Requests with a JSON body when a limit is exceeded.
+app.add_exception_handler(RateLimitExceeded, custom_rate_limit_handler)
 
 # ---------------------------------------------------------------------------
 # CORS — only the local Next.js dev server is allowed to call this API.

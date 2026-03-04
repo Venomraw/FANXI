@@ -106,6 +106,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const res = await makeRequest(_accessToken);
 
+    // ── 429 received — rate limited ──────────────────────────────────────
+    // Do not retry. Throw a structured error so callers can show the user
+    // exactly how long to wait instead of a generic failure message.
+    if (res.status === 429) {
+      const body = await res.json().catch(() => ({}));
+      const retryAfter = Number(body.retry_after ?? res.headers.get('Retry-After') ?? 60);
+      throw { code: 'RATE_LIMITED', retryAfter };
+    }
+
     if (res.status !== 401) return res;
 
     // ── 401 received — attempt refresh ──────────────────────────────────
@@ -153,6 +162,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
 
     if (!res.ok) {
+      // 429 — rate limited: tell the user exactly how long to wait
+      if (res.status === 429) {
+        const body = await res.json().catch(() => ({}));
+        const seconds = Number(body.retry_after ?? res.headers.get('Retry-After') ?? 60);
+        return `Too many login attempts. Please wait ${seconds} second${seconds !== 1 ? 's' : ''}.`;
+      }
       const err = await res.json();
       const detail = err.detail;
       if (Array.isArray(detail)) return detail.map((e: { msg: string }) => e.msg).join(', ');
