@@ -1,7 +1,7 @@
 import secrets
 from datetime import datetime, timedelta
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Cookie, Depends, HTTPException, Response, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from pydantic import BaseModel
 from sqlmodel import Session, select
@@ -9,7 +9,11 @@ from sqlmodel import Session, select
 from app.db import get_session
 from app.models import User, PasswordResetToken
 from app.schemas import UserCreate, UserRead
-from app.core.security import get_password_hash, verify_password, create_access_token, decode_access_token
+from app.core.security import (
+    get_password_hash, verify_password,
+    create_access_token, decode_access_token,
+    create_refresh_token, decode_refresh_token,
+)
 from app.config import settings
 
 router = APIRouter()
@@ -74,6 +78,7 @@ def register_user(user_data: UserCreate, session: Session = Depends(get_session)
 
 @router.post("/login")
 def login(
+    response: Response,
     form_data: OAuth2PasswordRequestForm = Depends(),
     session: Session = Depends(get_session),
 ):
@@ -87,9 +92,24 @@ def login(
             detail="Incorrect username or password",
         )
 
-    token = create_access_token({"sub": str(user.id)})
+    access_token = create_access_token({"sub": str(user.id)})
+    refresh_token = create_refresh_token(user.id)
+
+    # httpOnly prevents JavaScript from reading this cookie, protecting against
+    # XSS attacks. The token is sent automatically by the browser on requests
+    # to the /auth/refresh endpoint only (path-scoped for minimal exposure).
+    response.set_cookie(
+        key="fanxi_refresh",
+        value=refresh_token,
+        httponly=True,
+        secure=False,               # set True in production (requires HTTPS)
+        samesite="lax",
+        max_age=60 * 60 * 24 * 7,  # 7 days in seconds
+        path="/auth/refresh",       # cookie only sent to the refresh endpoint
+    )
+
     return {
-        "access_token": token,
+        "access_token": access_token,
         "token_type": "bearer",
         "user": {
             "id": user.id,
@@ -109,6 +129,42 @@ def login(
 @router.get("/me", response_model=UserRead)
 def get_me(current_user: User = Depends(get_current_user)):
     return current_user
+
+
+# ---------------------------------------------------------------------------
+# Refresh — issues a new access token using the httpOnly refresh cookie.
+# Flow: browser sends fanxi_refresh cookie → decode → verify user exists
+# → return new short-lived access token. No credentials needed.
+# ---------------------------------------------------------------------------
+
+@router.post("/auth/refresh")
+def refresh_token(
+    fanxi_refresh: str = Cookie(default=None),
+    session: Session = Depends(get_session),
+):
+    if not fanxi_refresh:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="No refresh token")
+
+    user_id = decode_refresh_token(fanxi_refresh)
+    if not user_id:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid or expired refresh token")
+
+    user = session.get(User, user_id)
+    if not user:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User not found")
+
+    access_token = create_access_token({"sub": str(user.id)})
+    return {"access_token": access_token, "token_type": "bearer"}
+
+
+# ---------------------------------------------------------------------------
+# Logout — clears the refresh cookie. Frontend must also discard the access
+# token from memory (it cannot be revoked server-side without a token store).
+# ---------------------------------------------------------------------------
+
+@router.post("/auth/logout", status_code=status.HTTP_204_NO_CONTENT)
+def logout(response: Response):
+    response.delete_cookie(key="fanxi_refresh", path="/auth/refresh")
 
 
 # ---------------------------------------------------------------------------

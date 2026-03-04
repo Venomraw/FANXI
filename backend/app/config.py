@@ -21,6 +21,9 @@ class Settings(BaseSettings):
     resend_api_key: str = ""
     frontend_url: str = "http://localhost:3000"
 
+    # JWT Secret
+    secret_key: str = ""
+
     # Anthropic Claude API
     anthropic_api_key: str = ""
 

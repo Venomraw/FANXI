@@ -3,12 +3,13 @@ from dataclasses import dataclass
 from datetime import datetime, timezone
 from typing import Dict, List
 
-from fastapi import APIRouter, HTTPException, Depends, Query, status
+from fastapi import APIRouter, HTTPException, Depends, status
 from sqlmodel import Session, select
 
 from app.db import get_session
 from app.models import MatchPrediction, User
 from app.schemas import LockSelectionRequest, LeaderboardEntry, MatchResultInput
+from app.api.users import get_current_user
 
 # Module-level logger — errors are written to the server log, never to HTTP
 # responses, so internal details are never exposed to clients.
@@ -185,11 +186,7 @@ async def lock_prediction(
     match_id: int,
     prediction_data: LockSelectionRequest,
     session: Session = Depends(get_session),
-    # user_id is a query parameter for now (e.g. ?user_id=3).
-    # TODO (Milestone 3): replace with `user_id = Depends(get_current_user)`
-    # once JWT authentication is implemented.  The default of 1 keeps the
-    # React frontend working during local development without auth.
-    user_id: int = Query(default=1, description="Authenticated user ID (placeholder until JWT auth)"),
+    current_user: User = Depends(get_current_user),
 ):
     """
     Save or overwrite a user's tactical lineup for a given match.
@@ -222,7 +219,7 @@ async def lock_prediction(
         existing = session.exec(
             select(MatchPrediction).where(
                 MatchPrediction.match_id == match_id,
-                MatchPrediction.user_id == user_id,
+                MatchPrediction.user_id == current_user.id,
             )
         ).first()
 
@@ -241,7 +238,7 @@ async def lock_prediction(
             new_prediction = existing
         else:
             new_prediction = MatchPrediction(
-                user_id=user_id,
+                user_id=current_user.id,
                 match_id=match_id,
                 lineup_data=clean_lineup,
                 tactics_data=clean_tactics,
@@ -269,7 +266,7 @@ async def lock_prediction(
         session.rollback()
         # Log the real error server-side for debugging, but return a generic
         # message to the client so internal DB details are never exposed.
-        logger.error("DB error in lock_prediction (match=%s, user=%s): %s", match_id, user_id, e)
+        logger.error("DB error in lock_prediction (match=%s, user=%s): %s", match_id, current_user.id, e)
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="An internal error occurred. Please try again.",
