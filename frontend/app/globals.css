@@ -23,7 +23,7 @@
   --success: #00FF85;        /* Locked state                    */
 
   /* ── Layout ── */
-  --container: 1200px;
+  --container: 1400px;
 
   /* ── Team-dynamic (overridden by ThemeContext) ── */
   --team-primary: #00E87C;

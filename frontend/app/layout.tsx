@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/src/context/ThemeContext";
 import { AuthProvider } from "@/src/context/AuthContext";
 import TeamPicker from "@/src/components/TeamPicker";
 import CustomCursor from "@/src/components/CustomCursor";
+import KickoffBar from "@/src/components/KickoffBar";
 
 // Primary display — Space Grotesk 600 replaces Bebas Neue
 const spaceGrotesk = Space_Grotesk({
@@ -43,6 +44,7 @@ export default function RootLayout({
         <AuthProvider>
           <ThemeProvider>
             <CustomCursor />
+            <KickoffBar />
             <TeamPicker />
             {children}
           </ThemeProvider>

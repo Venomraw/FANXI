@@ -1,8 +1,10 @@
 'use client';
 import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTheme } from '@/src/context/ThemeContext';
 import { useAuth } from '@/src/context/AuthContext';
+import NavBar from '@/src/components/NavBar';
 
 interface LeaderboardEntry {
   rank: number;
@@ -38,9 +40,10 @@ export default function LeaderboardPage() {
 
   return (
     <div className="min-h-screen text-white relative overflow-hidden" style={{ background: 'var(--dark)' }}>
+      <NavBar subtitle="RANKINGS" />
       <div className="grid-bg opacity-30" />
 
-      <div className="max-w-2xl mx-auto px-5 py-8 relative z-10">
+      <div className="max-w-[900px] mx-auto px-7 py-8 relative z-10">
 
         {/* Header */}
         <div className="flex items-end justify-between mb-8">
@@ -129,7 +132,15 @@ export default function LeaderboardPage() {
                     {/* Info */}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="font-bold text-base text-white">{entry.username}</span>
+                        <Link
+                          href={`/profile/${encodeURIComponent(entry.username)}`}
+                          className="font-bold text-base text-white transition-colors"
+                          style={{ textDecoration: 'none' }}
+                          onMouseEnter={e => (e.currentTarget.style.color = primary)}
+                          onMouseLeave={e => (e.currentTarget.style.color = 'white')}
+                        >
+                          {entry.username}
+                        </Link>
                         {isMe && (
                           <span className="font-mono text-[10px] tracking-widest uppercase px-2 py-0.5 font-bold theme-transition"
                             style={{ background: `${primary}25`, color: primary }}>

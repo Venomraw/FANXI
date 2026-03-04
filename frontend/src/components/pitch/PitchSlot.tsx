@@ -26,11 +26,11 @@ export default function PitchSlot({ id, player }: PitchSlotProps) {
   return (
     <div
       ref={setNodeRef}
-      className="w-20 h-20 flex flex-col items-center justify-center theme-transition"
+      className="w-10 lg:w-12 xl:w-14 flex flex-col items-center justify-center theme-transition"
       style={slotStyle}>
       {player ? (
         <div className="w-full">
-          <DraggablePlayer id={player.name} name={player.name} number={player.number} />
+          <DraggablePlayer id={player.name} name={player.name} number={player.number} variant="pitch" />
         </div>
       ) : (
         <div

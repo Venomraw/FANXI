@@ -1,7 +1,7 @@
 'use client';
 import { useRouter } from 'next/navigation';
 import { useTheme } from '@/src/context/ThemeContext';
-import { useAuth } from '@/src/context/AuthContext';
+import NavBar from '@/src/components/NavBar';
 
 const HOW_STEPS = [
   {
@@ -106,78 +106,13 @@ const TIPS = [
 export default function GuidePage() {
   const router = useRouter();
   const { primary } = useTheme();
-  const { user, logout } = useAuth();
 
   const borderSubtle = `color-mix(in srgb, ${primary} 12%, transparent)`;
 
   return (
     <div className="min-h-screen flex flex-col font-sans" style={{ background: 'var(--dark)', color: 'var(--text)' }}>
 
-      {/* ── NAV ── */}
-      <nav className="sticky top-0 z-50 w-full border-b theme-transition glass-panel" style={{ borderColor: 'var(--border)' }}>
-        <div className="max-w-[1200px] mx-auto px-7 py-[18px] flex items-center justify-between gap-4">
-
-          <h1
-            className="font-display font-semibold text-[18px] tracking-[0.6px] leading-none theme-transition cursor-pointer"
-            onClick={() => router.push('/')}
-            style={{ color: primary }}
-          >
-            Fan<span style={{ color: 'var(--gold)' }}>XI</span>
-            <span className="font-mono text-[11px] tracking-[1px] ml-2 align-middle" style={{ color: 'var(--muted)' }}>GUIDE</span>
-          </h1>
-
-          {/* Section anchors */}
-          <ul className="hidden lg:flex items-center list-none">
-            {[
-              ['How to Play', '#how'],
-              ['Scoring',     '#scoring'],
-              ['Ranks',       '#ranks'],
-              ['Tips',        '#tips'],
-            ].map(([label, href]) => (
-              <li key={label}>
-                <a
-                  href={href}
-                  className="block px-4 py-2 font-sans font-semibold text-[13px] transition-all rounded-sm"
-                  style={{ color: 'var(--muted)' }}
-                  onMouseEnter={e => { e.currentTarget.style.color = primary; e.currentTarget.style.background = 'rgba(255,255,255,0.06)'; }}
-                  onMouseLeave={e => { e.currentTarget.style.color = 'var(--muted)'; e.currentTarget.style.background = 'transparent'; }}
-                >
-                  {label}
-                </a>
-              </li>
-            ))}
-          </ul>
-
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => router.push('/')}
-              className="font-sans font-semibold text-[13px] px-4 py-2 border transition-all"
-              style={{ borderColor: 'var(--border)', color: 'var(--muted)' }}
-              onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = primary; (e.currentTarget as HTMLButtonElement).style.color = primary; }}
-              onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = 'var(--border)'; (e.currentTarget as HTMLButtonElement).style.color = 'var(--muted)'; }}
-            >
-              ← Hub
-            </button>
-
-            {user && (
-              <div className="flex items-center gap-3 px-3 py-2 border" style={{ borderColor: 'var(--border)', background: 'rgba(255,255,255,0.04)' }}>
-                <div className="hidden sm:block text-right">
-                  <div className="font-bold text-sm leading-tight" style={{ color: 'var(--text)' }}>{user.username}</div>
-                  <div className="font-mono text-[10px] tracking-wider uppercase leading-tight theme-transition" style={{ color: primary }}>
-                    {user.rank_title} · {user.football_iq_points} pts
-                  </div>
-                </div>
-                <button
-                  onClick={() => { logout(); router.push('/login'); }}
-                  className="hover:text-red-400 transition-colors text-base leading-none"
-                  style={{ color: 'rgba(255,255,255,0.3)' }}
-                  title="Logout"
-                >⏻</button>
-              </div>
-            )}
-          </div>
-        </div>
-      </nav>
+      <NavBar subtitle="GUIDE" />
 
       {/* ── HERO ── */}
       <section className="relative py-16 md:py-24 overflow-hidden border-b" style={{ borderColor: 'var(--border)', background: 'radial-gradient(ellipse 100% 60% at 50% 0%, #0d2010 0%, var(--dark) 70%)' }}>
@@ -188,7 +123,7 @@ export default function GuidePage() {
             backgroundSize: '60px 60px',
           }}
         />
-        <div className="relative z-10 max-w-6xl mx-auto px-6 md:px-10">
+        <div className="relative z-10 max-w-[1400px] mx-auto px-6 md:px-10">
           <div className="font-mono text-[11px] tracking-widest uppercase mb-4 theme-transition" style={{ color: primary }}>
             ⚡ FIFA World Cup 2026 · FanXI Platform
           </div>
@@ -207,7 +142,7 @@ export default function GuidePage() {
 
       {/* ── HOW TO PLAY ── */}
       <section id="how" className="py-12 md:py-16 border-b" style={{ background: 'var(--dark3)', borderColor: 'var(--border)' }}>
-        <div className="max-w-6xl mx-auto px-6 md:px-10">
+        <div className="max-w-[1400px] mx-auto px-6 md:px-10">
           <div className="font-mono text-[11px] tracking-widest uppercase mb-3" style={{ color: primary }}>// 01 — Process</div>
           <h2
             className="font-display font-semibold leading-none mb-14"
@@ -247,7 +182,7 @@ export default function GuidePage() {
 
       {/* ── SCORING ── */}
       <section id="scoring" className="py-12 md:py-16 border-b" style={{ background: 'var(--dark)', borderColor: 'var(--border)' }}>
-        <div className="max-w-6xl mx-auto px-6 md:px-10">
+        <div className="max-w-[1400px] mx-auto px-6 md:px-10">
           <div className="font-mono text-[11px] tracking-widest uppercase mb-3" style={{ color: primary }}>// 02 — Point System</div>
           <h2
             className="font-display font-semibold leading-none mb-14"
@@ -315,7 +250,7 @@ export default function GuidePage() {
 
       {/* ── RANKS ── */}
       <section id="ranks" className="py-12 md:py-16 border-b" style={{ background: 'var(--dark3)', borderColor: 'var(--border)' }}>
-        <div className="max-w-6xl mx-auto px-6 md:px-10">
+        <div className="max-w-[1400px] mx-auto px-6 md:px-10">
           <div className="font-mono text-[11px] tracking-widest uppercase mb-3" style={{ color: primary }}>// 03 — Progression</div>
           <h2
             className="font-display font-semibold leading-none mb-14"
@@ -394,7 +329,7 @@ export default function GuidePage() {
 
       {/* ── TIPS ── */}
       <section id="tips" className="py-12 md:py-16 border-b" style={{ background: 'var(--dark)', borderColor: 'var(--border)' }}>
-        <div className="max-w-6xl mx-auto px-6 md:px-10">
+        <div className="max-w-[1400px] mx-auto px-6 md:px-10">
           <div className="font-mono text-[11px] tracking-widest uppercase mb-3" style={{ color: primary }}>// 04 — Edge</div>
           <h2
             className="font-display font-semibold leading-none mb-14"

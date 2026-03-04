@@ -3,6 +3,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTheme } from '@/src/context/ThemeContext';
 import { useAuth } from '@/src/context/AuthContext';
+import NavBar from '@/src/components/NavBar';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -283,6 +284,7 @@ export default function NationPage() {
 
   return (
     <div className="min-h-screen bg-[var(--dark)] text-[var(--text)]">
+      <NavBar subtitle="INTEL" />
 
       {/* ── HERO ────────────────────────────────────────────────────────────── */}
       <div className="relative overflow-hidden"
@@ -296,7 +298,7 @@ export default function NationPage() {
         {/* Grid overlay */}
         <div className="grid-bg opacity-30" />
 
-        <div className="relative max-w-5xl mx-auto px-4 pt-5 pb-8 z-10">
+        <div className="relative max-w-[1400px] mx-auto px-4 pt-5 pb-8 z-10">
 
           {/* Nav row */}
           <div className="flex items-center justify-between mb-8">
@@ -379,7 +381,7 @@ export default function NationPage() {
           backdropFilter: 'blur(24px)',
           borderColor: `color-mix(in srgb, ${primary} 12%, transparent)`,
         }}>
-        <div className="max-w-5xl mx-auto px-4">
+        <div className="max-w-[1400px] mx-auto px-4">
           <div className="flex gap-px py-2">
             {tabs.map(tab => (
               <button key={tab.id} onClick={() => setActiveTab(tab.id)}
@@ -411,7 +413,7 @@ export default function NationPage() {
       </div>
 
       {/* ── CONTENT ─────────────────────────────────────────────────────────── */}
-      <div className="max-w-5xl mx-auto px-4 py-8">
+      <div className="max-w-[1400px] mx-auto px-4 py-8">
 
         {/* ── NEWS TAB ──────────────────────────────────────────────────────── */}
         {activeTab === 'news' && (

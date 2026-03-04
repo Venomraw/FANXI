@@ -195,3 +195,37 @@ def reset_password(body: ResetPasswordRequest, session: Session = Depends(get_se
     session.commit()
 
     return {"message": "Password updated. You can now log in."}
+
+
+# ---------------------------------------------------------------------------
+# Public profile — returns safe public data for any user by username
+# ---------------------------------------------------------------------------
+
+@router.get("/users/profile/{username}")
+def get_public_profile(username: str, session: Session = Depends(get_session)):
+    user = session.exec(select(User).where(User.username == username)).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="Scout not found")
+
+    # Global rank: count of users with strictly more IQ points, + 1
+    from sqlmodel import func
+    higher_count = session.exec(
+        select(func.count(User.id)).where(User.football_iq_points > user.football_iq_points)
+    ).one()
+    global_rank = higher_count + 1
+
+    # Prediction count
+    from app.models import MatchPrediction
+    prediction_count = session.exec(
+        select(func.count(MatchPrediction.id)).where(MatchPrediction.user_id == user.id)
+    ).one()
+
+    return {
+        "id": user.id,
+        "username": user.username,
+        "country_allegiance": user.country_allegiance,
+        "football_iq_points": user.football_iq_points,
+        "rank_title": user.rank_title,
+        "global_rank": global_rank,
+        "prediction_count": prediction_count,
+    }
