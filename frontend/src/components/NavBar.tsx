@@ -8,6 +8,7 @@ const NAV_LINKS = [
   { label: 'Hub',         href: '/'            },
   { label: 'Matches',     href: '/matches'     },
   { label: 'Intel',       href: '/nation'      },
+  { label: 'AI',          href: '/ai'          },
   { label: 'Leaderboard', href: '/leaderboard' },
   { label: 'Guide',       href: '/guide'       },
 ];
@@ -38,7 +39,7 @@ export default function NavBar({ subtitle }: NavBarProps) {
       >
         {/* Team-primary top accent line */}
         <div
-          className="h-[3px] w-full theme-transition"
+          className="h-[4px] w-full theme-transition"
           style={{
             background: `linear-gradient(90deg, transparent 0%, ${primary} 25%, ${primary} 75%, transparent 100%)`,
           }}
@@ -46,7 +47,7 @@ export default function NavBar({ subtitle }: NavBarProps) {
 
         <div
           className="max-w-[1400px] mx-auto px-7 flex items-center justify-between"
-          style={{ height: '80px' }}
+          style={{ height: '100px' }}
         >
           {/* ── Logo ── */}
           <button
@@ -56,14 +57,23 @@ export default function NavBar({ subtitle }: NavBarProps) {
           >
             <span
               className="font-display font-semibold leading-none theme-transition"
-              style={{ fontSize: '30px', color: primary, letterSpacing: '-1px' }}
+              style={{ fontSize: '52px', color: primary, letterSpacing: '-2px', lineHeight: 1 }}
             >
               Fan<span style={{ color: 'var(--gold)' }}>XI</span>
             </span>
             {subtitle && (
               <span
-                className="font-mono text-[8px] tracking-[2px] uppercase hidden sm:inline-block self-start mt-1"
-                style={{ color: 'var(--muted)' }}
+                className="font-mono hidden sm:inline-block"
+                style={{
+                  fontSize: '9px',
+                  letterSpacing: '3px',
+                  textTransform: 'uppercase',
+                  color: primary,
+                  border: `1px solid color-mix(in srgb, ${primary} 30%, transparent)`,
+                  background: `color-mix(in srgb, ${primary} 8%, transparent)`,
+                  padding: '2px 8px',
+                  marginTop: '6px',
+                }}
               >
                 /{subtitle}
               </span>
@@ -71,7 +81,7 @@ export default function NavBar({ subtitle }: NavBarProps) {
           </button>
 
           {/* ── Nav links (desktop) ── */}
-          <ul className="hidden lg:flex items-center list-none h-full" style={{ gap: '8px' }}>
+          <ul className="hidden lg:flex items-center list-none h-full" style={{ gap: '2px' }}>
             {NAV_LINKS.map(({ label, href }) => {
               const active = isActive(href);
               return (
@@ -80,10 +90,11 @@ export default function NavBar({ subtitle }: NavBarProps) {
                     href={href}
                     className="relative flex items-center h-full font-sans font-semibold transition-all duration-200"
                     style={{
-                      fontSize: '15px',
+                      fontSize: '12px',
                       color: active ? 'var(--text)' : 'var(--muted)',
                       padding: '0 20px',
-                      letterSpacing: '0.1px',
+                      letterSpacing: '2px',
+                      textTransform: 'uppercase',
                     }}
                     onMouseEnter={e => {
                       if (!active) e.currentTarget.style.color = 'var(--text)';

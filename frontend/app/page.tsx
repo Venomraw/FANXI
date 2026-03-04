@@ -2,7 +2,6 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import PitchBoard from "@/src/components/pitch/PitchBoard";
-import Countdown from "@/src/components/hub/Countdown";
 import UserStats from "@/src/components/hub/UserStats";
 import MiniLeaderboard from "@/src/components/hub/MiniLeaderboard";
 import NavBar from "@/src/components/NavBar";
@@ -12,7 +11,7 @@ import { useAuth } from "@/src/context/AuthContext";
 
 const TICKER_ITEMS = [
   '⚽ WORLD CUP 2026 — JUNE 11 → JULY 19',
-  '🏟️ AT&T STADIUM — ARLINGTON TX',
+  '🌎 USA · CANADA · MEXICO — 48 NATIONS · 104 MATCHES',
   '🧠 PREDICT THE STARTING XI',
   '⚡ LOCK YOUR PREDICTION 1H BEFORE KICKOFF',
   '🎯 48 NATIONS · 104 MATCHES',
@@ -62,6 +61,16 @@ export default function Home() {
     if (!isLoading && !user) router.push('/login');
   }, [user, isLoading, router]);
 
+  useEffect(() => {
+    const els = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver(
+      entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }),
+      { threshold: 0.15 }
+    );
+    els.forEach(el => observer.observe(el));
+    return () => observer.disconnect();
+  }, []);
+
   if (isLoading || !user) return null;
 
   const tickerFull = [...TICKER_ITEMS, ...TICKER_ITEMS].join('  ·  ');
@@ -75,37 +84,31 @@ export default function Home() {
       <section
         className="relative flex flex-col justify-center overflow-hidden"
         style={{
-          minHeight: '85vh',
-          paddingTop: '120px',
-          paddingBottom: '80px',
+          minHeight: 'auto',
+          paddingTop: '20px',
+          paddingBottom: '100px',
           background: 'radial-gradient(ellipse 120% 60% at 60% 0%, #0d2010 0%, var(--dark) 70%)',
         }}
       >
         {/* Animated grid BG */}
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            backgroundImage: `linear-gradient(rgba(0,232,124,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(0,232,124,0.04) 1px, transparent 1px)`,
-            backgroundSize: '60px 60px',
-          }}
-        />
+        <div className="grid-bg-primary absolute inset-0 pointer-events-none" />
         {/* Gold orb */}
         <div
           className="absolute right-0 top-1/4 pointer-events-none hidden lg:block"
           style={{ width: '500px', height: '500px', background: 'radial-gradient(circle, rgba(255,210,63,0.06), transparent 70%)', borderRadius: '50%' }}
         />
 
-        <div className="relative z-10 max-w-[1400px] mx-auto w-full px-7">
+        <div className="relative z-10 max-w-[1400px] mx-auto w-full px-8">
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-16 items-center">
 
             {/* ── Left: title + body + CTAs ── */}
             <div>
-              <div className="font-mono text-[11px] tracking-widest uppercase mb-5 theme-transition" style={{ color: primary }}>
-                ⚡ FIFA World Cup 2026 — June 11 → July 19 · Dallas, Texas
+              <div className="font-mono text-[11px] tracking-widest uppercase mb-7 theme-transition" style={{ color: primary }}>
+                ⚡ FIFA World Cup 2026 — June 11 → July 19 · USA · Canada · Mexico
               </div>
 
               <h1
-                className="font-display font-semibold leading-none mb-4"
+                className="font-display font-semibold leading-none mb-6"
                 style={{ fontSize: 'clamp(72px, 10vw, 160px)', letterSpacing: '-1px', lineHeight: '0.88' }}
               >
                 PREDICT THE<br />
@@ -113,13 +116,13 @@ export default function Home() {
               </h1>
 
               <p
-                className="font-sans font-semibold mb-8"
+                className="font-sans font-semibold mb-10"
                 style={{ fontSize: 'clamp(16px, 1.4vw, 20px)', letterSpacing: '0.5px', color: 'var(--gold)' }}
               >
                 48 Nations · 104 Matches · 1 World Cup
               </p>
 
-              <p className="text-[15px] leading-relaxed mb-10 max-w-lg" style={{ color: 'var(--muted)' }}>
+              <p className="text-[15px] leading-relaxed mb-12 max-w-lg" style={{ color: 'var(--muted)' }}>
                 The world's first tactical prediction platform for the World Cup. Predict lineups, formations, tactics and match stats — then watch AI score your football IQ in real time.
               </p>
 
@@ -157,7 +160,13 @@ export default function Home() {
                 <div
                   key={s.label}
                   className="flex flex-col justify-center items-center py-10 theme-transition"
-                  style={{ background: 'var(--dark3)' }}
+                  style={{ background: 'var(--dark3)', transition: 'background 0.3s ease' }}
+                  onMouseEnter={e => {
+                    (e.currentTarget as HTMLDivElement).style.background = `color-mix(in srgb, ${primary} 8%, var(--dark3))`;
+                  }}
+                  onMouseLeave={e => {
+                    (e.currentTarget as HTMLDivElement).style.background = 'var(--dark3)';
+                  }}
                 >
                   <div
                     className="font-display font-semibold leading-none theme-transition"
@@ -208,7 +217,7 @@ export default function Home() {
         <div className="max-w-[1400px] mx-auto px-7">
 
           {/* Header */}
-          <div className="mb-16">
+          <div className="mb-16 reveal">
             <div className="font-mono text-[11px] tracking-widest uppercase mb-3 theme-transition" style={{ color: primary }}>
               // Match Day Experience
             </div>
@@ -248,7 +257,7 @@ export default function Home() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-px" style={{ background: 'var(--border)' }}>
 
             {/* PRE-MATCH */}
-            <div className="relative p-8 flex flex-col gap-5 overflow-hidden" style={{ background: 'var(--dark3)' }}>
+            <div className="relative p-8 flex flex-col gap-5 overflow-hidden reveal" style={{ background: 'var(--dark3)' }}>
               {/* Background watermark */}
               <div
                 className="absolute right-4 top-4 font-display font-semibold leading-none select-none pointer-events-none"
@@ -298,7 +307,7 @@ export default function Home() {
             </div>
 
             {/* HALF-TIME */}
-            <div className="relative p-8 flex flex-col gap-5 overflow-hidden" style={{ background: 'var(--dark3)' }}>
+            <div className="relative p-8 flex flex-col gap-5 overflow-hidden reveal" style={{ background: 'var(--dark3)' }}>
               <div
                 className="absolute right-4 top-4 font-display font-semibold leading-none select-none pointer-events-none"
                 style={{ fontSize: '120px', color: 'var(--gold)', opacity: 0.04, lineHeight: 1 }}
@@ -346,7 +355,7 @@ export default function Home() {
             </div>
 
             {/* FULL-TIME */}
-            <div className="relative p-8 flex flex-col gap-5 overflow-hidden" style={{ background: 'var(--dark3)' }}>
+            <div className="relative p-8 flex flex-col gap-5 overflow-hidden reveal" style={{ background: 'var(--dark3)' }}>
               <div
                 className="absolute right-4 top-4 font-display font-semibold leading-none select-none pointer-events-none"
                 style={{ fontSize: '120px', color: 'var(--blue)', opacity: 0.04, lineHeight: 1 }}
@@ -397,7 +406,7 @@ export default function Home() {
 
           {/* Bottom AI feedback preview */}
           <div
-            className="mt-px p-6 flex flex-col sm:flex-row items-center gap-4 border-t"
+            className="mt-px p-6 flex flex-col sm:flex-row items-center gap-4 border-t reveal"
             style={{ background: 'var(--dark3)', borderColor: 'var(--border)' }}
           >
             <div className="text-2xl flex-shrink-0">🤖</div>
@@ -436,13 +445,6 @@ export default function Home() {
             <UserStats />
             <MiniLeaderboard />
           </div>
-        </div>
-      </section>
-
-      {/* ── COUNTDOWN ── */}
-      <section className="py-20 border-t border-b" style={{ background: 'var(--dark3)', borderColor: 'var(--border)' }}>
-        <div className="max-w-[1400px] mx-auto px-7">
-          <Countdown />
         </div>
       </section>
 

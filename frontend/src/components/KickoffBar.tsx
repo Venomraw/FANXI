@@ -32,78 +32,78 @@ export default function KickoffBar() {
 
   return (
     <div
-      className="w-full z-[60] flex items-center justify-center gap-6 py-2 px-4 border-b"
+      className="w-full z-[60]"
       style={{
-        background: 'var(--dark3)',
-        borderColor: 'var(--border)',
-        minHeight: '36px',
+        background: 'rgba(6,10,6,0.98)',
+        backdropFilter: 'blur(12px)',
+        WebkitBackdropFilter: 'blur(12px)',
+        borderBottom: '1px solid color-mix(in srgb, var(--team-primary) 20%, transparent)',
+        height: '44px',
       }}
     >
-      {/* Live dot */}
-      <div className="hidden sm:flex items-center gap-2">
-        <span className="haki-dot" style={{ width: '5px', height: '5px' }} />
-        <span
-          className="font-mono text-[10px] tracking-widest uppercase"
-          style={{ color: 'var(--muted)' }}
-        >
-          WC 2026 Kickoff
-        </span>
-      </div>
-
-      {/* Divider */}
-      <div className="hidden sm:block h-3 w-px" style={{ background: 'var(--border)' }} />
-
-      {/* Countdown units */}
-      {ready ? (
-        <div className="flex items-center gap-4">
-          {[
-            { v: days,    l: 'D' },
-            { v: hours,   l: 'H' },
-            { v: minutes, l: 'M' },
-            { v: seconds, l: 'S' },
-          ].map(({ v, l }, i) => (
-            <div key={l} className="flex items-center gap-4">
-              <div className="flex items-baseline gap-1">
-                <span
-                  className="font-display font-semibold tabular-nums"
-                  style={{ fontSize: '15px', lineHeight: '1', color: 'var(--text)' }}
-                >
-                  {String(v).padStart(2, '0')}
-                </span>
-                <span
-                  className="font-mono text-[9px] tracking-widest uppercase"
-                  style={{ color: 'var(--muted)' }}
-                >
-                  {l}
-                </span>
-              </div>
-              {i < 3 && (
-                <span
-                  className="font-mono text-[11px]"
-                  style={{ color: 'var(--border)', animation: 'colonBlink 1s step-start infinite' }}
-                >
-                  :
-                </span>
-              )}
-            </div>
-          ))}
-        </div>
-      ) : (
-        <span className="font-mono text-[10px] tracking-widest" style={{ color: 'var(--muted)' }}>
-          SYNCING...
-        </span>
-      )}
-
-      {/* Divider */}
-      <div className="hidden sm:block h-3 w-px" style={{ background: 'var(--border)' }} />
-
-      {/* Event label */}
-      <span
-        className="hidden sm:block font-mono text-[10px] tracking-widest uppercase"
-        style={{ color: 'var(--muted)' }}
+      <div
+        className="h-full mx-auto flex items-center justify-between"
+        style={{ maxWidth: '1400px', padding: '0 32px' }}
       >
-        Jun 11 → Jul 19 · Dallas, TX
-      </span>
+        {/* ── LEFT — Event label ── */}
+        <div className="hidden sm:flex items-center gap-3">
+          <span style={{ fontSize: '13px' }}>⚽</span>
+          <span
+            className="font-mono uppercase"
+            style={{ fontSize: '9px', letterSpacing: '3px', color: 'var(--muted)' }}
+          >
+            FIFA World Cup 2026
+          </span>
+          <div className="w-px h-3" style={{ background: 'var(--border)' }} />
+        </div>
+
+        {/* ── CENTER — Countdown ── */}
+        {ready ? (
+          <div className="flex items-center" style={{ gap: '10px' }}>
+            {[
+              { v: days,    l: 'd', highlight: false },
+              { v: hours,   l: 'h', highlight: false },
+              { v: minutes, l: 'm', highlight: false },
+              { v: seconds, l: 's', highlight: true  },
+            ].map(({ v, l, highlight }, i) => (
+              <div key={l} className="flex items-center" style={{ gap: '10px' }}>
+                <span style={{ whiteSpace: 'nowrap' }}>
+                  <span
+                    className="font-display font-semibold tabular-nums"
+                    style={{ fontSize: '15px', color: highlight ? 'var(--team-primary)' : 'var(--text)' }}
+                  >
+                    {String(v).padStart(2, '0')}
+                  </span>
+                  <span
+                    className="font-mono"
+                    style={{ fontSize: '10px', color: 'var(--text)', opacity: 0.5 }}
+                  >
+                    {l}
+                  </span>
+                </span>
+                {i < 3 && (
+                  <span className="font-mono" style={{ fontSize: '12px', color: 'var(--muted)', opacity: 0.4 }}>·</span>
+                )}
+              </div>
+            ))}
+          </div>
+        ) : (
+          <span className="font-mono text-[10px] tracking-widest" style={{ color: 'var(--muted)' }}>
+            SYNCING...
+          </span>
+        )}
+
+        {/* ── RIGHT — Host nations ── */}
+        <div className="hidden sm:flex items-center gap-3">
+          <div className="w-px h-3" style={{ background: 'var(--border)' }} />
+          <span
+            className="font-mono uppercase"
+            style={{ fontSize: '9px', letterSpacing: '2px', color: 'var(--muted)' }}
+          >
+            🇺🇸 USA · 🇨🇦 Canada · 🇲🇽 Mexico
+          </span>
+        </div>
+      </div>
     </div>
   );
 }

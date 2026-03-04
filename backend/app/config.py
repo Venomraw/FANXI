@@ -21,6 +21,9 @@ class Settings(BaseSettings):
     resend_api_key: str = ""
     frontend_url: str = "http://localhost:3000"
 
+    # Anthropic Claude API
+    anthropic_api_key: str = ""
+
     # Tell Pydantic where to read env vars from
     model_config = SettingsConfigDict(
         env_file=".env",
