@@ -61,6 +61,7 @@ app.add_exception_handler(RateLimitExceeded, custom_rate_limit_handler)
 origins = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
+    "https://fanxi.vercel.app",
 ]
 
 app.add_middleware(
