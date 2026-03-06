@@ -47,11 +47,11 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html {
   scroll-behavior: smooth;
-  background-color: #050d08 !important;
+  background-color: transparent !important;
 }
 
 body {
-  background-color: #050d08 !important;
+  background-color: transparent !important;
   color: var(--text);
   font-family: var(--font-syne, 'Syne', sans-serif);
   font-size: 15px;
