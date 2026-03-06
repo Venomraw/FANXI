@@ -12,3 +12,4 @@ python-multipart
 jinja2
 anthropic
 slowapi==0.1.9
+psycopg2-binary==2.9.9
