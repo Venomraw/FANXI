@@ -69,7 +69,7 @@ export default function Home() {
   const tickerFull = [...TICKER_ITEMS, ...TICKER_ITEMS].join('  ·  ');
 
   return (
-    <div className="flex min-h-screen flex-col font-sans" style={{ background: 'var(--dark)', color: 'var(--text)' }}>
+    <div className="flex min-h-screen flex-col font-sans" style={{ background: 'transparent', color: 'var(--text)' }}>
 
       <NavBar subtitle="HUB" />
 
@@ -80,7 +80,7 @@ export default function Home() {
           minHeight: 'auto',
           paddingTop: '20px',
           paddingBottom: '100px',
-          background: 'radial-gradient(ellipse 120% 60% at 60% 0%, #0d2010 0%, var(--dark) 70%)',
+          background: 'transparent',
         }}
       >
         {/* Animated grid BG */}
@@ -186,7 +186,7 @@ export default function Home() {
       </div>
 
       {/* ── GUIDE CTA ── */}
-      <section className="py-14 border-t border-b" style={{ background: 'var(--dark3)', borderColor: 'var(--border)' }}>
+      <section className="py-14 border-t border-b" style={{ background: 'rgba(5, 13, 8, 0.75)', borderColor: 'var(--border)' }}>
         <div className="max-w-[1400px] mx-auto px-7 flex flex-col sm:flex-row items-center justify-between gap-6">
           <div>
             <div className="font-mono text-[11px] tracking-widest uppercase mb-2" style={{ color: primary }}>// New to FanXI?</div>
@@ -206,7 +206,7 @@ export default function Home() {
       </section>
 
       {/* ── HOW IT WORKS ── */}
-      <section className="py-24 border-b overflow-hidden" style={{ background: 'var(--dark)', borderColor: 'var(--border)' }}>
+      <section className="py-24 border-b overflow-hidden" style={{ background: 'rgba(5, 13, 8, 0.6)', borderColor: 'var(--border)' }}>
         <div className="max-w-[1400px] mx-auto px-7">
 
           {/* Header */}
@@ -424,7 +424,7 @@ export default function Home() {
       </section>
 
       {/* ── PITCH BUILDER (main interactive section) ── */}
-      <section id="builder" className="py-24" style={{ background: 'var(--dark)' }}>
+      <section id="builder" className="py-24" style={{ background: 'rgba(5, 13, 8, 0.6)' }}>
         <div className="max-w-[1400px] mx-auto px-7">
           <div className="font-mono text-[11px] tracking-widest uppercase mb-3" style={{ color: primary }}>// Tactical Engine</div>
           <h2
@@ -443,7 +443,7 @@ export default function Home() {
 
 
       {/* ── LEAGUES ── */}
-      <section id="leagues" className="py-24" style={{ background: 'var(--dark3)' }}>
+      <section id="leagues" className="py-24" style={{ background: 'rgba(5, 13, 8, 0.75)' }}>
         <div className="max-w-[1400px] mx-auto px-7">
           <div className="font-mono text-[11px] tracking-widest uppercase mb-3" style={{ color: primary }}>// Competition</div>
           <h2
@@ -482,7 +482,7 @@ export default function Home() {
       </section>
 
       {/* ── FOOTER ── */}
-      <footer className="pt-14 pb-9 border-t" style={{ background: 'var(--dark)', borderColor: 'var(--border)' }}>
+      <footer className="pt-14 pb-9 border-t" style={{ background: 'rgba(5, 13, 8, 0.85)', borderColor: 'var(--border)' }}>
         <div className="max-w-[1400px] mx-auto px-7">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-14 mb-14">
 
