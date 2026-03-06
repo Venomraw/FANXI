@@ -12,6 +12,9 @@ class Settings(BaseSettings):
     football_laliga_id: int = 140
     football_season: int = 2024
 
+    # Database
+    database_url: str = ""
+
     # Nation Intel APIs
     guardian_api_key: str = ""
     newsdata_api_key: str = ""
