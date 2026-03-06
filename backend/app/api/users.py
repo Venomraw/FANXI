@@ -110,8 +110,8 @@ def login(
         key="fanxi_refresh",
         value=refresh_token,
         httponly=True,
-        secure=False,               # set True in production (requires HTTPS)
-        samesite="lax",
+        secure=True,
+        samesite="none",
         max_age=60 * 60 * 24 * 7,  # 7 days in seconds
         path="/auth/refresh",       # cookie only sent to the refresh endpoint
     )
@@ -179,7 +179,7 @@ def refresh_token(
 
 @router.post("/auth/logout", status_code=status.HTTP_204_NO_CONTENT)
 def logout(response: Response):
-    response.delete_cookie(key="fanxi_refresh", path="/auth/refresh")
+    response.delete_cookie(key="fanxi_refresh", path="/auth/refresh", samesite="none", secure=True)
 
 
 # ---------------------------------------------------------------------------
