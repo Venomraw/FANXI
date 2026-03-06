@@ -5,8 +5,8 @@
 ═══════════════════════════════════════════ */
 :root {
   /* ── Backgrounds — rich deep green ── */
-  --dark:        #0a1f0f;   /* base background — deep pitch green */
-  --dark2:       #0a1f0f;   /* same as dark */
+  --dark:        #0d2614;   /* base background — stadium night green */
+  --dark2:       #0d2614;   /* same as dark */
   --dark3:       rgba(8, 25, 12, 0.92);   /* card surface — glass over grass */
   --mid:         #1a3d25;   /* hover / active surface */
   --border:      rgba(255,255,255,0.1);   /* borders — glass-friendly */
@@ -48,43 +48,31 @@
 html { scroll-behavior: smooth; }
 
 body {
-  background-color: #0a1f0f;
+  background-color: #0d2614;
   color: var(--text);
   background-image:
-    /* Floodlight 1 — top left corner */
+    /* Floodlight top-left */
     radial-gradient(
-      ellipse 60% 40% at 15% 0%,
-      rgba(255, 248, 220, 0.12) 0%,
+      ellipse 50% 35% at 10% 0%,
+      rgba(255, 252, 210, 0.15) 0%,
       transparent 70%
     ),
-    /* Floodlight 2 — top right corner */
+    /* Floodlight top-right */
     radial-gradient(
-      ellipse 60% 40% at 85% 0%,
-      rgba(255, 248, 220, 0.12) 0%,
+      ellipse 50% 35% at 90% 0%,
+      rgba(255, 252, 210, 0.15) 0%,
       transparent 70%
     ),
-    /* Floodlight 3 — subtle center top glow */
-    radial-gradient(
-      ellipse 40% 25% at 50% 0%,
-      rgba(255, 248, 220, 0.06) 0%,
-      transparent 60%
-    ),
-    /* Dark night overlay */
-    linear-gradient(
-      rgba(3, 10, 5, 0.82),
-      rgba(3, 10, 5, 0.82)
-    ),
-    /* Real grass texture */
-    url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1920&q=80&fit=crop');
-  background-size:
-    100% 100%,
-    100% 100%,
-    100% 100%,
-    cover,
-    cover;
+    /* Pitch stripe pattern - light bands */
+    repeating-linear-gradient(
+      180deg,
+      rgba(255,255,255,0.03) 0px,
+      rgba(255,255,255,0.03) 80px,
+      rgba(0,0,0,0.12) 80px,
+      rgba(0,0,0,0.12) 160px
+    );
   background-attachment: fixed;
-  background-position: center;
-  background-repeat: no-repeat;
+  background-size: 100% 100%, 100% 100%, 100% 160px;
   font-family: var(--font-syne, 'Syne', sans-serif);
   font-size: 15px;
   line-height: 1.6;
