@@ -44,13 +44,6 @@ const LEAGUES = [
   },
 ];
 
-const DALLAS_MATCHES = [
-  { date: 'JUN 12', teams: 'Group Stage — Match 1', type: 'Group Phase', gold: false },
-  { date: 'JUN 16', teams: 'Group Stage — Match 2', type: 'Group Phase', gold: false },
-  { date: 'JUN 20', teams: 'Group Stage — Match 3', type: 'Group Phase', gold: false },
-  { date: 'JUL 6',  teams: 'Round of 16',           type: 'Knockout',    gold: false },
-  { date: 'JUL 14', teams: '⭐ SEMI-FINAL',          type: 'Semi-Final',  gold: true  },
-];
 
 export default function Home() {
   const { team, primary } = useTheme();
@@ -488,57 +481,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── DALLAS ── */}
-      <section
-        id="dallas"
-        className="py-24 border-t border-b overflow-hidden"
-        style={{ background: 'linear-gradient(135deg, var(--dark) 0%, #0D1A06 50%, var(--dark) 100%)', borderColor: 'var(--border)' }}
-      >
-        <div className="max-w-[1400px] mx-auto px-7 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-
-          {/* Left copy */}
-          <div>
-            <div
-              className="inline-flex items-center gap-2 px-4 py-2 mb-5 font-mono text-[9px] tracking-widest uppercase border"
-              style={{ background: 'rgba(255,210,63,0.08)', borderColor: 'rgba(255,210,63,0.25)', color: 'var(--gold)' }}
-            >
-              📍 Host City — Dallas / Fort Worth
-            </div>
-            <div className="font-mono text-[11px] tracking-widest uppercase mb-3" style={{ color: primary }}>// Local Advantage</div>
-            <h2
-              className="font-display font-semibold leading-none mb-5"
-              style={{ fontSize: 'clamp(44px, 6vw, 86px)', letterSpacing: '1px', lineHeight: '0.95' }}
-            >
-              AT&T<br />STADIUM<br />
-              <span style={{ color: 'var(--gold)' }}>ARLINGTON</span>
-            </h2>
-            <p className="text-[14px] leading-relaxed max-w-md" style={{ color: 'var(--muted)' }}>
-              Nine World Cup matches, including a Semi-Final. Dallas is at the heart of the tournament. Join a{' '}
-              <strong style={{ color: primary }}>DFW-only mini-league</strong> and prove your local supremacy.
-            </p>
-          </div>
-
-          {/* Right: match schedule */}
-          <div className="flex flex-col gap-2.5">
-            <div className="font-mono text-[9px] tracking-widest uppercase mb-1" style={{ color: primary }}>AT&T STADIUM SCHEDULE</div>
-            {DALLAS_MATCHES.map(match => (
-              <div
-                key={match.date}
-                className="flex items-center gap-4 px-5 py-3.5 border transition-colors duration-200"
-                style={{
-                  background: 'var(--dark3)',
-                  borderColor: match.gold ? 'rgba(255,210,63,0.3)' : 'var(--border)',
-                }}
-              >
-                <div className="font-mono text-[9px] tracking-wide min-w-[56px]" style={{ color: 'var(--gold)' }}>{match.date}</div>
-                <div className="flex-1 text-sm font-bold">{match.teams}</div>
-                <div className="font-mono text-[8px] tracking-wide uppercase" style={{ color: match.gold ? 'var(--gold)' : 'var(--muted)' }}>{match.type}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* ── FOOTER ── */}
       <footer className="pt-14 pb-9 border-t" style={{ background: 'var(--dark)', borderColor: 'var(--border)' }}>
         <div className="max-w-[1400px] mx-auto px-7">
@@ -583,7 +525,6 @@ export default function Home() {
               <ul className="space-y-2">
                 {[
                   ['Scoring Rules',  '#scoring'],
-                  ['Fixtures',       '#dallas'],
                   ['How It Works',   '#how-it-works'],
                   ['Nation Intel',   '/nation'],
                 ].map(([label, href]) => (

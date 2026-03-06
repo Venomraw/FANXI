@@ -1,18 +1,25 @@
 from typing import Iterator
 from sqlalchemy import text
 from sqlmodel import SQLModel, create_engine, Session, select
+from app.config import settings
 
 # ---------------------------------------------------------------------------
 # Engine configuration
 # ---------------------------------------------------------------------------
 
-sqlite_file_name = "fanxi.db"
-sqlite_url = f"sqlite:///{sqlite_file_name}"
+def get_engine():
+    db_url = settings.database_url
+    if db_url and "postgresql" in db_url:
+        # PostgreSQL (Neon) — SSL handled via the connection string params
+        return create_engine(db_url, echo=False)
+    else:
+        # SQLite fallback for local dev
+        sqlite_url = "sqlite:///fanxi.db"
+        return create_engine(
+            sqlite_url, echo=False, connect_args={"check_same_thread": False}
+        )
 
-# echo=False prevents SQLAlchemy from printing every SQL statement to stdout.
-# Set echo=True temporarily when debugging query issues, but never in production
-# because SQL logs can expose sensitive data (e.g. hashed passwords in INSERT).
-engine = create_engine(sqlite_url, echo=False)
+engine = get_engine()
 
 
 # ---------------------------------------------------------------------------
@@ -42,18 +49,18 @@ def run_migrations() -> None:
     """
     Add new columns to existing tables without dropping data.
 
-    SQLite does not support DROP COLUMN or complex ALTER TABLE, but it does
-    allow ADD COLUMN.  We wrap each statement in a try/except so this is safe
-    to call on every startup — columns that already exist raise an
-    OperationalError which we silently ignore.
+    Uses an existence check before ALTER TABLE so this is safe to call on
+    every startup on both SQLite and PostgreSQL. PostgreSQL aborts the whole
+    transaction on a duplicate-column error, so we must avoid the error
+    rather than catch it.
     """
     new_columns = [
         # MatchPrediction — 5 core outcome prediction fields
-        ("matchprediction", "match_result",    "TEXT"),
-        ("matchprediction", "btts_prediction", "INTEGER"),
-        ("matchprediction", "correct_score",   "JSON"),
-        ("matchprediction", "over_under",      "JSON"),
-        ("matchprediction", "ht_ft",           "JSON"),
+        ("matchprediction", "match_result",       "TEXT"),
+        ("matchprediction", "btts_prediction",    "INTEGER"),
+        ("matchprediction", "correct_score",      "JSON"),
+        ("matchprediction", "over_under",         "JSON"),
+        ("matchprediction", "ht_ft",              "JSON"),
         ("matchprediction", "player_predictions", "JSON"),
         # MatchDB — real result columns for scoring
         ("matchdb", "home_goals",    "INTEGER"),
@@ -61,13 +68,22 @@ def run_migrations() -> None:
         ("matchdb", "ht_home_goals", "INTEGER"),
         ("matchdb", "ht_away_goals", "INTEGER"),
     ]
+    is_pg = "postgresql" in (settings.database_url or "")
     with engine.connect() as conn:
         for table, col, col_type in new_columns:
-            try:
+            if is_pg:
+                exists = conn.execute(text(
+                    "SELECT 1 FROM information_schema.columns "
+                    "WHERE table_name = :t AND column_name = :c"
+                ), {"t": table, "c": col}).fetchone()
+            else:
+                # SQLite: PRAGMA table_info
+                rows = conn.execute(text(f"PRAGMA table_info({table})")).fetchall()
+                exists = any(row[1] == col for row in rows)
+
+            if not exists:
                 conn.execute(text(f"ALTER TABLE {table} ADD COLUMN {col} {col_type}"))
                 conn.commit()
-            except Exception:
-                pass  # Column already exists — safe to ignore
 
 
 def init_db() -> None:
