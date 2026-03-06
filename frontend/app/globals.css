@@ -52,14 +52,15 @@ body {
   color: var(--text);
   background-image:
     linear-gradient(
-      rgba(2, 8, 4, 0.78),
-      rgba(2, 8, 4, 0.78)
+      rgba(2, 8, 4, 0.65),
+      rgba(2, 8, 4, 0.65)
     ),
     url('/stadium-bg.jpg');
   background-size: cover;
-  background-attachment: fixed;
+  background-attachment: scroll;
   background-position: center top;
   background-repeat: no-repeat;
+  min-height: 100vh;
   font-family: var(--font-syne, 'Syne', sans-serif);
   font-size: 15px;
   line-height: 1.6;
