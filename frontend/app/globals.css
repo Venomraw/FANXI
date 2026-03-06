@@ -4,20 +4,24 @@
    DESIGN TOKENS — reference: fanxi-ultra-merged
 ═══════════════════════════════════════════ */
 :root {
-  /* ── Backgrounds — Obsidian Tactical palette ── */
-  --dark:        #060A06;   /* base — pure pitch dark         */
-  --dark2:       #060A06;   /* same base layer                */
-  --dark3:       #0D130D;   /* card surface — distinct elevation (spec exact) */
-  --mid:         #152018;   /* hover / active surface          */
-  --border:      #1E2D1E;   /* structural wireframe — pitch green tint */
-  --slot-empty:  #1E2D1E;   /* empty pitch slot fill           */
+  /* ── Backgrounds — rich deep green ── */
+  --dark:        #0a1f0f;   /* base background — deep pitch green */
+  --dark2:       #0a1f0f;   /* same as dark */
+  --dark3:       #112918;   /* card surface — slightly lighter */
+  --mid:         #1a3d25;   /* hover / active surface */
+  --border:      #1f4a2c;   /* borders — visible but subtle */
+  --slot-empty:  #1f4a2c;   /* empty pitch slot fill */
 
   /* ── Text ── */
-  --text:  #E8F5E8;
-  --muted: #5A7A5A;         /* spec: Muted Green labels        */
+  --text:    #f0f7f0;       /* primary text — clean white-green */
+  --muted:   #7aaa7a;       /* secondary text — more visible */
 
   /* ── Accent ── */
-  --gold:    #FFD23F;        /* Captain / Premium highlight     */
+  --gold:    #FFD23F;        /* Captain / Premium highlight — keep */
+
+  /* ── Utility ── */
+  --surface: rgba(255,255,255,0.04);   /* glass card effect */
+  --glow:    rgba(74,222,128,0.15);    /* green glow for hover */
   --red:     #FF2D55;
   --blue:    #00D1FF;        /* Electric Blue — interactive     */
   --success: #00FF85;        /* Locked state                    */
@@ -44,7 +48,7 @@
 html { scroll-behavior: smooth; }
 
 body {
-  background: var(--dark);
+  background-color: var(--dark);
   color: var(--text);
   font-family: var(--font-syne, 'Syne', sans-serif);
   font-size: 15px;
