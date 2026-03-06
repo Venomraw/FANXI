@@ -299,27 +299,67 @@ export default function PitchBoard() {
 
             {/* Pitch surface */}
             <div
-              className="relative w-full max-w-[380px] lg:max-w-[440px] xl:max-w-[520px] aspect-[2/3] flex-shrink-0 p-3 lg:p-4 xl:p-5 border"
-              style={{
-                background: '#060A06',
-                borderColor: `color-mix(in srgb, ${primary} 20%, transparent)`,
-                backgroundImage: [
-                  `linear-gradient(color-mix(in srgb, ${primary} 3%, transparent) 1px, transparent 1px)`,
-                  `linear-gradient(90deg, color-mix(in srgb, ${primary} 2.5%, transparent) 1px, transparent 1px)`,
-                  `radial-gradient(ellipse 110% 70% at 50% 0%, #0d2010 0%, #060A06 70%)`,
-                ].join(', '),
-                backgroundSize: '36px 36px, 36px 36px, 100% 100%',
-              }}
+              className="relative w-full max-w-[380px] lg:max-w-[440px] xl:max-w-[520px] aspect-[2/3] flex-shrink-0 p-3 lg:p-4 xl:p-5 border overflow-hidden"
+              style={{ borderColor: `color-mix(in srgb, ${primary} 20%, transparent)` }}
             >
-              {/* Pitch markings */}
-              <div className="absolute top-1/2 left-8 right-8 h-px pointer-events-none"
-                style={{ background: `color-mix(in srgb, ${primary} 12%, transparent)` }} />
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-24 h-24 rounded-full border pointer-events-none"
-                style={{ borderColor: `color-mix(in srgb, ${primary} 12%, transparent)` }} />
-              <div className="absolute top-0 left-1/4 right-1/4 h-16 border-b border-l border-r pointer-events-none"
-                style={{ borderColor: `color-mix(in srgb, ${primary} 8%, transparent)` }} />
-              <div className="absolute bottom-0 left-1/4 right-1/4 h-16 border-t border-l border-r pointer-events-none"
-                style={{ borderColor: `color-mix(in srgb, ${primary} 8%, transparent)` }} />
+              {/* SVG Football Pitch */}
+              <svg
+                className="absolute inset-0 w-full h-full pointer-events-none"
+                viewBox="0 0 300 450"
+                preserveAspectRatio="xMidYMid slice"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                {/* Alternating grass stripes */}
+                {Array.from({ length: 9 }).map((_, i) => (
+                  <rect
+                    key={i}
+                    x="0" y={i * 50} width="300" height="50"
+                    fill={i % 2 === 0 ? '#1a472a' : '#1d4e30'}
+                  />
+                ))}
+
+                {/* Pitch outline */}
+                <rect x="10" y="10" width="280" height="430" fill="none" stroke="rgba(255,255,255,0.5)" strokeWidth="1.5" />
+
+                {/* Halfway line */}
+                <line x1="10" y1="225" x2="290" y2="225" stroke="rgba(255,255,255,0.5)" strokeWidth="1.5" />
+
+                {/* Centre circle */}
+                <circle cx="150" cy="225" r="40" fill="none" stroke="rgba(255,255,255,0.5)" strokeWidth="1.5" />
+
+                {/* Centre spot */}
+                <circle cx="150" cy="225" r="2.5" fill="rgba(255,255,255,0.5)" />
+
+                {/* ── Top penalty box ── */}
+                <rect x="65" y="10" width="170" height="65" fill="none" stroke="rgba(255,255,255,0.5)" strokeWidth="1.5" />
+                {/* Top 6-yard box */}
+                <rect x="105" y="10" width="90" height="25" fill="none" stroke="rgba(255,255,255,0.5)" strokeWidth="1.5" />
+                {/* Top penalty spot */}
+                <circle cx="150" cy="58" r="2.5" fill="rgba(255,255,255,0.5)" />
+                {/* Top penalty arc */}
+                <path d="M 112 75 A 40 40 0 0 1 188 75" fill="none" stroke="rgba(255,255,255,0.5)" strokeWidth="1.5" />
+
+                {/* ── Bottom penalty box ── */}
+                <rect x="65" y="375" width="170" height="65" fill="none" stroke="rgba(255,255,255,0.5)" strokeWidth="1.5" />
+                {/* Bottom 6-yard box */}
+                <rect x="105" y="415" width="90" height="25" fill="none" stroke="rgba(255,255,255,0.5)" strokeWidth="1.5" />
+                {/* Bottom penalty spot */}
+                <circle cx="150" cy="392" r="2.5" fill="rgba(255,255,255,0.5)" />
+                {/* Bottom penalty arc */}
+                <path d="M 112 375 A 40 40 0 0 0 188 375" fill="none" stroke="rgba(255,255,255,0.5)" strokeWidth="1.5" />
+
+                {/* ── Corner arcs ── */}
+                <path d="M 10 22 A 12 12 0 0 1 22 10" fill="none" stroke="rgba(255,255,255,0.5)" strokeWidth="1.5" />
+                <path d="M 278 10 A 12 12 0 0 1 290 22" fill="none" stroke="rgba(255,255,255,0.5)" strokeWidth="1.5" />
+                <path d="M 10 428 A 12 12 0 0 0 22 440" fill="none" stroke="rgba(255,255,255,0.5)" strokeWidth="1.5" />
+                <path d="M 278 440 A 12 12 0 0 0 290 428" fill="none" stroke="rgba(255,255,255,0.5)" strokeWidth="1.5" />
+
+                {/* ── Goal areas ── */}
+                {/* Top goal */}
+                <rect x="120" y="4" width="60" height="8" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.5)" strokeWidth="1.5" />
+                {/* Bottom goal */}
+                <rect x="120" y="438" width="60" height="8" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.5)" strokeWidth="1.5" />
+              </svg>
 
               {/* Slots */}
               <div className="relative h-full flex flex-col justify-between z-10">
