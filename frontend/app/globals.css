@@ -51,12 +51,37 @@ body {
   background-color: #0a1f0f;
   color: var(--text);
   background-image:
-    linear-gradient(
-      rgba(5, 15, 8, 0.75),
-      rgba(5, 15, 8, 0.75)
+    /* Floodlight 1 — top left corner */
+    radial-gradient(
+      ellipse 60% 40% at 15% 0%,
+      rgba(255, 248, 220, 0.12) 0%,
+      transparent 70%
     ),
+    /* Floodlight 2 — top right corner */
+    radial-gradient(
+      ellipse 60% 40% at 85% 0%,
+      rgba(255, 248, 220, 0.12) 0%,
+      transparent 70%
+    ),
+    /* Floodlight 3 — subtle center top glow */
+    radial-gradient(
+      ellipse 40% 25% at 50% 0%,
+      rgba(255, 248, 220, 0.06) 0%,
+      transparent 60%
+    ),
+    /* Dark night overlay */
+    linear-gradient(
+      rgba(3, 10, 5, 0.82),
+      rgba(3, 10, 5, 0.82)
+    ),
+    /* Real grass texture */
     url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1920&q=80&fit=crop');
-  background-size: cover;
+  background-size:
+    100% 100%,
+    100% 100%,
+    100% 100%,
+    cover,
+    cover;
   background-attachment: fixed;
   background-position: center;
   background-repeat: no-repeat;
