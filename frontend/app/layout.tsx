@@ -41,6 +41,19 @@ export default function RootLayout({
         className={`${spaceGrotesk.variable} ${syne.variable} ${jetbrainsMono.variable} antialiased`}
         suppressHydrationWarning={true}
       >
+        {/* Fixed stadium background — content scrolls over it */}
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100vw',
+          height: '100vh',
+          zIndex: -1,
+          backgroundImage: "url('/stadium-bg.jpg')",
+          backgroundSize: 'cover',
+          backgroundPosition: 'center center',
+          backgroundRepeat: 'no-repeat',
+        }} />
         <AuthProvider>
           <ThemeProvider>
             <CustomCursor />

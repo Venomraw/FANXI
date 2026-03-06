@@ -48,21 +48,8 @@
 html { scroll-behavior: smooth; }
 
 body {
-  background-color: #050d08;
+  background: transparent;
   color: var(--text);
-  background-image:
-    /* Very subtle vignette only — no color overlay */
-    radial-gradient(
-      ellipse at center,
-      transparent 40%,
-      rgba(0,0,0,0.4) 100%
-    ),
-    url('/stadium-bg.jpg');
-  background-size: contain;
-  background-attachment: scroll;
-  background-position: center top;
-  background-repeat: no-repeat;
-  min-height: 100vh;
   font-family: var(--font-syne, 'Syne', sans-serif);
   font-size: 15px;
   line-height: 1.6;
