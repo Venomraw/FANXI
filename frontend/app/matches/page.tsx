@@ -71,7 +71,7 @@ function MatchCard({
 }: {
   match: Match;
   isPredicted: boolean;
-  onPredict: (id: number, homeTeam: string) => void;
+  onPredict: (id: number, homeTeam: string, awayTeam: string) => void;
   primary: string;
 }) {
   const hours = hoursUntil(match.kickoff);
@@ -179,7 +179,7 @@ function MatchCard({
             </span>
           ) : (
             <button
-              onClick={() => onPredict(match.id, match.home_team)}
+              onClick={() => onPredict(match.id, match.home_team, match.away_team)}
               className="font-sans font-semibold text-[13px] px-5 py-2.5 border transition-all theme-transition flex items-center gap-2"
               style={{ color: primary, borderColor: `color-mix(in srgb, ${primary} 40%, transparent)`, background: `color-mix(in srgb, ${primary} 8%, transparent)` }}
               onMouseEnter={e => {
@@ -232,8 +232,8 @@ export default function MatchesPage() {
       .catch(() => {});
   }, [user]);
 
-  const handlePredict = (matchId: number, homeTeam: string) => {
-    router.push(`/?match=${matchId}&team=${encodeURIComponent(homeTeam)}`);
+  const handlePredict = (matchId: number, homeTeam: string, awayTeam: string) => {
+    router.push(`/?match=${matchId}&team=${encodeURIComponent(homeTeam)}&away=${encodeURIComponent(awayTeam)}`);
   };
 
   // ── Derived lists ──────────────────────────────────────────────────────────

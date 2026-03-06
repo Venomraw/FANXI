@@ -104,6 +104,7 @@ class LockSelectionRequest(BaseModel):
     tactics: TacticsInfo
     outcomes: Optional[OutcomesPrediction] = None
     player_predictions: Optional[PlayerPredictions] = None
+    team_name: Optional[str] = None
     timestamp: str
     status: str
 

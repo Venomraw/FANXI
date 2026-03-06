@@ -225,6 +225,7 @@ async def lock_prediction(
             select(MatchPrediction).where(
                 MatchPrediction.match_id == match_id,
                 MatchPrediction.user_id == current_user.id,
+                MatchPrediction.team_name == prediction_data.team_name,
             )
         ).first()
 
@@ -245,6 +246,7 @@ async def lock_prediction(
             new_prediction = MatchPrediction(
                 user_id=current_user.id,
                 match_id=match_id,
+                team_name=prediction_data.team_name,
                 lineup_data=clean_lineup,
                 tactics_data=clean_tactics,
                 match_result=clean_outcomes.get("match_result"),

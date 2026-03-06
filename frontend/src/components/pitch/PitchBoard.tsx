@@ -9,6 +9,12 @@ import MatchSelector, { WCMatch } from './MatchSelector';
 import { useTheme } from '@/src/context/ThemeContext';
 import { useAuth } from '@/src/context/AuthContext';
 import { FORMATIONS, DEFAULT_FORMATION, FormationLayout } from '@/src/data/formations';
+import { WC2026_TEAMS } from '@/src/data/teamColors';
+
+function getFlagForTeam(name: string): string {
+  const found = WC2026_TEAMS.find(t => t.name.toLowerCase() === name.toLowerCase());
+  return found?.flag ?? '🏳';
+}
 
 interface Player {
   name: string;
@@ -52,6 +58,7 @@ export default function PitchBoard() {
   const searchParams = useSearchParams();
   const urlMatchId = searchParams ? Number(searchParams.get('match')) || null : null;
   const urlTeam    = searchParams ? searchParams.get('team') : null;
+  const urlAway    = searchParams ? searchParams.get('away') : null;
   const [isMounted, setIsMounted]         = useState(false);
   const [rightTab, setRightTab]           = useState<RightTab>('tactics');
   const [formation, setFormation]         = useState<FormationLayout>(DEFAULT_FORMATION);
@@ -64,6 +71,7 @@ export default function PitchBoard() {
   const [squadLoading, setSquadLoading]   = useState(false);
   const [lineup, setLineup]               = useState<Record<string, Player>>({});
   const [selectedMatch, setSelectedMatch] = useState<WCMatch | null>(null);
+  const [activeTeam, setActiveTeam]       = useState<string | null>(null);
   const [history, setHistory]             = useState<any[]>([]);
   const [lockMsg, setLockMsg]             = useState<{ ok: boolean; text: string } | null>(null);
   const [halfTime, setHalfTime]           = useState<HalfTimePredictions>({
@@ -106,10 +114,16 @@ export default function PitchBoard() {
     finally { setSquadLoading(false); }
   }, []);
 
+  // Initialise activeTeam when URL params or selectedMatch arrive
   useEffect(() => {
-    const name = selectedMatch?.home_team || urlTeam || team?.name;
-    if (name) loadSquad(name);
-  }, [selectedMatch?.home_team, urlTeam, team?.name, loadSquad]);
+    const initial = selectedMatch?.home_team || urlTeam || team?.name || null;
+    setActiveTeam(prev => prev ?? initial);
+  }, [selectedMatch?.home_team, urlTeam, team?.name]);
+
+  // Reload squad whenever the active team changes
+  useEffect(() => {
+    if (activeTeam) loadSquad(activeTeam);
+  }, [activeTeam, loadSquad]);
 
   const handleFormationChange = (f: FormationLayout) => {
     const newSlots = f.slots.flat();
@@ -138,6 +152,7 @@ export default function PitchBoard() {
     const matchId = selectedMatch?.id ?? 1001;
     const finalData = {
       lineup, tactics,
+      team_name: activeTeam ?? undefined,
       outcomes: {
         match_result: outcomes.matchResult,
         correct_score: outcomes.correctScore,
@@ -239,6 +254,44 @@ export default function PitchBoard() {
         </div>
         <MatchSelector selectedId={selectedMatch?.id ?? urlMatchId} onSelect={m => setSelectedMatch(m)} />
       </div>
+
+      {/* ── TEAM SWITCHER ── */}
+      {(() => {
+        const homeTeam = selectedMatch?.home_team ?? urlTeam ?? null;
+        const awayTeam = selectedMatch?.away_team ?? urlAway ?? null;
+        if (!homeTeam || !awayTeam) return null;
+        const homeFlag = selectedMatch?.home_flag ?? getFlagForTeam(homeTeam);
+        const awayFlag = selectedMatch?.away_flag ?? getFlagForTeam(awayTeam);
+        return (
+          <div className="flex items-center justify-center gap-3">
+            <button
+              onClick={() => setActiveTeam(homeTeam)}
+              className="flex items-center gap-2 px-6 py-2.5 font-mono text-[11px] tracking-widest uppercase transition-all border"
+              style={activeTeam === homeTeam
+                ? { background: primary, color: 'var(--dark)', borderColor: primary, boxShadow: `0 0 16px color-mix(in srgb, ${primary} 40%, transparent)` }
+                : { background: 'var(--dark3)', color: 'var(--muted)', borderColor: 'var(--border)' }
+              }
+            >
+              <span>{homeFlag}</span>
+              <span>{homeTeam}</span>
+            </button>
+
+            <span className="font-mono text-[11px] uppercase tracking-widest" style={{ color: 'var(--muted)' }}>VS</span>
+
+            <button
+              onClick={() => setActiveTeam(awayTeam)}
+              className="flex items-center gap-2 px-6 py-2.5 font-mono text-[11px] tracking-widest uppercase transition-all border"
+              style={activeTeam === awayTeam
+                ? { background: primary, color: 'var(--dark)', borderColor: primary, boxShadow: `0 0 16px color-mix(in srgb, ${primary} 40%, transparent)` }
+                : { background: 'var(--dark3)', color: 'var(--muted)', borderColor: 'var(--border)' }
+              }
+            >
+              <span>{awayTeam}</span>
+              <span>{awayFlag}</span>
+            </button>
+          </div>
+        );
+      })()}
 
       {/* ── 3-COLUMN LAYOUT ── */}
       <DndContext onDragEnd={handleDragEnd}>

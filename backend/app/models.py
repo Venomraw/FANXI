@@ -25,6 +25,7 @@ class MatchPrediction(SQLModel, table=True):
     # Foreign key to User.id — nullable until JWT auth is wired up (Milestone 3)
     user_id: Optional[int] = Field(default=None, foreign_key="user.id")
     match_id: int = Field(index=True)
+    team_name: Optional[str] = None
 
     # JSON columns: SQLite stores these as TEXT; SQLModel deserialises them back
     # to dicts automatically when the row is read.
