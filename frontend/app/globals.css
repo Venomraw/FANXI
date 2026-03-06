@@ -5,8 +5,8 @@
 ═══════════════════════════════════════════ */
 :root {
   /* ── Backgrounds — rich deep green ── */
-  --dark:        #0d2614;   /* base background — stadium night green */
-  --dark2:       #0d2614;   /* same as dark */
+  --dark:        #050d08;   /* base background — stadium night */
+  --dark2:       #050d08;   /* same as dark */
   --dark3:       rgba(8, 25, 12, 0.92);   /* card surface — glass over grass */
   --mid:         #1a3d25;   /* hover / active surface */
   --border:      rgba(255,255,255,0.1);   /* borders — glass-friendly */
@@ -48,31 +48,18 @@
 html { scroll-behavior: smooth; }
 
 body {
-  background-color: #0d2614;
+  background-color: #050d08;
   color: var(--text);
   background-image:
-    /* Floodlight top-left */
-    radial-gradient(
-      ellipse 50% 35% at 10% 0%,
-      rgba(255, 252, 210, 0.15) 0%,
-      transparent 70%
+    linear-gradient(
+      rgba(2, 8, 4, 0.78),
+      rgba(2, 8, 4, 0.78)
     ),
-    /* Floodlight top-right */
-    radial-gradient(
-      ellipse 50% 35% at 90% 0%,
-      rgba(255, 252, 210, 0.15) 0%,
-      transparent 70%
-    ),
-    /* Pitch stripe pattern - light bands */
-    repeating-linear-gradient(
-      180deg,
-      rgba(255,255,255,0.03) 0px,
-      rgba(255,255,255,0.03) 80px,
-      rgba(0,0,0,0.12) 80px,
-      rgba(0,0,0,0.12) 160px
-    );
+    url('/stadium-bg.jpg');
+  background-size: cover;
   background-attachment: fixed;
-  background-size: 100% 100%, 100% 100%, 100% 160px;
+  background-position: center top;
+  background-repeat: no-repeat;
   font-family: var(--font-syne, 'Syne', sans-serif);
   font-size: 15px;
   line-height: 1.6;
