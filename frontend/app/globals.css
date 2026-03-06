@@ -7,8 +7,8 @@
   /* ── Backgrounds — rich deep green ── */
   --dark:        #050d08;   /* base background — stadium night */
   --dark2:       #050d08;   /* same as dark */
-  --dark3:       rgba(8, 25, 12, 0.92);   /* card surface — glass over grass */
-  --mid:         #1a3d25;   /* hover / active surface */
+  --dark3:       rgba(5, 13, 8, 0.75);    /* card surface — transparent over stadium */
+  --mid:         rgba(26, 61, 37, 0.8);   /* hover / active surface */
   --border:      rgba(255,255,255,0.1);   /* borders — glass-friendly */
   --slot-empty:  rgba(255,255,255,0.08); /* empty pitch slot fill */
 
@@ -51,12 +51,14 @@ body {
   background-color: #050d08;
   color: var(--text);
   background-image:
-    linear-gradient(
-      rgba(2, 8, 4, 0.65),
-      rgba(2, 8, 4, 0.65)
+    /* Very subtle vignette only — no color overlay */
+    radial-gradient(
+      ellipse at center,
+      transparent 40%,
+      rgba(0,0,0,0.4) 100%
     ),
     url('/stadium-bg.jpg');
-  background-size: cover;
+  background-size: contain;
   background-attachment: scroll;
   background-position: center top;
   background-repeat: no-repeat;
