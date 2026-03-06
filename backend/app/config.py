@@ -27,8 +27,8 @@ class Settings(BaseSettings):
     # JWT Secret
     secret_key: str = ""
 
-    # Anthropic Claude API
-    anthropic_api_key: str = ""
+    # Groq API
+    groq_api_key: str = ""
 
     # Tell Pydantic where to read env vars from
     model_config = SettingsConfigDict(

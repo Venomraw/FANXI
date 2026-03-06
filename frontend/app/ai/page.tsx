@@ -86,7 +86,7 @@ export default function AIPage() {
     }
 
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/ai/chat`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/ai/chat/stream`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ mode, messages: newMessages }),
@@ -101,8 +101,44 @@ export default function AIPage() {
         return;
       }
 
-      const data = await res.json();
-      setMessages(prev => [...prev, { role: 'assistant', content: data.response }]);
+      const reader = res.body?.getReader();
+      const decoder = new TextDecoder();
+      let aiMessage = '';
+
+      // Seed an empty assistant bubble so it appears immediately
+      setMessages(prev => [...prev, { role: 'assistant', content: '' }]);
+      setLoading(false);
+
+      while (reader) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        const lines = decoder.decode(value).split('\n');
+        for (const line of lines) {
+          if (!line.startsWith('data: ')) continue;
+          const data = line.slice(6);
+          if (data === '[DONE]') break;
+          try {
+            const parsed = JSON.parse(data);
+            if (parsed.error) {
+              setMessages(prev => {
+                const updated = [...prev];
+                updated[updated.length - 1] = { role: 'assistant', content: `⚠️ ${parsed.error}` };
+                return updated;
+              });
+              break;
+            }
+            if (parsed.text) {
+              aiMessage += parsed.text;
+              setMessages(prev => {
+                const updated = [...prev];
+                updated[updated.length - 1] = { role: 'assistant', content: aiMessage };
+                return updated;
+              });
+            }
+          } catch { /* malformed chunk — skip */ }
+        }
+      }
     } catch {
       setMessages(prev => [
         ...prev,

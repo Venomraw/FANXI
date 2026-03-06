@@ -10,6 +10,6 @@ httpx
 pillow
 python-multipart
 jinja2
-anthropic
+groq
 slowapi==0.1.9
 psycopg2-binary==2.9.10

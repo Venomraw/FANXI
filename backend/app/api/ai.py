@@ -1,11 +1,13 @@
 """
-FANXI AI — Four-mode tactical assistant powered by Claude.
+FANXI AI — Four-mode tactical assistant powered by Groq (Llama 3).
 """
 
 from fastapi import APIRouter, HTTPException
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from typing import Literal
-import anthropic as anthropic_sdk
+from groq import Groq
+import json
 
 from app.config import settings
 
@@ -78,29 +80,78 @@ class ChatRequest(BaseModel):
 
 class ChatResponse(BaseModel):
     response: str
+    model: str = "llama-3.3-70b-versatile"
+    provider: str = "groq"
 
 # ── Endpoint ───────────────────────────────────────────────────────────────────
 
 @router.post("/chat", response_model=ChatResponse)
 async def ai_chat(body: ChatRequest) -> ChatResponse:
-    if not settings.anthropic_api_key:
+    if not settings.groq_api_key:
         raise HTTPException(
             status_code=503,
-            detail="ANTHROPIC_API_KEY is not configured. Add it to backend/.env and restart the server.",
+            detail="AI service not configured",
         )
 
-    client = anthropic_sdk.Anthropic(api_key=settings.anthropic_api_key)
+    try:
+        client = Groq(api_key=settings.groq_api_key)
 
-    anthropic_messages = [
-        {"role": m.role, "content": m.content} for m in body.messages
-    ]
+        messages = [
+            {"role": "system", "content": SYSTEM_PROMPTS[body.mode]},
+            *[{"role": m.role, "content": m.content} for m in body.messages],
+        ]
 
-    result = client.messages.create(
-        model="claude-opus-4-6",
-        max_tokens=1024,
-        system=SYSTEM_PROMPTS[body.mode],
-        messages=anthropic_messages,
+        result = client.chat.completions.create(
+            model="llama-3.3-70b-versatile",
+            max_tokens=1024,
+            temperature=0.7,
+            messages=messages,
+        )
+
+        response_text = result.choices[0].message.content or ""
+        return ChatResponse(response=response_text)
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"AI error: {str(e)}")
+
+
+@router.post("/chat/stream")
+async def ai_chat_stream(body: ChatRequest) -> StreamingResponse:
+    if not settings.groq_api_key:
+        raise HTTPException(status_code=503, detail="AI service not configured")
+
+    async def generate():
+        try:
+            client = Groq(api_key=settings.groq_api_key)
+
+            messages = [
+                {"role": "system", "content": SYSTEM_PROMPTS[body.mode]},
+                *[{"role": m.role, "content": m.content} for m in body.messages],
+            ]
+
+            stream = client.chat.completions.create(
+                model="llama-3.3-70b-versatile",
+                max_tokens=1024,
+                temperature=0.7,
+                stream=True,
+                messages=messages,
+            )
+
+            for chunk in stream:
+                delta = chunk.choices[0].delta
+                if delta.content:
+                    yield f"data: {json.dumps({'text': delta.content})}\n\n"
+
+            yield "data: [DONE]\n\n"
+
+        except Exception as e:
+            yield f"data: {json.dumps({'error': str(e)})}\n\n"
+
+    return StreamingResponse(
+        generate(),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "X-Accel-Buffering": "no",
+        },
     )
-
-    response_text = result.content[0].text if result.content else ""
-    return ChatResponse(response=response_text)
