@@ -7,10 +7,10 @@
   /* ── Backgrounds — rich deep green ── */
   --dark:        #0a1f0f;   /* base background — deep pitch green */
   --dark2:       #0a1f0f;   /* same as dark */
-  --dark3:       #112918;   /* card surface — slightly lighter */
+  --dark3:       rgba(8, 25, 12, 0.92);   /* card surface — glass over grass */
   --mid:         #1a3d25;   /* hover / active surface */
-  --border:      #1f4a2c;   /* borders — visible but subtle */
-  --slot-empty:  #1f4a2c;   /* empty pitch slot fill */
+  --border:      rgba(255,255,255,0.1);   /* borders — glass-friendly */
+  --slot-empty:  rgba(255,255,255,0.08); /* empty pitch slot fill */
 
   /* ── Text ── */
   --text:    #f0f7f0;       /* primary text — clean white-green */
@@ -50,14 +50,16 @@ html { scroll-behavior: smooth; }
 body {
   background-color: #0a1f0f;
   color: var(--text);
-  background-image: repeating-linear-gradient(
-    180deg,
-    rgba(255,255,255,0.04) 0px,
-    rgba(255,255,255,0.04) 60px,
-    transparent 60px,
-    transparent 120px
-  );
+  background-image:
+    linear-gradient(
+      rgba(5, 15, 8, 0.75),
+      rgba(5, 15, 8, 0.75)
+    ),
+    url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1920&q=80&fit=crop');
+  background-size: cover;
   background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
   font-family: var(--font-syne, 'Syne', sans-serif);
   font-size: 15px;
   line-height: 1.6;
