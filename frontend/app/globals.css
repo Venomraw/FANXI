@@ -48,8 +48,16 @@
 html { scroll-behavior: smooth; }
 
 body {
-  background-color: var(--dark);
+  background-color: #0a1f0f;
   color: var(--text);
+  background-image: repeating-linear-gradient(
+    180deg,
+    rgba(255,255,255,0.018) 0px,
+    rgba(255,255,255,0.018) 60px,
+    transparent 60px,
+    transparent 120px
+  );
+  background-attachment: fixed;
   font-family: var(--font-syne, 'Syne', sans-serif);
   font-size: 15px;
   line-height: 1.6;
@@ -58,6 +66,13 @@ body {
 }
 
 a, button, input, select, textarea, [role="button"] { cursor: none; }
+
+/* ── Glass card utility ── */
+.card-glass {
+  background: rgba(10, 31, 15, 0.85);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.08);
+}
 
 /* Noise overlay — 4% grain per spec */
 body::before {
