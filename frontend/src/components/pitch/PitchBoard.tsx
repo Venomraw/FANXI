@@ -1,5 +1,6 @@
 'use client';
 import React, { useState, useEffect, useCallback } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { DndContext, DragEndEvent } from '@dnd-kit/core';
 import PitchSlot from './PitchSlot';
 import DraggablePlayer from './DraggablePlayer';
@@ -48,6 +49,9 @@ interface HalfTimePredictions {
 export default function PitchBoard() {
   const { primary, team } = useTheme();
   const { user, token } = useAuth();
+  const searchParams = useSearchParams();
+  const urlMatchId = searchParams ? Number(searchParams.get('match')) || null : null;
+  const urlTeam    = searchParams ? searchParams.get('team') : null;
   const [isMounted, setIsMounted]         = useState(false);
   const [rightTab, setRightTab]           = useState<RightTab>('tactics');
   const [formation, setFormation]         = useState<FormationLayout>(DEFAULT_FORMATION);
@@ -102,7 +106,10 @@ export default function PitchBoard() {
     finally { setSquadLoading(false); }
   }, []);
 
-  useEffect(() => { if (team?.name) loadSquad(team.name); }, [team?.name, loadSquad]);
+  useEffect(() => {
+    const name = selectedMatch?.home_team || urlTeam || team?.name;
+    if (name) loadSquad(name);
+  }, [selectedMatch?.home_team, urlTeam, team?.name, loadSquad]);
 
   const handleFormationChange = (f: FormationLayout) => {
     const newSlots = f.slots.flat();
@@ -230,7 +237,7 @@ export default function PitchBoard() {
             </p>
           )}
         </div>
-        <MatchSelector selectedId={selectedMatch?.id ?? null} onSelect={m => setSelectedMatch(m)} />
+        <MatchSelector selectedId={selectedMatch?.id ?? urlMatchId} onSelect={m => setSelectedMatch(m)} />
       </div>
 
       {/* ── 3-COLUMN LAYOUT ── */}

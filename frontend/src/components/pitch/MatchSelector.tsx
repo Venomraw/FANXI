@@ -40,7 +40,10 @@ export default function MatchSelector({ selectedId, onSelect }: Props) {
       .then(d => {
         const list = Array.isArray(d) ? d : [];
         setMatches(list);
-        if (list.length > 0 && selectedId === null) onSelect(list[0]);
+        if (list.length > 0) {
+          const preselect = selectedId !== null ? list.find(m => m.id === selectedId) : null;
+          onSelect(preselect ?? list[0]);
+        }
       })
       .catch(() => {})
       .finally(() => setLoading(false));
