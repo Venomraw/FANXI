@@ -78,29 +78,194 @@ function SectionHead({ icon, label, sub, primary }: { icon: string; label: strin
 
 // ── News Card ──────────────────────────────────────────────────────────────────
 
-function NewsCard({ article, primary }: { article: Article; primary: string }) {
+function ArticlePanel({
+  article,
+  onClose,
+  primary,
+}: {
+  article: Article | null;
+  onClose: () => void;
+  primary: string;
+}) {
+  if (!article) return null;
   return (
-    <a href={article.url} target="_blank" rel="noopener noreferrer"
-      className="group flex flex-col overflow-hidden border theme-transition hover:-translate-y-0.5 transition-all duration-200"
+    <>
+      <style>{`
+        @keyframes slideInRight {
+          from { transform: translateX(100%); opacity: 0; }
+          to   { transform: translateX(0);    opacity: 1; }
+        }
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to   { opacity: 1; }
+        }
+      `}</style>
+
+      {/* Backdrop */}
+      <div
+        className="fixed inset-0 z-40 transition-opacity duration-300"
+        style={{ background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)', animation: 'fadeIn 0.2s ease' }}
+        onClick={onClose}
+      />
+
+      {/* Panel */}
+      <div
+        className="fixed top-0 right-0 bottom-0 z-50 flex flex-col overflow-hidden"
+        style={{
+          width: 'min(560px, 100vw)',
+          background: 'var(--dark)',
+          borderLeft: `1px solid color-mix(in srgb, ${primary} 20%, transparent)`,
+          boxShadow: `-20px 0 60px rgba(0,0,0,0.5)`,
+          transform: 'translateX(0)',
+          animation: 'slideInRight 0.3s ease',
+        }}
+      >
+        {/* Top accent line */}
+        <div className="h-[2px] flex-shrink-0 theme-transition"
+          style={{ background: `linear-gradient(90deg, ${primary}, transparent)` }} />
+
+        {/* Header */}
+        <div className="flex items-center justify-between px-6 py-4 border-b flex-shrink-0"
+          style={{ borderColor: `color-mix(in srgb, ${primary} 12%, transparent)` }}>
+          <div className="flex items-center gap-2">
+            <span className="font-mono text-[10px] uppercase tracking-widest px-2 py-0.5 theme-transition"
+              style={{
+                background: `color-mix(in srgb, ${primary} 12%, transparent)`,
+                color: primary,
+                border: `1px solid color-mix(in srgb, ${primary} 25%, transparent)`,
+              }}>
+              {article.source || article.byline || 'Guardian'}
+            </span>
+            <span className="font-mono text-[10px]" style={{ color: 'var(--muted)' }}>
+              {timeAgo(article.published)}
+            </span>
+          </div>
+          <button
+            onClick={onClose}
+            className="font-mono text-[11px] uppercase tracking-widest px-3 py-1.5 border transition-all theme-transition"
+            style={{
+              borderColor: `color-mix(in srgb, ${primary} 20%, transparent)`,
+              color: 'var(--muted)',
+            }}
+            onMouseEnter={e => (e.currentTarget.style.color = primary)}
+            onMouseLeave={e => (e.currentTarget.style.color = 'var(--muted)')}>
+            ✕ Close
+          </button>
+        </div>
+
+        {/* Scrollable content */}
+        <div className="flex-1 overflow-y-auto">
+
+          {/* Thumbnail */}
+          {article.thumbnail && (
+            <div className="w-full h-64 overflow-hidden flex-shrink-0">
+              <img src={article.thumbnail} alt="" className="w-full h-full object-cover" />
+            </div>
+          )}
+
+          {/* Article content */}
+          <div className="px-6 py-6 flex flex-col gap-5">
+
+            {/* Headline */}
+            <h2 className="font-display font-semibold leading-tight"
+              style={{ fontSize: 'clamp(22px, 3vw, 28px)', letterSpacing: '-0.5px' }}>
+              {article.title}
+            </h2>
+
+            {/* Byline */}
+            {article.byline && (
+              <p className="font-mono text-[11px] uppercase tracking-widest" style={{ color: primary }}>
+                By {article.byline}
+              </p>
+            )}
+
+            {/* Divider */}
+            <div className="h-px theme-transition"
+              style={{ background: `color-mix(in srgb, ${primary} 15%, transparent)` }} />
+
+            {/* Trail / description */}
+            {article.trail ? (
+              <div
+                className="text-[14px] leading-relaxed"
+                style={{ color: 'var(--muted)' }}
+                dangerouslySetInnerHTML={{ __html: article.trail }}
+              />
+            ) : (
+              <p className="text-[14px] leading-relaxed" style={{ color: 'var(--muted)' }}>
+                No preview available for this article.
+              </p>
+            )}
+
+            {/* FANXI note */}
+            <div className="p-4 border"
+              style={{
+                background: `color-mix(in srgb, ${primary} 5%, transparent)`,
+                borderColor: `color-mix(in srgb, ${primary} 15%, transparent)`,
+              }}>
+              <p className="font-mono text-[10px] uppercase tracking-widest mb-1" style={{ color: primary }}>
+                📡 Intel Note
+              </p>
+              <p className="text-[12px] leading-relaxed" style={{ color: 'var(--muted)' }}>
+                This is a preview. For the full article, read it on {article.source || 'the source'}.
+              </p>
+            </div>
+
+          </div>
+        </div>
+
+        {/* Footer CTA */}
+        <div className="px-6 py-4 border-t flex-shrink-0"
+          style={{ borderColor: `color-mix(in srgb, ${primary} 12%, transparent)`, background: 'var(--dark3)' }}>
+          <a
+            href={article.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-center gap-2 w-full py-3.5 font-mono text-[11px] tracking-widest uppercase transition-all hover:-translate-y-0.5 btn-cut"
+            style={{
+              background: primary,
+              color: 'var(--dark)',
+              boxShadow: `0 0 20px color-mix(in srgb, ${primary} 30%, transparent)`,
+            }}>
+            Read Full Article →
+          </a>
+          <p className="text-center font-mono text-[9px] uppercase tracking-widest mt-2"
+            style={{ color: 'var(--muted)' }}>
+            Opens on {article.source || 'source website'}
+          </p>
+        </div>
+      </div>
+    </>
+  );
+}
+
+function NewsCard({ article, primary, onSelect }: { article: Article; primary: string; onSelect: (article: Article) => void }) {
+  return (
+    <div
+      onClick={() => onSelect(article)}
+      className="group flex flex-col overflow-hidden border theme-transition hover:-translate-y-0.5 transition-all duration-200 cursor-pointer"
       style={{
         background: 'var(--dark3)',
         borderColor: `color-mix(in srgb, ${primary} 12%, transparent)`,
+        position: 'relative',
       }}
       onMouseEnter={e => (e.currentTarget.style.borderColor = `color-mix(in srgb, ${primary} 35%, transparent)`)}
       onMouseLeave={e => (e.currentTarget.style.borderColor = `color-mix(in srgb, ${primary} 12%, transparent)`)}>
+      {/* Top accent line */}
+      <div className="absolute top-0 left-0 right-0 h-[2px] transition-opacity opacity-0 group-hover:opacity-100"
+        style={{ background: primary }} />
       {article.thumbnail ? (
-        <div className="h-36 overflow-hidden">
+        <div className="h-48 overflow-hidden">
           <img src={article.thumbnail} alt=""
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
         </div>
       ) : (
-        <div className="h-20 flex items-center justify-center text-3xl"
+        <div className="h-48 flex items-center justify-center text-3xl"
           style={{ background: `linear-gradient(135deg, color-mix(in srgb, ${primary} 12%, transparent), transparent)` }}>
           📰
         </div>
       )}
       <div className="p-4 flex-1 flex flex-col gap-2">
-        <p className="text-[var(--text)] text-sm font-semibold leading-snug line-clamp-2">
+        <p className="text-[var(--text)] text-[14px] font-semibold leading-snug line-clamp-2">
           {article.title}
         </p>
         {article.trail && (
@@ -109,13 +274,18 @@ function NewsCard({ article, primary }: { article: Article; primary: string }) {
         )}
         <div className="mt-auto flex items-center justify-between pt-2 border-t"
           style={{ borderColor: `color-mix(in srgb, ${primary} 8%, transparent)` }}>
-          <span className="font-mono text-[11px] uppercase tracking-wider" style={{ color: 'var(--muted)' }}>
-            {article.byline || article.source || 'The Guardian'}
+          <span className="font-mono text-[10px] uppercase tracking-wider px-2 py-0.5"
+            style={{
+              background: `color-mix(in srgb, ${primary} 10%, transparent)`,
+              color: primary,
+              border: `1px solid color-mix(in srgb, ${primary} 20%, transparent)`,
+            }}>
+            {article.byline || article.source || 'Guardian'}
           </span>
           <span className="font-mono text-[11px]" style={{ color: 'var(--muted)' }}>{timeAgo(article.published)}</span>
         </div>
       </div>
-    </a>
+    </div>
   );
 }
 
@@ -124,18 +294,24 @@ function NewsCard({ article, primary }: { article: Article; primary: string }) {
 function RedditCard({ post, primary }: { post: RedditPost; primary: string }) {
   return (
     <a href={post.url} target="_blank" rel="noopener noreferrer"
-      className="group flex gap-3 p-4 border transition-all hover:-translate-y-0.5 duration-200 theme-transition"
+      className="group flex gap-3 p-5 border transition-all hover:-translate-y-0.5 duration-200 theme-transition"
       style={{
         background: 'var(--dark3)',
         borderColor: `color-mix(in srgb, ${primary} 12%, transparent)`,
+        position: 'relative',
+        overflow: 'hidden',
       }}
       onMouseEnter={e => (e.currentTarget.style.borderColor = `color-mix(in srgb, ${primary} 35%, transparent)`)}
       onMouseLeave={e => (e.currentTarget.style.borderColor = `color-mix(in srgb, ${primary} 12%, transparent)`)}>
 
+      {/* Left accent bar */}
+      <div className="absolute left-0 top-0 bottom-0 w-[3px] transition-opacity opacity-0 group-hover:opacity-100"
+        style={{ background: primary }} />
+
       {/* Score */}
-      <div className="flex flex-col items-center gap-0.5 flex-shrink-0 w-10 pt-0.5">
+      <div className="flex flex-col items-center gap-0.5 flex-shrink-0 w-12 pt-0.5">
         <span className="text-xs theme-transition" style={{ color: primary }}>▲</span>
-        <span className="font-display text-xl leading-none theme-transition" style={{ color: primary }}>
+        <span className="font-display text-2xl leading-none theme-transition" style={{ color: primary }}>
           {formatScore(post.score)}
         </span>
       </div>
@@ -145,7 +321,7 @@ function RedditCard({ post, primary }: { post: RedditPost; primary: string }) {
           {post.title}
         </p>
         <div className="flex items-center gap-3 mt-2">
-          <span className="font-mono text-[10px] tracking-widest uppercase px-2 py-0.5 theme-transition"
+          <span className="font-mono text-[11px] font-semibold tracking-widest uppercase px-2 py-0.5 theme-transition"
             style={{
               background: `color-mix(in srgb, ${primary} 15%, transparent)`,
               color: primary,
@@ -178,30 +354,40 @@ function VideoCard({ video, primary }: { video: Video; primary: string }) {
   const ytUrl = `https://www.youtube.com/watch?v=${video.id}`;
   return (
     <a href={ytUrl} target="_blank" rel="noopener noreferrer"
-      className="group flex-shrink-0 w-56 border overflow-hidden transition-all hover:-translate-y-0.5 duration-200 theme-transition"
+      className="group flex-shrink-0 w-72 border overflow-hidden transition-all hover:-translate-y-0.5 duration-200 theme-transition"
       style={{
         background: 'var(--dark3)',
         borderColor: `color-mix(in srgb, ${primary} 12%, transparent)`,
       }}
       onMouseEnter={e => (e.currentTarget.style.borderColor = `color-mix(in srgb, ${primary} 35%, transparent)`)}
       onMouseLeave={e => (e.currentTarget.style.borderColor = `color-mix(in srgb, ${primary} 12%, transparent)`)}>
-      <div className="relative h-32 overflow-hidden" style={{ background: 'var(--mid)' }}>
+      <div className="relative h-44 overflow-hidden" style={{ background: 'var(--mid)' }}>
         {video.thumbnail && (
           <img src={video.thumbnail} alt=""
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
         )}
+        {/* Channel badge */}
+        <div className="absolute top-2 left-2 font-mono text-[9px] tracking-wider uppercase px-2 py-0.5"
+          style={{
+            background: 'rgba(0,0,0,0.75)',
+            color: 'white',
+            border: '1px solid rgba(255,255,255,0.15)',
+          }}>
+          {video.channel.slice(0, 12)}
+        </div>
         <div className="absolute inset-0 flex items-center justify-center">
-          <div className="w-10 h-10 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform"
+          <div className="w-14 h-14 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform"
             style={{
               background: 'rgba(0,0,0,0.65)',
               border: `1px solid color-mix(in srgb, ${primary} 30%, transparent)`,
+              boxShadow: `0 0 20px color-mix(in srgb, ${primary} 40%, transparent)`,
             }}>
-            <span className="text-white text-sm ml-0.5">▶</span>
+            <span className="text-white text-lg ml-0.5">▶</span>
           </div>
         </div>
       </div>
       <div className="p-3">
-        <p className="text-[var(--text)] text-xs font-semibold leading-snug line-clamp-2">{video.title}</p>
+        <p className="text-[var(--text)] text-[13px] font-semibold leading-snug line-clamp-2">{video.title}</p>
         <p className="font-mono text-[11px] mt-1 truncate theme-transition" style={{ color: primary }}>{video.channel}</p>
         <p className="font-mono text-[10px] mt-0.5" style={{ color: 'var(--muted)' }}>{timeAgo(video.published)}</p>
       </div>
@@ -213,7 +399,7 @@ function VideoCard({ video, primary }: { video: Video; primary: string }) {
 
 export default function NationPage() {
   const { team, primary, setShowPicker } = useTheme();
-  const { user } = useAuth();
+  const { user, isLoading } = useAuth();
   const router = useRouter();
 
   const [news,     setNews]     = useState<Article[]>([]);
@@ -222,12 +408,26 @@ export default function NationPage() {
   const [videos,   setVideos]   = useState<Video[]>([]);
   const [loading,  setLoading]  = useState({ news: true, reddit: true, videos: true });
   const [activeTab, setActiveTab] = useState<'news' | 'community' | 'videos'>('news');
+  const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
+
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setSelectedArticle(null);
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, []);
+
+  useEffect(() => {
+    document.body.style.overflow = selectedArticle ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [selectedArticle]);
 
   const teamName = team?.name ?? '';
 
   const fetchAll = useCallback(async () => {
     if (!teamName) return;
-    const base = 'http://localhost:8000/intel';
+    const base = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/intel`;
     setLoading({ news: true, reddit: true, videos: true });
 
     await Promise.allSettled([
@@ -253,11 +453,12 @@ export default function NationPage() {
   }, [teamName]);
 
   useEffect(() => {
+    if (isLoading) return;
     if (!user) { router.push('/login'); return; }
     fetchAll();
-  }, [user, fetchAll, router]);
+  }, [user, isLoading, fetchAll, router]);
 
-  if (!user) return null;
+  if (isLoading || !user) return null;
 
   // ── No team selected ──────────────────────────────────────────────────────────
 
@@ -298,7 +499,19 @@ export default function NationPage() {
         {/* Grid overlay */}
         <div className="grid-bg opacity-30" />
 
-        <div className="relative max-w-[1400px] mx-auto px-4 pt-5 pb-8 z-10">
+        {/* Country name watermark */}
+        <div className="absolute bottom-0 right-0 font-display font-semibold leading-none select-none pointer-events-none hidden lg:block"
+          style={{
+            fontSize: '220px',
+            color: primary,
+            opacity: 0.03,
+            letterSpacing: '-4px',
+            lineHeight: 1,
+          }}>
+          {team.name.toUpperCase()}
+        </div>
+
+        <div className="relative max-w-[1400px] mx-auto px-8 pt-10 pb-14 z-10">
 
           {/* Nav row */}
           <div className="flex items-center justify-between mb-8">
@@ -337,7 +550,7 @@ export default function NationPage() {
 
           {/* Nation identity */}
           <div className="flex items-center gap-6">
-            <div className="w-20 h-20 flex items-center justify-center text-5xl flex-shrink-0 border-2 theme-transition"
+            <div className="w-28 h-28 flex items-center justify-center text-6xl flex-shrink-0 border-2 theme-transition"
               style={{
                 background: `color-mix(in srgb, ${primary} 12%, transparent)`,
                 borderColor: `color-mix(in srgb, ${primary} 30%, transparent)`,
@@ -357,20 +570,53 @@ export default function NationPage() {
                 <span>WC 2026</span>
               </div>
 
-              <h1 className="font-display text-5xl sm:text-7xl leading-none tracking-widest uppercase theme-transition"
-                style={{ color: primary }}>
+              <h1 className="font-display text-6xl sm:text-8xl md:text-[120px] leading-none tracking-widest uppercase theme-transition"
+                style={{ color: primary, letterSpacing: '-1px', lineHeight: '0.88' }}>
                 {team.name}
               </h1>
 
               <p className="font-mono text-[11px] uppercase tracking-[4px] mt-2" style={{ color: 'var(--muted)' }}>
-                Nation Intel · Live Dossier
+                Nation Intel · Live Dossier · {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
               </p>
             </div>
           </div>
 
           {/* Accent line */}
-          <div className="mt-8 h-px theme-transition"
-            style={{ background: `linear-gradient(90deg, ${primary}50, transparent)` }} />
+          <div className="mt-8 h-[2px] theme-transition"
+            style={{ background: `linear-gradient(90deg, ${primary}, ${primary}30, transparent)` }} />
+        </div>
+      </div>
+
+      {/* ── STATS BAR ───────────────────────────────────────────────────────── */}
+      <div className="border-b theme-transition"
+        style={{
+          background: 'var(--dark3)',
+          borderColor: `color-mix(in srgb, ${primary} 15%, transparent)`,
+        }}>
+        <div className="max-w-[1400px] mx-auto px-8">
+          <div className="flex items-center gap-8 py-4 overflow-x-auto">
+            {[
+              { label: 'News Articles',   value: String(news.length + moreNews.length) || '—' },
+              { label: 'Community Posts', value: String(reddit.length) || '—' },
+              { label: 'Video Clips',     value: String(videos.length) || '—' },
+              { label: 'Data Source',     value: 'Live' },
+              { label: 'Last Updated',    value: 'Just now' },
+            ].map(stat => (
+              <div key={stat.label} className="flex items-center gap-3 flex-shrink-0">
+                <div>
+                  <div className="font-display font-semibold theme-transition"
+                    style={{ fontSize: '20px', color: primary, lineHeight: 1 }}>
+                    {stat.value}
+                  </div>
+                  <div className="font-mono text-[9px] uppercase tracking-widest mt-0.5"
+                    style={{ color: 'var(--muted)' }}>
+                    {stat.label}
+                  </div>
+                </div>
+                <div className="w-px h-8 ml-3 flex-shrink-0" style={{ background: 'var(--border)' }} />
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -381,14 +627,19 @@ export default function NationPage() {
           backdropFilter: 'blur(24px)',
           borderColor: `color-mix(in srgb, ${primary} 12%, transparent)`,
         }}>
-        <div className="max-w-[1400px] mx-auto px-4">
-          <div className="flex gap-px py-2">
+        <div className="max-w-[1400px] mx-auto" style={{ paddingLeft: '32px', paddingRight: '32px' }}>
+          <div className="flex gap-px py-3">
             {tabs.map(tab => (
               <button key={tab.id} onClick={() => setActiveTab(tab.id)}
-                className="flex items-center gap-2 px-4 py-2 font-mono text-[11px] tracking-widest uppercase transition-all theme-transition"
+                className="flex items-center gap-2 px-6 py-2.5 font-mono text-[12px] tracking-widest uppercase transition-all theme-transition"
                 style={activeTab === tab.id
-                  ? { background: primary, color: 'var(--dark)' }
-                  : { color: 'var(--muted)' }}
+                  ? {
+                      color: primary,
+                      fontWeight: 600,
+                      borderBottom: `2px solid ${primary}`,
+                      background: `color-mix(in srgb, ${primary} 8%, transparent)`,
+                    }
+                  : { color: 'var(--muted)', borderBottom: '2px solid transparent' }}
                 onMouseEnter={e => {
                   if (activeTab !== tab.id) e.currentTarget.style.color = 'var(--text)';
                 }}
@@ -398,10 +649,12 @@ export default function NationPage() {
                 <span>{tab.icon}</span>
                 <span>{tab.label}</span>
                 {tab.count > 0 && (
-                  <span className="font-mono text-[10px] px-1.5 py-0.5"
+                  <span className="font-mono text-[11px] px-1.5 py-0.5"
                     style={{
-                      background: activeTab === tab.id ? 'rgba(0,0,0,0.2)' : `color-mix(in srgb, ${primary} 12%, transparent)`,
-                      color: activeTab === tab.id ? 'var(--dark)' : primary,
+                      background: activeTab === tab.id ? `color-mix(in srgb, ${primary} 15%, transparent)` : `color-mix(in srgb, ${primary} 12%, transparent)`,
+                      color: primary,
+                      minWidth: '20px',
+                      textAlign: 'center',
                     }}>
                     {tab.count}
                   </span>
@@ -413,7 +666,7 @@ export default function NationPage() {
       </div>
 
       {/* ── CONTENT ─────────────────────────────────────────────────────────── */}
-      <div className="max-w-[1400px] mx-auto px-4 py-8">
+      <div className="max-w-[1400px] mx-auto px-8 py-10">
 
         {/* ── NEWS TAB ──────────────────────────────────────────────────────── */}
         {activeTab === 'news' && (
@@ -440,7 +693,7 @@ export default function NationPage() {
             ) : (
               <>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                  {news.map((a, i) => <NewsCard key={a.id ?? i} article={a} primary={primary} />)}
+                  {news.map((a, i) => <NewsCard key={a.id ?? i} article={a} primary={primary} onSelect={setSelectedArticle} />)}
                 </div>
 
                 {moreNews.length > 0 && (
@@ -455,7 +708,7 @@ export default function NationPage() {
                         style={{ background: `color-mix(in srgb, ${primary} 20%, transparent)` }} />
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      {moreNews.map((a, i) => <NewsCard key={i} article={a} primary={primary} />)}
+                      {moreNews.map((a, i) => <NewsCard key={i} article={a} primary={primary} onSelect={setSelectedArticle} />)}
                     </div>
                   </div>
                 )}
@@ -490,14 +743,20 @@ export default function NationPage() {
                 {reddit.map(post => <RedditCard key={post.id} post={post} primary={primary} />)}
                 <a href={`https://www.reddit.com/r/soccer/search/?q=${encodeURIComponent(teamName)}&sort=hot`}
                   target="_blank" rel="noopener noreferrer"
-                  className="text-center py-3 border font-mono text-[11px] tracking-widest uppercase transition-all theme-transition"
+                  className="text-center py-4 border font-mono text-[11px] tracking-widest uppercase transition-all theme-transition hover:-translate-y-0.5"
                   style={{
                     borderColor: `color-mix(in srgb, ${primary} 15%, transparent)`,
                     color: 'var(--muted)',
                     background: 'var(--dark3)',
                   }}
-                  onMouseEnter={e => { e.currentTarget.style.color = primary; }}
-                  onMouseLeave={e => { e.currentTarget.style.color = 'var(--muted)'; }}>
+                  onMouseEnter={e => {
+                    e.currentTarget.style.color = primary;
+                    e.currentTarget.style.boxShadow = `0 4px 20px color-mix(in srgb, ${primary} 20%, transparent)`;
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.color = 'var(--muted)';
+                    e.currentTarget.style.boxShadow = 'none';
+                  }}>
                   View more on Reddit →
                 </a>
               </div>
@@ -547,6 +806,12 @@ export default function NationPage() {
           </div>
         )}
       </div>
+
+      <ArticlePanel
+        article={selectedArticle}
+        onClose={() => setSelectedArticle(null)}
+        primary={primary}
+      />
     </div>
   );
 }

@@ -92,7 +92,7 @@ export default function PitchBoard() {
   const loadSquad = useCallback(async (teamName: string) => {
     setSquadLoading(true);
     try {
-      const res  = await fetch(`http://localhost:8000/squad/${encodeURIComponent(teamName)}`);
+      const res  = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/squad/${encodeURIComponent(teamName)}`);
       const data = await res.json();
       const players: Player[] = (data.players ?? []).map((p: any) => ({
         name: p.name, number: p.number ?? 0, position: p.position,
@@ -153,7 +153,7 @@ export default function PitchBoard() {
     try {
       const userId = user?.id ?? 1;
       const res = await fetch(
-        `http://localhost:8000/predictions/lock/${matchId}?user_id=${userId}`,
+        `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/predictions/lock/${matchId}?user_id=${userId}`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },

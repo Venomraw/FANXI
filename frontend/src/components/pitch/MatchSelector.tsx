@@ -35,7 +35,7 @@ export default function MatchSelector({ selectedId, onSelect }: Props) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('http://localhost:8000/matches/upcoming')
+    fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/matches/upcoming`)
       .then(r => r.json())
       .then(d => {
         const list = Array.isArray(d) ? d : [];

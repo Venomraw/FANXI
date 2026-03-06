@@ -32,7 +32,7 @@ export default function LeaderboardPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('http://localhost:8000/predictions/leaderboard')
+    fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/predictions/leaderboard`)
       .then(r => r.json())
       .then(data => { setEntries(data); setLoading(false); })
       .catch(() => setLoading(false));

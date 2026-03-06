@@ -1,7 +1,7 @@
 'use client';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
-const API = 'http://localhost:8000';
+const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
 // ── Refresh lock — prevents parallel /auth/refresh calls ──────────────────
 // If multiple requests 401 at the same time, only the first triggers a

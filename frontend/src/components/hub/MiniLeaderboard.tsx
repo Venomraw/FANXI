@@ -29,7 +29,7 @@ export default function MiniLeaderboard() {
   const [entries, setEntries] = useState<Entry[]>([]);
 
   useEffect(() => {
-    fetch('http://localhost:8000/predictions/leaderboard')
+    fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/predictions/leaderboard`)
       .then(r => r.json())
       .then(d => setEntries(Array.isArray(d) ? d.slice(0, 5) : []))
       .catch(() => {});

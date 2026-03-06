@@ -216,7 +216,7 @@ export default function MatchesPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('http://localhost:8000/matches/all')
+    fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/matches/all`)
       .then(r => r.json())
       .then((data: Match[]) => { setMatches(data); setLoading(false); })
       .catch(() => setLoading(false));
@@ -224,7 +224,7 @@ export default function MatchesPage() {
 
   useEffect(() => {
     if (!user) return;
-    fetch(`http://localhost:8000/predictions/history/${user.id}`)
+    fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/predictions/history/${user.id}`)
       .then(r => r.json())
       .then((hist: { match_id: number }[]) => {
         setPredictedIds(new Set(hist.map(h => h.match_id)));

@@ -247,7 +247,7 @@ export default function ProfilePage() {
     setLoading(true);
     setNotFound(false);
 
-    fetch(`http://localhost:8000/users/profile/${encodeURIComponent(username)}`)
+    fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/users/profile/${encodeURIComponent(username)}`)
       .then(r => {
         if (r.status === 404) { setNotFound(true); setLoading(false); return null; }
         return r.json();
@@ -257,8 +257,8 @@ export default function ProfilePage() {
         setProfile(data);
         // Fetch history + leaderboard in parallel
         return Promise.all([
-          fetch(`http://localhost:8000/predictions/history/${data.id}`).then(r => r.json()),
-          fetch('http://localhost:8000/predictions/leaderboard').then(r => r.json()),
+          fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/predictions/history/${data.id}`).then(r => r.json()),
+          fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/predictions/leaderboard`).then(r => r.json()),
         ]);
       })
       .then(results => {
