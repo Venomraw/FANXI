@@ -153,7 +153,7 @@ export default function Home() {
                 <div
                   key={s.label}
                   className="flex flex-col justify-center items-center py-10 theme-transition"
-                  style={{ background: 'var(--dark3)', transition: 'background 0.3s ease' }}
+                  style={{ background: 'transparent', transition: 'background 0.3s ease' }}
                   onMouseEnter={e => {
                     (e.currentTarget as HTMLDivElement).style.background = `color-mix(in srgb, ${primary} 8%, var(--dark3))`;
                   }}
@@ -186,7 +186,7 @@ export default function Home() {
       </div>
 
       {/* ── GUIDE CTA ── */}
-      <section className="py-14 border-t border-b" style={{ background: 'rgba(5, 13, 8, 0.75)', borderColor: 'var(--border)' }}>
+      <section className="py-14 border-t border-b" style={{ background: 'transparent', borderColor: 'var(--border)' }}>
         <div className="max-w-[1400px] mx-auto px-7 flex flex-col sm:flex-row items-center justify-between gap-6">
           <div>
             <div className="font-mono text-[11px] tracking-widest uppercase mb-2" style={{ color: primary }}>// New to FanXI?</div>
@@ -206,7 +206,7 @@ export default function Home() {
       </section>
 
       {/* ── HOW IT WORKS ── */}
-      <section className="py-24 border-b overflow-hidden" style={{ background: 'rgba(5, 13, 8, 0.6)', borderColor: 'var(--border)' }}>
+      <section className="py-24 border-b overflow-hidden" style={{ background: 'transparent', borderColor: 'var(--border)' }}>
         <div className="max-w-[1400px] mx-auto px-7">
 
           {/* Header */}
@@ -234,7 +234,7 @@ export default function Home() {
                 {/* Dot */}
                 <div
                   className="w-3 h-3 rounded-full border-2 z-10 theme-transition"
-                  style={{ background: 'var(--dark)', borderColor: p.color, boxShadow: `0 0 10px ${p.color}` }}
+                  style={{ background: 'transparent', borderColor: p.color, boxShadow: `0 0 10px ${p.color}` }}
                 />
                 <span className="font-mono text-[9px] tracking-widest uppercase" style={{ color: p.color }}>
                   {p.phase}
@@ -250,7 +250,7 @@ export default function Home() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-px" style={{ background: 'var(--border)' }}>
 
             {/* PRE-MATCH */}
-            <div className="relative p-8 flex flex-col gap-5 overflow-hidden reveal" style={{ background: 'var(--dark3)' }}>
+            <div className="relative p-8 flex flex-col gap-5 overflow-hidden reveal" style={{ background: 'transparent' }}>
               {/* Background watermark */}
               <div
                 className="absolute right-4 top-4 font-display font-semibold leading-none select-none pointer-events-none"
@@ -300,7 +300,7 @@ export default function Home() {
             </div>
 
             {/* HALF-TIME */}
-            <div className="relative p-8 flex flex-col gap-5 overflow-hidden reveal" style={{ background: 'var(--dark3)' }}>
+            <div className="relative p-8 flex flex-col gap-5 overflow-hidden reveal" style={{ background: 'transparent' }}>
               <div
                 className="absolute right-4 top-4 font-display font-semibold leading-none select-none pointer-events-none"
                 style={{ fontSize: '120px', color: 'var(--gold)', opacity: 0.04, lineHeight: 1 }}
@@ -348,7 +348,7 @@ export default function Home() {
             </div>
 
             {/* FULL-TIME */}
-            <div className="relative p-8 flex flex-col gap-5 overflow-hidden reveal" style={{ background: 'var(--dark3)' }}>
+            <div className="relative p-8 flex flex-col gap-5 overflow-hidden reveal" style={{ background: 'transparent' }}>
               <div
                 className="absolute right-4 top-4 font-display font-semibold leading-none select-none pointer-events-none"
                 style={{ fontSize: '120px', color: 'var(--blue)', opacity: 0.04, lineHeight: 1 }}
@@ -400,7 +400,7 @@ export default function Home() {
           {/* Bottom AI feedback preview */}
           <div
             className="mt-px p-6 flex flex-col sm:flex-row items-center gap-4 border-t reveal"
-            style={{ background: 'var(--dark3)', borderColor: 'var(--border)' }}
+            style={{ background: 'transparent', borderColor: 'var(--border)' }}
           >
             <div className="text-2xl flex-shrink-0">🤖</div>
             <div className="flex-1">
@@ -424,7 +424,7 @@ export default function Home() {
       </section>
 
       {/* ── PITCH BUILDER (main interactive section) ── */}
-      <section id="builder" className="py-24" style={{ background: 'rgba(5, 13, 8, 0.6)' }}>
+      <section id="builder" className="py-24" style={{ background: 'transparent' }}>
         <div className="max-w-[1400px] mx-auto px-7">
           <div className="font-mono text-[11px] tracking-widest uppercase mb-3" style={{ color: primary }}>// Tactical Engine</div>
           <h2
@@ -443,7 +443,7 @@ export default function Home() {
 
 
       {/* ── LEAGUES ── */}
-      <section id="leagues" className="py-24" style={{ background: 'rgba(5, 13, 8, 0.75)' }}>
+      <section id="leagues" className="py-24" style={{ background: 'transparent' }}>
         <div className="max-w-[1400px] mx-auto px-7">
           <div className="font-mono text-[11px] tracking-widest uppercase mb-3" style={{ color: primary }}>// Competition</div>
           <h2
@@ -457,7 +457,7 @@ export default function Home() {
               <div
                 key={league.title}
                 className="relative p-10 border transition-all duration-300 hover:-translate-y-1 cursor-default"
-                style={{ background: 'var(--dark)', borderColor: league.featured ? 'rgba(255,210,63,0.3)' : 'var(--border)' }}
+                style={{ background: 'transparent', borderColor: league.featured ? 'rgba(255,210,63,0.3)' : 'var(--border)' }}
                 onMouseEnter={e => ((e.currentTarget as HTMLDivElement).style.borderColor = league.featured ? 'var(--gold)' : primary)}
                 onMouseLeave={e => ((e.currentTarget as HTMLDivElement).style.borderColor = league.featured ? 'rgba(255,210,63,0.3)' : 'var(--border)')}
               >
@@ -482,7 +482,7 @@ export default function Home() {
       </section>
 
       {/* ── FOOTER ── */}
-      <footer className="pt-14 pb-9 border-t" style={{ background: 'rgba(5, 13, 8, 0.85)', borderColor: 'var(--border)' }}>
+      <footer className="pt-14 pb-9 border-t" style={{ background: 'transparent', borderColor: 'var(--border)' }}>
         <div className="max-w-[1400px] mx-auto px-7">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-14 mb-14">
 
