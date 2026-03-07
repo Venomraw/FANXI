@@ -5,10 +5,10 @@
 ═══════════════════════════════════════════ */
 :root {
   /* ── Backgrounds — rich deep green ── */
-  --dark:        rgba(5, 13, 8, 0.15);   /* base background — stadium night */
-  --dark2:       rgba(5, 13, 8, 0.15);   /* same as dark */
-  --dark3:       rgba(10, 25, 15, 0.2);  /* card surface — transparent over stadium */
-  --mid:         rgba(26, 61, 37, 0.25); /* hover / active surface */
+  --dark:        rgba(5, 13, 8, 0.55);   /* base background — stadium night */
+  --dark2:       rgba(5, 13, 8, 0.55);   /* same as dark */
+  --dark3:       rgba(10, 25, 15, 0.6);  /* card surface — transparent over stadium */
+  --mid:         rgba(26, 61, 37, 0.65); /* hover / active surface */
   --border:      rgba(255,255,255,0.1);   /* borders — glass-friendly */
   --slot-empty:  rgba(255,255,255,0.08); /* empty pitch slot fill */
 
@@ -45,6 +45,13 @@
    BASE
 ═══════════════════════════════════════════ */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+h1, h2, h3 {
+  text-shadow: 0 2px 12px rgba(0,0,0,0.8);
+}
+p, span, a {
+  text-shadow: 0 1px 6px rgba(0,0,0,0.6);
+}
 html {
   scroll-behavior: smooth;
   background-color: transparent !important;
