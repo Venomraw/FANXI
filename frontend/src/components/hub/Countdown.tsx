@@ -50,7 +50,7 @@ export default function Countdown() {
           World Cup 2026
         </div>
         <p className="font-mono" style={{ fontSize: '9px', letterSpacing: '3px', color: 'var(--muted)', textTransform: 'uppercase' }}>
-          Jun 11 · Dallas TX
+          Jun 11 · World Cup 2026
         </p>
       </div>
 

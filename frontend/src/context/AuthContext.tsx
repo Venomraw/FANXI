@@ -33,6 +33,7 @@ interface AuthContextValue {
   user: AuthUser | null;
   token: string | null;
   login: (username: string, password: string) => Promise<string | null>;
+  loginWithToken: (accessToken: string) => Promise<boolean>;
   logout: () => Promise<void>;
   authFetch: (input: RequestInfo, init?: RequestInit) => Promise<Response>;
   isLoading: boolean;
@@ -44,6 +45,7 @@ const AuthContext = createContext<AuthContextValue>({
   user: null,
   token: null,
   login: async () => null,
+  loginWithToken: async () => false,
   logout: async () => {},
   authFetch: (input, init) => fetch(input, init),
   isLoading: true,
@@ -182,6 +184,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return null;
   }
 
+  // ── Login with token (Google OAuth callback) ─────────────────────────────
+
+  async function loginWithToken(accessToken: string): Promise<boolean> {
+    try {
+      const res = await fetch(`${API}/me`, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+      if (!res.ok) return false;
+      const userData = await res.json();
+      setToken(accessToken);
+      setUser(userData);
+      localStorage.setItem('fanxi_user', JSON.stringify(userData));
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
   // ── Logout ───────────────────────────────────────────────────────────────
 
   async function logout() {
@@ -200,7 +220,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, token, login, logout, authFetch, isLoading }}>
+    <AuthContext.Provider value={{ user, token, login, loginWithToken, logout, authFetch, isLoading }}>
       {children}
     </AuthContext.Provider>
   );

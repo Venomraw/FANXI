@@ -64,6 +64,7 @@ class User(SQLModel, table=True):
     country_allegiance: str
     football_iq_points: int = Field(default=0)
     rank_title: str = Field(default="Scout")
+    google_id: Optional[str] = Field(default=None, index=True)  # set for Google OAuth users
 
 
 # ---------------------------------------------------------------------------

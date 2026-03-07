@@ -1,7 +1,11 @@
+import re
 import secrets
+import urllib.parse
 from datetime import datetime, timedelta
 
+import httpx
 from fastapi import APIRouter, Cookie, Depends, HTTPException, Request, Response, status
+from fastapi.responses import RedirectResponse
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from pydantic import BaseModel
 from sqlmodel import Session, select
@@ -266,6 +270,111 @@ def reset_password(body: ResetPasswordRequest, session: Session = Depends(get_se
     session.commit()
 
     return {"message": "Password updated. You can now log in."}
+
+
+# ---------------------------------------------------------------------------
+# Google OAuth — /auth/google  →  Google consent  →  /auth/google/callback
+# ---------------------------------------------------------------------------
+
+@router.get("/auth/google")
+def google_auth_redirect():
+    """Redirect the browser to Google's OAuth consent screen."""
+    params = urllib.parse.urlencode({
+        "client_id": settings.google_client_id,
+        "redirect_uri": settings.google_redirect_uri,
+        "response_type": "code",
+        "scope": "openid email profile",
+        "access_type": "offline",
+        "prompt": "select_account",
+    })
+    return RedirectResponse(f"https://accounts.google.com/o/oauth2/v2/auth?{params}")
+
+
+@router.get("/auth/google/callback")
+def google_auth_callback(code: str, session: Session = Depends(get_session)):
+    """Exchange Google code for user info, find/create user, set cookie, redirect."""
+    # 1. Exchange authorisation code for Google access token
+    with httpx.Client() as client:
+        token_res = client.post(
+            "https://oauth2.googleapis.com/token",
+            data={
+                "code": code,
+                "client_id": settings.google_client_id,
+                "client_secret": settings.google_client_secret,
+                "redirect_uri": settings.google_redirect_uri,
+                "grant_type": "authorization_code",
+            },
+        )
+        if token_res.status_code != 200:
+            raise HTTPException(status_code=400, detail="Google token exchange failed")
+
+        google_access_token = token_res.json().get("access_token")
+
+        # 2. Fetch the user's Google profile
+        info_res = client.get(
+            "https://www.googleapis.com/oauth2/v2/userinfo",
+            headers={"Authorization": f"Bearer {google_access_token}"},
+        )
+        if info_res.status_code != 200:
+            raise HTTPException(status_code=400, detail="Failed to fetch Google profile")
+
+        info = info_res.json()
+
+    google_id: str = info["id"]
+    email: str = info["email"]
+    display_name: str = info.get("name", "")
+
+    # 3. Find or create the user
+    user = session.exec(select(User).where(User.google_id == google_id)).first()
+
+    if not user:
+        # Try linking by email (existing manual account)
+        user = session.exec(select(User).where(User.email == email)).first()
+        if user:
+            user.google_id = google_id
+            session.add(user)
+            session.commit()
+            session.refresh(user)
+
+    if not user:
+        # Brand-new Google user — generate a unique username
+        base = re.sub(r"[^a-zA-Z0-9_]", "", display_name.lower().replace(" ", "_"))[:15] or "scout"
+        username = base
+        suffix = 1
+        while session.exec(select(User).where(User.username == username)).first():
+            username = f"{base}{suffix}"
+            suffix += 1
+
+        # Store an unguessable locked password — Google users authenticate via OAuth only
+        user = User(
+            username=username,
+            email=email,
+            hashed_password=get_password_hash(secrets.token_urlsafe(32)),
+            country_allegiance="",
+            google_id=google_id,
+            rank_title="Scout",
+        )
+        session.add(user)
+        session.commit()
+        session.refresh(user)
+
+    # 4. Issue FanXI tokens
+    access_token = create_access_token({"sub": str(user.id)})
+    refresh_tok = create_refresh_token(user.id)
+
+    # 5. Redirect to frontend callback page with access token in query param
+    frontend_redirect = f"{settings.frontend_url}/auth/callback?token={access_token}"
+    response = RedirectResponse(url=frontend_redirect)
+    response.set_cookie(
+        key="fanxi_refresh",
+        value=refresh_tok,
+        httponly=True,
+        secure=True,
+        samesite="none",
+        max_age=60 * 60 * 24 * 7,
+        path="/auth/refresh",
+    )
+    return response
 
 
 # ---------------------------------------------------------------------------

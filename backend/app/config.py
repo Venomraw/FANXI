@@ -27,6 +27,11 @@ class Settings(BaseSettings):
     # JWT Secret
     secret_key: str = ""
 
+    # Google OAuth
+    google_client_id: str = ""
+    google_client_secret: str = ""
+    google_redirect_uri: str = "http://localhost:8000/auth/google/callback"
+
     # Groq API
     groq_api_key: str = ""
 
