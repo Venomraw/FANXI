@@ -141,7 +141,7 @@ export default function PitchBoard() {
   const fetchHistory = async () => {
     if (!user) return;
     try {
-      const res = await fetch(`http://127.0.0.1:8000/predictions/history/${user.id}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/predictions/history/${user.id}`, {
         headers: token ? { Authorization: `Bearer ${token}` } : {},
       });
       if (res.ok) setHistory(await res.json());

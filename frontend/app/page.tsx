@@ -1,6 +1,7 @@
 'use client';
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { Suspense } from 'react';
 import PitchBoard from "@/src/components/pitch/PitchBoard";
 import UserStats from "@/src/components/hub/UserStats";
 import MiniLeaderboard from "@/src/components/hub/MiniLeaderboard";
@@ -434,7 +435,17 @@ export default function Home() {
           >
             YOUR <span style={{ color: primary }}>XI</span>
           </h2>
-          <main><PitchBoard /></main>
+          <main>
+            <Suspense fallback={
+              <div className="flex items-center justify-center py-24">
+                <span className="font-mono text-[11px] tracking-widest uppercase" style={{ color: 'var(--muted)' }}>
+                  Loading Tactical Engine...
+                </span>
+              </div>
+            }>
+              <PitchBoard />
+            </Suspense>
+          </main>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-8">
             <UserStats />
             <MiniLeaderboard />
