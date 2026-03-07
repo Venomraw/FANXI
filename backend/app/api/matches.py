@@ -1,5 +1,5 @@
 """
-WC 2026 fixture endpoint.
+WC 2026 fixture + live match endpoints.
 
 Returns group-stage matches as a flat list.  The full 72-match group stage
 is built from _GROUP_DATA using a round-robin generator.  Fixtures follow the
@@ -12,8 +12,14 @@ Endpoint priority:
   GET /matches/upcoming → tries API-Football, falls back to static filter
 """
 from datetime import datetime, timezone
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
+from sqlmodel import Session, select, func
+from app.db import get_session
+from fastapi import Depends
 from app.services import football_api as fa
+from app.services import football_data as fd
+from app.services import ai_commentary as ai_c
+from app.models import MatchPrediction
 
 router = APIRouter(prefix="/matches", tags=["matches"])
 
@@ -338,3 +344,104 @@ _FLAGS = {
 
 def _country_flag(name: str) -> str:
     return _FLAGS.get(name, "🏳️")
+
+
+# ---------------------------------------------------------------------------
+# Live match endpoints (football-data.org)
+# ---------------------------------------------------------------------------
+
+@router.get("/live")
+def live_matches():
+    """All WC 2026 matches currently IN_PLAY or PAUSED."""
+    return fd.get_live_matches()
+
+
+@router.get("/{match_id}/events")
+def match_events(match_id: int):
+    """Goals, cards and substitutions as a sorted timeline."""
+    events = fd.get_match_events(match_id)
+    if events is None:
+        raise HTTPException(status_code=404, detail="Match not found")
+    return events
+
+
+@router.get("/{match_id}/lineups")
+def match_lineups(match_id: int):
+    """Confirmed starting XI and substitutes for both teams."""
+    return fd.get_match_lineups(match_id)
+
+
+@router.get("/{match_id}/stats")
+def match_stats(match_id: int):
+    """Possession, shots, score and momentum data."""
+    stats = fd.get_match_stats(match_id)
+    if not stats:
+        raise HTTPException(status_code=404, detail="Match not found or not live")
+    momentum = fd.compute_momentum(match_id)
+    stats["momentum"] = momentum
+    return stats
+
+
+@router.get("/{match_id}/commentary")
+def match_commentary(match_id: int):
+    """Last 5 AI tactical commentary entries for this match."""
+    return ai_c.get_recent_commentary(match_id, limit=5)
+
+
+@router.get("/{match_id}/pulse")
+def match_pulse(match_id: int, session: Session = Depends(get_session)):
+    """
+    Aggregate of all FanXI scout predictions for this match.
+    Returns: % who predicted home/draw/away, most popular formation,
+    most popular captain (first goalscorer pick), total scout count.
+    """
+    predictions = session.exec(
+        select(MatchPrediction).where(MatchPrediction.match_id == match_id)
+    ).all()
+
+    total = len(predictions)
+    if total == 0:
+        return {
+            "total_scouts": 0,
+            "result_split": {"home": 0, "draw": 0, "away": 0},
+            "top_formation": None,
+            "top_captain": None,
+        }
+
+    # Result split
+    result_counts: dict = {"home": 0, "draw": 0, "away": 0}
+    for p in predictions:
+        r = p.match_result
+        if r in result_counts:
+            result_counts[r] += 1
+
+    result_split = {k: round((v / total) * 100) for k, v in result_counts.items()}
+
+    # Top formation
+    formation_counts: dict = {}
+    for p in predictions:
+        lineup = p.lineup_data or {}
+        slots = list(lineup.keys())
+        count = len(slots)
+        # derive formation from lineup slot count — best effort
+        if count == 11:
+            formation_counts["full lineup"] = formation_counts.get("full lineup", 0) + 1
+
+    # Top captain (first goalscorer pick)
+    scorer_counts: dict = {}
+    for p in predictions:
+        pp = p.player_predictions or {}
+        scorer = pp.get("first_goalscorer")
+        if scorer:
+            scorer_counts[scorer] = scorer_counts.get(scorer, 0) + 1
+
+    top_captain = max(scorer_counts, key=lambda k: scorer_counts[k]) if scorer_counts else None
+    top_captain_pct = round((scorer_counts[top_captain] / total) * 100) if top_captain else 0
+
+    return {
+        "total_scouts": total,
+        "result_split": result_split,
+        "top_formation": max(formation_counts, key=lambda k: formation_counts[k]) if formation_counts else None,
+        "top_captain": top_captain,
+        "top_captain_pct": top_captain_pct,
+    }

@@ -170,6 +170,18 @@ class PasswordResetToken(SQLModel, table=True):
     used: bool = Field(default=False)
 
 
+class AiCommentary(SQLModel, table=True):
+    """
+    AI tactical commentary generated every 10 minutes during live matches.
+    Stored so clients connecting mid-match can fetch recent commentary immediately.
+    """
+    id: Optional[int] = Field(default=None, primary_key=True)
+    match_id: int = Field(index=True)
+    minute: Optional[int] = None
+    content: str
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+
 class TeamSquadCache(SQLModel, table=True):
     """
     Cache for Squad Data.

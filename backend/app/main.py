@@ -2,6 +2,7 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from app.api import users, predictions, leagues, teams, intel, squads, matches, ai
+from app.websocket import match_ws
 from app import web
 from app.db import init_db
 
@@ -107,6 +108,9 @@ app.include_router(squads.router)
 app.include_router(matches.router)
 app.include_router(ai.router)
 
+# WebSocket
+app.include_router(match_ws.router)
+
 # HTML interface (Jinja2 templates — the original La Liga prototype)
 app.include_router(web.router)
 
@@ -124,3 +128,5 @@ def on_startup():
     """
     print("FanXI is setting sail...")
     init_db()
+    match_ws.scheduler.start()
+    print("APScheduler started for live match polling.")

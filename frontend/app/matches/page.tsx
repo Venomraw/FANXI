@@ -166,34 +166,55 @@ function MatchCard({
             </span>
           </div>
 
-          {isPast ? (
-            <span className="font-mono text-[11px] uppercase px-4 py-2" style={{ color: 'rgba(255,255,255,0.2)', border: '1px solid var(--border)' }}>
-              Finished
-            </span>
-          ) : isPredicted ? (
-            <span
-              className="font-mono text-[11px] uppercase px-4 py-2 flex items-center gap-2 theme-transition"
-              style={{ color: '#00FF85', background: 'rgba(0,255,133,0.08)', border: '1px solid rgba(0,255,133,0.25)' }}
-            >
-              <span>✓</span> Predicted
-            </span>
-          ) : (
-            <button
-              onClick={() => onPredict(match.id, match.home_team, match.away_team)}
-              className="font-sans font-semibold text-[13px] px-5 py-2.5 border transition-all theme-transition flex items-center gap-2"
-              style={{ color: primary, borderColor: `color-mix(in srgb, ${primary} 40%, transparent)`, background: `color-mix(in srgb, ${primary} 8%, transparent)` }}
-              onMouseEnter={e => {
-                (e.currentTarget as HTMLButtonElement).style.background = `color-mix(in srgb, ${primary} 18%, transparent)`;
-                (e.currentTarget as HTMLButtonElement).style.boxShadow = `0 0 16px color-mix(in srgb, ${primary} 30%, transparent)`;
-              }}
-              onMouseLeave={e => {
-                (e.currentTarget as HTMLButtonElement).style.background = `color-mix(in srgb, ${primary} 8%, transparent)`;
-                (e.currentTarget as HTMLButtonElement).style.boxShadow = 'none';
-              }}
-            >
-              Predict <span style={{ opacity: 0.7 }}>→</span>
-            </button>
-          )}
+          <div className="flex items-center gap-2 flex-wrap">
+            {isPast ? (
+              <>
+                <span className="font-mono text-[11px] uppercase px-4 py-2" style={{ color: 'rgba(255,255,255,0.2)', border: '1px solid var(--border)' }}>
+                  Finished
+                </span>
+                <a
+                  href={`/matches/${match.id}/live`}
+                  className="font-mono text-[11px] uppercase px-4 py-2 flex items-center gap-1.5 transition-all"
+                  style={{ color: 'var(--muted)', border: '1px solid var(--border)' }}
+                >
+                  Review
+                </a>
+              </>
+            ) : isPredicted ? (
+              <>
+                <span
+                  className="font-mono text-[11px] uppercase px-4 py-2 flex items-center gap-2 theme-transition"
+                  style={{ color: '#00FF85', background: 'rgba(0,255,133,0.08)', border: '1px solid rgba(0,255,133,0.25)' }}
+                >
+                  <span>✓</span> Predicted
+                </span>
+                <a
+                  href={`/matches/${match.id}/live`}
+                  className="font-mono text-[11px] uppercase px-4 py-2 flex items-center gap-1.5 transition-all"
+                  style={{ color: '#FF2D55', background: 'rgba(255,45,85,0.08)', border: '1px solid rgba(255,45,85,0.3)' }}
+                >
+                  <span className="w-1.5 h-1.5 rounded-full inline-block" style={{ background: '#FF2D55' }} />
+                  Watch Live
+                </a>
+              </>
+            ) : (
+              <button
+                onClick={() => onPredict(match.id, match.home_team, match.away_team)}
+                className="font-sans font-semibold text-[13px] px-5 py-2.5 border transition-all theme-transition flex items-center gap-2"
+                style={{ color: primary, borderColor: `color-mix(in srgb, ${primary} 40%, transparent)`, background: `color-mix(in srgb, ${primary} 8%, transparent)` }}
+                onMouseEnter={e => {
+                  (e.currentTarget as HTMLButtonElement).style.background = `color-mix(in srgb, ${primary} 18%, transparent)`;
+                  (e.currentTarget as HTMLButtonElement).style.boxShadow = `0 0 16px color-mix(in srgb, ${primary} 30%, transparent)`;
+                }}
+                onMouseLeave={e => {
+                  (e.currentTarget as HTMLButtonElement).style.background = `color-mix(in srgb, ${primary} 8%, transparent)`;
+                  (e.currentTarget as HTMLButtonElement).style.boxShadow = 'none';
+                }}
+              >
+                Predict <span style={{ opacity: 0.7 }}>→</span>
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </div>

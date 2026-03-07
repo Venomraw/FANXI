@@ -443,3 +443,159 @@ def score_match(
 
     session.commit()
     return {"match_id": match_id, "scored": len(scored), "results": scored}
+
+
+# ---------------------------------------------------------------------------
+# Live scorecard — compare user's prediction against current match reality
+# ---------------------------------------------------------------------------
+
+@router.get("/matches/{match_id}/my-score")
+@limiter.limit("30/minute")
+def live_my_score(
+    request: Request,
+    match_id: int,
+    session: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user),
+):
+    """
+    Compare the authenticated user's pre-match prediction against
+    current match state from football-data.org.
+
+    Scoring:
+      formation  : +10 pts if at least 7 of 11 players in lineup match the
+                   real starting XI (best-effort without official lineup data)
+      captain    : +20 pts if first_goalscorer pick matches a real goal scorer
+      result     : +15 pts if match_result pick matches current score trend
+                   (null while still live + equal score)
+      first_scorer: +25 pts if first_goalscorer matches actual first goal
+      clean_sheet: +15 pts if team has 0 goals against at current minute
+
+    Returns null for unresolvable fields while match is live.
+    """
+    from app.services import football_data as _fd
+
+    pred = session.exec(
+        select(MatchPrediction).where(
+            MatchPrediction.match_id == match_id,
+            MatchPrediction.user_id == current_user.id,
+        )
+    ).first()
+
+    if not pred:
+        raise HTTPException(status_code=404, detail="No prediction found for this match")
+
+    # Fetch live match data
+    stats = _fd.get_match_stats(match_id)
+    events = _fd.get_match_events(match_id)
+    lineups = _fd.get_match_lineups(match_id)
+
+    score = stats.get("score", {})
+    home_goals = score.get("home") or 0
+    away_goals = score.get("away") or 0
+    status = stats.get("status", "")
+    is_live = status in ("IN_PLAY", "PAUSED", "HALF_TIME")
+    is_finished = status == "FINISHED"
+
+    total_pts = 0
+
+    # ── Formation check (vs confirmed lineup) ─────────────────────────────
+    formation_correct = None
+    formation_pts = 0
+    home_lineup = lineups.get("home") or {}
+    away_lineup = lineups.get("away") or {}
+    confirmed_starters: set = set()
+    for l in [home_lineup, away_lineup]:
+        for p in l.get("startXI", []):
+            name = (p.get("name") or "").lower()
+            if name:
+                confirmed_starters.add(name)
+
+    if confirmed_starters:
+        predicted_players = {
+            (v.get("name") or "").lower()
+            for v in (pred.lineup_data or {}).values()
+            if isinstance(v, dict)
+        }
+        overlap = len(predicted_players & confirmed_starters)
+        formation_correct = overlap >= 7
+        if formation_correct:
+            formation_pts = 10
+            total_pts += formation_pts
+
+    # ── Captain / first goalscorer ────────────────────────────────────────
+    captain_correct = None
+    captain_pts = 0
+    pp = pred.player_predictions or {}
+    first_scorer_pick = (pp.get("first_goalscorer") or "").lower()
+    goals_timeline = [e for e in events if e["type"] == "goal"]
+    actual_first_scorer = (
+        (goals_timeline[0].get("scorer") or "").lower() if goals_timeline else None
+    )
+    all_scorers = {(e.get("scorer") or "").lower() for e in goals_timeline}
+
+    if first_scorer_pick and actual_first_scorer:
+        captain_correct = first_scorer_pick == actual_first_scorer
+        if captain_correct:
+            captain_pts = 20
+            total_pts += captain_pts
+
+    # ── Result ─────────────────────────────────────────────────────────────
+    result_correct = None
+    result_pts = 0
+    if pred.match_result and (is_finished or (is_live and home_goals != away_goals)):
+        if home_goals > away_goals:
+            actual_result = "home"
+        elif away_goals > home_goals:
+            actual_result = "away"
+        else:
+            actual_result = "draw"
+        if not is_finished and actual_result == "draw":
+            result_correct = None  # still live — could change
+        else:
+            result_correct = pred.match_result == actual_result
+            if result_correct:
+                result_pts = 15
+                total_pts += result_pts
+
+    # ── First scorer +25 ──────────────────────────────────────────────────
+    first_scorer_pts = 0
+    if first_scorer_pick and actual_first_scorer and first_scorer_pick == actual_first_scorer:
+        first_scorer_pts = 25
+        total_pts += first_scorer_pts
+
+    # ── Clean sheet ───────────────────────────────────────────────────────
+    clean_sheet_pts = 0
+    # Award if the user's team has a clean sheet so far
+    team_name = (pred.team_name or "").lower()
+    home_name = stats.get("home_team", "").lower()
+    if team_name and team_name == home_name and away_goals == 0:
+        clean_sheet_pts = 15
+        total_pts += clean_sheet_pts
+    elif team_name and team_name != home_name and home_goals == 0:
+        clean_sheet_pts = 15
+        total_pts += clean_sheet_pts
+
+    # ── Current rank ──────────────────────────────────────────────────────
+    all_users = session.exec(select(User).order_by(User.football_iq_points.desc())).all()
+    current_rank = next(
+        (i + 1 for i, u in enumerate(all_users) if u.id == current_user.id), None
+    )
+    total_scouts = len(all_users)
+
+    return {
+        "formation_correct": formation_correct,
+        "formation_pts": formation_pts,
+        "captain_correct": captain_correct,
+        "captain_pts": captain_pts,
+        "first_scorer_pts": first_scorer_pts,
+        "result_correct": result_correct,
+        "result_pts": result_pts,
+        "clean_sheet_pts": clean_sheet_pts,
+        "total_pts": total_pts,
+        "current_rank": current_rank,
+        "rank_change": 0,  # requires snapshot at kickoff — placeholder
+        "total_scouts": total_scouts,
+        "match_status": status,
+        "home_goals": home_goals,
+        "away_goals": away_goals,
+    }
