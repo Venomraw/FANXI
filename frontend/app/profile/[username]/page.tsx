@@ -12,11 +12,17 @@ import NavBar from '@/src/components/NavBar';
 interface PublicProfile {
   id: number;
   username: string;
+  display_name?: string;
+  avatar_id?: string;
   country_allegiance: string;
   football_iq_points: number;
   rank_title: string;
   global_rank: number;
   prediction_count: number;
+  favorite_nation?: string;
+  favorite_club?: string;
+  preferred_formation?: string;
+  tactical_style?: string;
 }
 
 interface LeaderboardEntry {
@@ -310,7 +316,7 @@ export default function ProfilePage() {
   // ---------- loading / not found ----------
   if (loading) {
     return (
-      <div className="min-h-screen" style={{ background: 'var(--dark)' }}>
+      <div className="min-h-screen" style={{ background: 'transparent' }}>
         <NavBar subtitle="PROFILE" />
         <div className="flex items-center justify-center h-[60vh]">
           <span className="font-mono text-[12px] uppercase tracking-[3px]" style={{ color: 'var(--muted)' }}>
@@ -323,7 +329,7 @@ export default function ProfilePage() {
 
   if (notFound || !profile) {
     return (
-      <div className="min-h-screen" style={{ background: 'var(--dark)' }}>
+      <div className="min-h-screen" style={{ background: 'transparent' }}>
         <NavBar subtitle="PROFILE" />
         <div className="flex flex-col items-center justify-center h-[60vh] gap-6">
           <span className="font-display" style={{ fontSize: '80px', lineHeight: 1 }}>404</span>
@@ -343,7 +349,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen text-white" style={{ background: 'var(--dark)' }}>
+    <div className="min-h-screen text-white" style={{ background: 'transparent' }}>
       <NavBar subtitle="PROFILE" />
       <div className="grid-bg opacity-20" />
 
@@ -351,7 +357,7 @@ export default function ProfilePage() {
       <div
         className="relative py-16 border-b theme-transition"
         style={{
-          background: `radial-gradient(ellipse 80% 60% at 50% 0%, color-mix(in srgb, ${rankColor} 12%, transparent) 0%, transparent 70%), var(--dark)`,
+          background: `radial-gradient(ellipse 80% 60% at 50% 0%, color-mix(in srgb, ${rankColor} 12%, transparent) 0%, transparent 70%), rgba(0,0,0,0.35)`,
           borderColor: 'var(--border)',
         }}
       >
@@ -359,18 +365,28 @@ export default function ProfilePage() {
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-8">
 
             {/* Avatar */}
-            <div
-              className="w-24 h-24 flex items-center justify-center font-display font-semibold flex-shrink-0 theme-transition"
-              style={{
-                fontSize: '48px',
-                background: `color-mix(in srgb, ${rankColor} 18%, var(--dark3))`,
-                color: rankColor,
-                border: `2px solid color-mix(in srgb, ${rankColor} 50%, transparent)`,
-                boxShadow: `0 0 32px color-mix(in srgb, ${rankColor} 25%, transparent)`,
-              }}
-            >
-              {profile.username[0].toUpperCase()}
-            </div>
+            {(() => {
+              const AVATAR_EMOJIS: Record<string, string> = {
+                football: '⚽', goalkeeper: '🥅', gloves: '🧤', tactician: '🎯',
+                captain: '👑', striker: '⚡', beast: '🦁', fire: '🔥',
+                champion: '🏆', star: '🌟', robot: '🤖', diamond: '💎',
+              };
+              const emoji = profile.avatar_id ? AVATAR_EMOJIS[profile.avatar_id] : null;
+              return (
+                <div
+                  className="w-24 h-24 flex items-center justify-center font-display font-semibold flex-shrink-0 theme-transition"
+                  style={{
+                    fontSize: emoji ? '48px' : '48px',
+                    background: `color-mix(in srgb, ${rankColor} 18%, var(--dark3))`,
+                    color: rankColor,
+                    border: `2px solid color-mix(in srgb, ${rankColor} 50%, transparent)`,
+                    boxShadow: `0 0 32px color-mix(in srgb, ${rankColor} 25%, transparent)`,
+                  }}
+                >
+                  {emoji ?? profile.username[0].toUpperCase()}
+                </div>
+              );
+            })()}
 
             {/* Identity */}
             <div className="flex-1 min-w-0">
@@ -379,7 +395,7 @@ export default function ProfilePage() {
                   className="font-display leading-none"
                   style={{ fontSize: 'clamp(2.5rem, 6vw, 4.5rem)', color: 'var(--text)' }}
                 >
-                  {profile.username}
+                  {profile.display_name || profile.username}
                 </h1>
                 <span
                   className="font-mono text-[11px] uppercase tracking-[1.5px] px-3 py-1.5 flex-shrink-0 theme-transition"
@@ -408,6 +424,7 @@ export default function ProfilePage() {
             <div className="flex-shrink-0">
               {isOwnProfile ? (
                 <button
+                  onClick={() => router.push('/settings')}
                   className="font-sans font-semibold text-[13px] px-6 py-3 border transition-all"
                   style={{ borderColor: primary, color: primary, background: `color-mix(in srgb, ${primary} 8%, transparent)` }}
                 >
@@ -548,7 +565,7 @@ export default function ProfilePage() {
                 <div>
                   <p className="font-mono text-[10px] uppercase tracking-[1.5px] mb-1" style={{ color: 'var(--muted)' }}>Nation</p>
                   <p className="font-sans font-semibold text-[16px]" style={{ color: 'var(--text)' }}>
-                    {countryFlag} {profile.country_allegiance}
+                    {countryFlag} {profile.favorite_nation || profile.country_allegiance}
                   </p>
                 </div>
                 <div>
@@ -558,6 +575,30 @@ export default function ProfilePage() {
                     {percentile !== null && ` · Top ${100 - percentile + 1}%`}
                   </p>
                 </div>
+                {profile.favorite_club && (
+                  <div>
+                    <p className="font-mono text-[10px] uppercase tracking-[1.5px] mb-1" style={{ color: 'var(--muted)' }}>Club</p>
+                    <p className="font-sans font-semibold text-[16px]" style={{ color: 'var(--text)' }}>
+                      {profile.favorite_club}
+                    </p>
+                  </div>
+                )}
+                {profile.preferred_formation && (
+                  <div>
+                    <p className="font-mono text-[10px] uppercase tracking-[1.5px] mb-1" style={{ color: 'var(--muted)' }}>Formation</p>
+                    <p className="font-sans font-semibold text-[16px]" style={{ color: 'var(--text)' }}>
+                      {profile.preferred_formation}
+                    </p>
+                  </div>
+                )}
+                {profile.tactical_style && (
+                  <div>
+                    <p className="font-mono text-[10px] uppercase tracking-[1.5px] mb-1" style={{ color: 'var(--muted)' }}>Tactical Style</p>
+                    <p className="font-sans font-semibold text-[16px]" style={{ color: 'var(--text)' }}>
+                      {profile.tactical_style.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
           </div>

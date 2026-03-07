@@ -3,6 +3,7 @@ import { Space_Grotesk, Syne, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/src/context/ThemeContext";
 import { AuthProvider } from "@/src/context/AuthContext";
+import { LanguageProvider } from "@/src/context/LanguageContext";
 import TeamPicker from "@/src/components/TeamPicker";
 import CustomCursor from "@/src/components/CustomCursor";
 import KickoffBar from "@/src/components/KickoffBar";
@@ -55,12 +56,14 @@ export default function RootLayout({
           backgroundRepeat: 'no-repeat',
         }} />
         <AuthProvider>
+          <LanguageProvider>
           <ThemeProvider>
             <CustomCursor />
             <KickoffBar />
             <TeamPicker />
             {children}
           </ThemeProvider>
+          </LanguageProvider>
         </AuthProvider>
       </body>
     </html>

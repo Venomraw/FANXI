@@ -59,6 +59,7 @@ export default function PitchBoard() {
   const urlMatchId = searchParams ? Number(searchParams.get('match')) || null : null;
   const urlTeam    = searchParams ? searchParams.get('team') : null;
   const urlAway    = searchParams ? searchParams.get('away') : null;
+  const urlTab     = searchParams ? searchParams.get('tab') : null;
   const [isMounted, setIsMounted]         = useState(false);
   const [rightTab, setRightTab]           = useState<RightTab>('tactics');
   const [formation, setFormation]         = useState<FormationLayout>(DEFAULT_FORMATION);
@@ -100,6 +101,13 @@ export default function PitchBoard() {
   });
 
   useEffect(() => { setIsMounted(true); }, []);
+
+  // Switch to history tab when navigated via /?tab=history
+  useEffect(() => {
+    if (urlTab === 'history') {
+      setRightTab('history');
+    }
+  }, [urlTab]);
 
   const loadSquad = useCallback(async (teamName: string) => {
     setSquadLoading(true);

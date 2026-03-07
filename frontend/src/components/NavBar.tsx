@@ -3,8 +3,9 @@ import { useState, useRef, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useTheme } from '@/src/context/ThemeContext';
 import { useAuth } from '@/src/context/AuthContext';
+import { useLanguage, LangCode } from '@/src/context/LanguageContext';
 
-const LANGUAGES = ['EN', 'ES', 'FR', 'PT', 'DE'];
+const LANGUAGES: LangCode[] = ['EN', 'ES', 'FR', 'PT', 'DE'];
 
 const NAV_LINKS = [
   { label: 'Hub',         href: '/'            },
@@ -22,13 +23,11 @@ interface NavBarProps {
 export default function NavBar({ subtitle }: NavBarProps) {
   const { primary, team, setShowPicker } = useTheme();
   const { user, logout } = useAuth();
+  const { lang, setLang, t } = useLanguage();
   const router = useRouter();
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [lang, setLang] = useState(() =>
-    typeof window !== 'undefined' ? (localStorage.getItem('fanxi_lang') ?? 'EN') : 'EN'
-  );
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -41,9 +40,8 @@ export default function NavBar({ subtitle }: NavBarProps) {
     return () => document.removeEventListener('mousedown', handleClick);
   }, []);
 
-  function handleLang(l: string) {
+  function handleLang(l: LangCode) {
     setLang(l);
-    localStorage.setItem('fanxi_lang', l);
   }
 
   function handleLogout() {
@@ -244,9 +242,9 @@ export default function NavBar({ subtitle }: NavBarProps) {
 
                     {/* Menu items */}
                     {[
-                      { icon: '👤', label: 'Profile',        action: () => { router.push('/profile'); setDropdownOpen(false); } },
-                      { icon: '⚙️', label: 'Settings',       action: () => { router.push('/settings'); setDropdownOpen(false); } },
-                      { icon: '🏆', label: 'My Predictions', action: () => { router.push('/?tab=history'); setDropdownOpen(false); } },
+                      { icon: '👤', label: t('profile'),       action: () => { router.push('/profile'); setDropdownOpen(false); } },
+                      { icon: '⚙️', label: t('settings'),      action: () => { router.push('/settings'); setDropdownOpen(false); } },
+                      { icon: '🏆', label: t('myPredictions'), action: () => { router.push('/?tab=history'); setDropdownOpen(false); } },
                     ].map(item => (
                       <button
                         key={item.label}
@@ -271,7 +269,7 @@ export default function NavBar({ subtitle }: NavBarProps) {
                     <div className="px-4 py-2.5 border-t" style={{ borderColor: 'var(--border)' }}>
                       <div className="flex items-center gap-2 mb-2">
                         <span className="text-base">🌍</span>
-                        <span className="font-sans font-semibold text-[13px]" style={{ color: 'var(--muted)' }}>Language</span>
+                        <span className="font-sans font-semibold text-[13px]" style={{ color: 'var(--muted)' }}>{t('language')}</span>
                       </div>
                       <div className="flex gap-1">
                         {LANGUAGES.map(l => (

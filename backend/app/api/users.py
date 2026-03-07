@@ -133,6 +133,11 @@ def login(
             "rank_title": user.rank_title,
             "onboarding_complete": user.onboarding_complete,
             "display_name": user.display_name,
+            "avatar_id": user.avatar_id,
+            "favorite_nation": user.favorite_nation,
+            "favorite_club": user.favorite_club,
+            "preferred_formation": user.preferred_formation,
+            "tactical_style": user.tactical_style,
         },
     }
 
@@ -463,9 +468,15 @@ def get_public_profile(username: str, session: Session = Depends(get_session)):
     return {
         "id": user.id,
         "username": user.username,
+        "display_name": user.display_name,
+        "avatar_id": user.avatar_id,
         "country_allegiance": user.country_allegiance,
         "football_iq_points": user.football_iq_points,
         "rank_title": user.rank_title,
         "global_rank": global_rank,
         "prediction_count": prediction_count,
+        "favorite_nation": user.favorite_nation,
+        "favorite_club": user.favorite_club,
+        "preferred_formation": user.preferred_formation,
+        "tactical_style": user.tactical_style,
     }

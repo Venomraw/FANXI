@@ -42,6 +42,11 @@ class UserRead(UserBase):
     rank_title: str
     onboarding_complete: bool = False
     display_name: Optional[str] = None
+    avatar_id: Optional[str] = None
+    favorite_nation: Optional[str] = None
+    favorite_club: Optional[str] = None
+    preferred_formation: Optional[str] = None
+    tactical_style: Optional[str] = None
 
     class Config:
         from_attributes = True

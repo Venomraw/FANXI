@@ -29,6 +29,11 @@ export interface AuthUser {
   rank_title: string;
   onboarding_complete: boolean;
   display_name?: string;
+  avatar_id?: string;
+  favorite_nation?: string;
+  favorite_club?: string;
+  preferred_formation?: string;
+  tactical_style?: string;
 }
 
 interface AuthContextValue {
