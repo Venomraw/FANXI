@@ -13,7 +13,7 @@ from app.limiter import limiter
 
 from app.db import get_session
 from app.models import User, PasswordResetToken
-from app.schemas import UserCreate, UserRead
+from app.schemas import UserCreate, UserRead, OnboardingUpdate
 from app.core.security import (
     get_password_hash, verify_password,
     create_access_token, decode_access_token,
@@ -73,6 +73,7 @@ def register_user(request: Request, user_data: UserCreate, session: Session = De
         hashed_password=get_password_hash(user_data.password),
         country_allegiance=user_data.country_allegiance,
         rank_title="Scout",
+        onboarding_complete=True,  # manual registration skips onboarding
     )
     session.add(new_user)
     session.commit()
@@ -130,6 +131,8 @@ def login(
             "country_allegiance": user.country_allegiance,
             "football_iq_points": user.football_iq_points,
             "rank_title": user.rank_title,
+            "onboarding_complete": user.onboarding_complete,
+            "display_name": user.display_name,
         },
     }
 
@@ -375,6 +378,63 @@ def google_auth_callback(code: str, session: Session = Depends(get_session)):
         path="/auth/refresh",
     )
     return response
+
+
+# ---------------------------------------------------------------------------
+# Username availability check — lightweight, no auth required
+# ---------------------------------------------------------------------------
+
+@router.get("/users/check/{username}")
+def check_username(username: str, session: Session = Depends(get_session)):
+    """Returns {"available": true} if the username is free to use."""
+    existing = session.exec(select(User).where(User.username == username.lower())).first()
+    return {"available": existing is None}
+
+
+# ---------------------------------------------------------------------------
+# Onboarding — Google OAuth users complete their profile here
+# ---------------------------------------------------------------------------
+
+@router.patch("/users/me/onboarding", response_model=UserRead)
+def complete_onboarding(
+    body: OnboardingUpdate,
+    current_user: User = Depends(get_current_user),
+    session: Session = Depends(get_session),
+):
+    new_username = body.username.lower()
+
+    # Check username uniqueness (allow keeping current username unchanged)
+    if new_username != current_user.username:
+        existing = session.exec(select(User).where(User.username == new_username)).first()
+        if existing:
+            raise HTTPException(status_code=400, detail="Username already taken")
+
+    current_user.username = new_username
+    if body.display_name:
+        current_user.display_name = body.display_name
+    if body.avatar_id:
+        current_user.avatar_id = body.avatar_id
+    if body.favorite_nation:
+        current_user.favorite_nation = body.favorite_nation
+        current_user.country_allegiance = body.favorite_nation  # keep in sync
+    if body.favorite_club:
+        current_user.favorite_club = body.favorite_club
+    if body.preferred_formation:
+        current_user.preferred_formation = body.preferred_formation
+    if body.tactical_style:
+        current_user.tactical_style = body.tactical_style
+    if body.wc_winner_pick:
+        current_user.wc_winner_pick = body.wc_winner_pick
+    if body.top_scorer_pick:
+        current_user.top_scorer_pick = body.top_scorer_pick
+    if body.biggest_upset_pick:
+        current_user.biggest_upset_pick = body.biggest_upset_pick
+
+    current_user.onboarding_complete = True
+    session.add(current_user)
+    session.commit()
+    session.refresh(current_user)
+    return current_user
 
 
 # ---------------------------------------------------------------------------

@@ -40,9 +40,32 @@ class UserRead(UserBase):
     id: int
     football_iq_points: int
     rank_title: str
+    onboarding_complete: bool = False
+    display_name: Optional[str] = None
 
     class Config:
         from_attributes = True
+
+
+class OnboardingUpdate(BaseModel):
+    username: str
+    display_name: Optional[str] = None
+    avatar_id: Optional[str] = None
+    favorite_nation: Optional[str] = None
+    favorite_club: Optional[str] = None
+    preferred_formation: Optional[str] = None
+    tactical_style: Optional[str] = None
+    wc_winner_pick: Optional[str] = None
+    top_scorer_pick: Optional[str] = None
+    biggest_upset_pick: Optional[str] = None
+
+    @field_validator("username")
+    @classmethod
+    def validate_username(cls, v: str) -> str:
+        v = v.strip()
+        if not USERNAME_RE.match(v):
+            raise ValueError("Username must be 3–20 characters (alphanumeric/underscore).")
+        return v.lower()
 
 # --- Match Outcome Sub-Schemas ---
 

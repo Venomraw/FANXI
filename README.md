@@ -1,6 +1,8 @@
-# FanXI: World Cup 2026 Tactical Hub
+# FanXI — World Cup 2026 Tactical Hub
 
-The world's first tactical-first football prediction engine. Fans don't just pick the XI — they set the full tactical picture: formation, mentality, line height, and width, then lock it in against real match results.
+The world's first tactical-first football prediction platform for the 2026 FIFA World Cup. Predict starting XIs, formations, tactics and match stats — then watch AI score your football IQ in real time.
+
+**48 nations · 104 matches · 1,100+ players · Free to play**
 
 ---
 
@@ -10,7 +12,13 @@ The world's first tactical-first football prediction engine. Fans don't just pic
 |---------|-------------|
 | 1.0 | Initial FastAPI + SQLite scaffold, Jinja2 HTML prediction form |
 | 1.1 | Tactical Bridge: React PitchBoard with drag-and-drop, JSON API, state re-hydration |
-| 1.2 | Security hardening: UserCreate schema, response_model filtering, error log isolation, missing dependencies added, web router mounted |
+| 1.2 | Security hardening: UserCreate schema, response_model filtering, error log isolation |
+| 1.3 | JWT auth: access + refresh tokens, httpOnly cookie session, `/me`, `/auth/refresh`, `/auth/logout` |
+| 1.4 | Rate limiting (slowapi), password reset via Resend email, forgot/reset password flow |
+| 1.5 | Static World Cup squads (48 teams × 23 players), squad caching, AI scoring via Groq |
+| 1.6 | Full Next.js UI: hub page, leaderboard, nation intel, matches, profile, AI page, custom cursor |
+| 1.7 | PostgreSQL (Neon) in production, Vercel deployment, stadium background, Space Grotesk + Syne typography |
+| 1.8 | Google OAuth: one-click sign-in/register, account linking by email |
 
 ---
 
@@ -18,63 +26,101 @@ The world's first tactical-first football prediction engine. Fans don't just pic
 
 | Layer | Technology |
 |-------|-----------|
-| Frontend | Next.js 16, React 19, TypeScript, Tailwind CSS v4 |
-| Drag & Drop | dnd-kit (`@dnd-kit/core`, `@dnd-kit/sortable`) |
+| Frontend | Next.js 15, React 19, TypeScript, Tailwind CSS v4 |
+| Fonts | Space Grotesk (display), Syne (body), JetBrains Mono (micro labels) |
+| Drag & Drop | `@dnd-kit/core`, `@dnd-kit/sortable` |
 | Backend | Python 3.11, FastAPI |
-| ORM / DB | SQLModel + SQLite (`fanxi.db`) |
-| Validation | Pydantic v2 |
+| ORM | SQLModel + Pydantic v2 |
+| Database | PostgreSQL via Neon (production), SQLite (local dev) |
+| Auth | JWT access tokens (in-memory) + httpOnly refresh cookie, Google OAuth 2.0 |
 | Password hashing | passlib + bcrypt |
-| HTTP client | httpx (external football API calls) |
-| HTML templates | Jinja2 (La Liga prototype interface) |
+| Rate limiting | slowapi (per-IP, per-route limits) |
+| Email | Resend API (password reset) |
+| AI scoring | Groq API (llama-3) |
+| HTTP client | httpx |
 | Image generation | Pillow (shareable lineup cards) |
+| HTML templates | Jinja2 (legacy prototype interface) |
 
 ---
 
 ## Architecture
 
-FanXI runs two parallel interfaces backed by the same FastAPI server:
-
 ```
-┌─────────────────────────────────────┐    ┌──────────────────────────────────┐
-│   React Frontend (Next.js :3000)    │    │   HTML Interface (Jinja2)        │
-│                                     │    │                                  │
-│  PitchBoard.tsx                     │    │  /                  home         │
-│   ├─ Drag-and-drop bench → pitch    │    │  /teams/{id}/fixtures            │
-│   ├─ Tactics sliders (3 axes)       │    │  /teams/{id}/matches/{id}/predict│
-│   ├─ History tab (re-hydration)     │    │  /matches/{id}/scores/html       │
-│   └─ Lock Selection → POST /predict │    │  /users/{name}/predictions/html  │
-└────────────────┬────────────────────┘    └─────────────┬────────────────────┘
-                 │ JSON (fetch)                           │ HTML forms
-                 ▼                                        ▼
-┌────────────────────────────────────────────────────────────────────────────┐
-│                        FastAPI Backend (:8000)                             │
-│                                                                            │
-│  CORS whitelist: localhost:3000 only                                       │
-│                                                                            │
-│  /register              POST  — UserCreate schema → bcrypt → DB           │
-│  /predictions/lock/{id} POST  — LockSelectionRequest → MatchPrediction    │
-│  /predictions/match/{id} GET  — fetch locked lineup                       │
-│  /predictions/history/{uid} GET — all snapshots for a scout               │
-│  /leagues/              GET   — list leagues                               │
-│  /leagues/{code}/teams  GET   — teams in a league                         │
-│  /teams/{id}/matches    GET   — fixtures for a team                       │
-└────────────────────────────────────────────────────────────────────────────┘
-                                    │
-                                    ▼
-                        SQLite — fanxi.db
-                        ├─ User
-                        ├─ MatchPrediction   (React interface)
-                        ├─ PredictionDB      (HTML interface)
-                        ├─ TeamDB
-                        ├─ MatchDB
-                        └─ Player
+┌──────────────────────────────────────────────────────────┐
+│              Next.js Frontend (localhost:3000)            │
+│                                                           │
+│  /                  Hub — PitchBoard + UserStats          │
+│  /login             Auth — login, register, Google OAuth  │
+│  /auth/callback     Google OAuth redirect handler         │
+│  /leaderboard       Global scout rankings                 │
+│  /nation            Nation Intel — news, YouTube, stats   │
+│  /matches           Live & upcoming matches               │
+│  /ai                AI Football IQ analysis               │
+│  /profile/[user]    Public scout profile                  │
+│  /guide             How to play                           │
+│  /forgot-password   Password reset request                │
+│  /reset-password    Password reset confirmation           │
+└──────────────────────────┬───────────────────────────────┘
+                           │ JSON (authFetch — auto refresh)
+                           ▼
+┌──────────────────────────────────────────────────────────┐
+│              FastAPI Backend (localhost:8000)             │
+│                                                           │
+│  Auth                                                     │
+│  POST  /register                  create account          │
+│  POST  /login                     username + password     │
+│  GET   /auth/google               redirect to Google      │
+│  GET   /auth/google/callback      exchange code → user    │
+│  POST  /auth/refresh              rotate access token     │
+│  POST  /auth/logout               clear refresh cookie    │
+│  GET   /me                        current user            │
+│  POST  /auth/forgot-password      email reset link        │
+│  POST  /auth/reset-password       apply new password      │
+│                                                           │
+│  Predictions                                              │
+│  POST  /predictions/lock/{match_id}                       │
+│  GET   /predictions/match/{match_id}                      │
+│  GET   /predictions/history/{user_id}                     │
+│                                                           │
+│  Squads / Teams / Matches / Leagues / Intel / AI          │
+│  GET   /squads/{team_name}                                │
+│  GET   /teams/{id}/matches                                │
+│  GET   /leagues/                                          │
+│  GET   /intel/{country}                                   │
+│  POST  /ai/score                                          │
+└──────────────────────────┬───────────────────────────────┘
+                           │
+                           ▼
+              PostgreSQL (Neon) — production
+              SQLite fanxi.db  — local dev
+              ├─ User                (accounts + Google ID)
+              ├─ MatchPrediction     (tactical lineups)
+              ├─ PredictionDB        (legacy HTML interface)
+              ├─ TeamDB
+              ├─ MatchDB
+              ├─ Player
+              ├─ TeamSquadCache      (API quota protection)
+              └─ PasswordResetToken  (single-use, 1h TTL)
 ```
 
-### Two prediction models — why?
+---
 
-`MatchPrediction` (React interface) stores lineup and tactics as JSON blobs because the React frontend sends a dynamic structure that varies by formation — a 4-3-3 has different pitch slots to a 3-5-2.
+## Auth Flow
 
-`PredictionDB` (HTML interface) stores a simpler pipe-separated player list (`"Messi|Ronaldo|..."`) that matches the `<textarea>` form input from the original Jinja2 prototype.
+### Username / Password
+1. `POST /login` → access token (memory) + httpOnly refresh cookie (7 days)
+2. Every request: `Authorization: Bearer <access_token>`
+3. On 401: `AuthContext` auto-calls `POST /auth/refresh` (queue lock prevents parallel refreshes)
+4. On refresh failure: redirect to `/login`
+
+### Google OAuth
+1. User clicks **Continue with Google** → browser navigates to `GET /auth/google`
+2. Backend redirects to Google consent screen
+3. Google redirects to `GET /auth/google/callback?code=...`
+4. Backend exchanges code → fetches profile → finds or creates user → sets refresh cookie → redirects to `/auth/callback?token=<access_token>`
+5. Frontend `/auth/callback` page calls `/me` with the token, stores user, redirects to hub
+
+Existing accounts are linked by email if the same address is used with Google.
 
 ---
 
@@ -82,59 +128,27 @@ FanXI runs two parallel interfaces backed by the same FastAPI server:
 
 | Concern | Mitigation |
 |---------|-----------|
-| Mass-assignment | `/register` accepts `UserCreate` schema, not the raw `User` DB model. Clients cannot set `hashed_password`, `rank_title`, or `football_iq_points` directly. |
-| Password exposure | `response_model=UserRead` on `/register` — FastAPI filters the response through `UserRead`, which has no `hashed_password` field. The hash never leaves the server. |
-| User enumeration | Duplicate-user check returns the same error whether username or email matched, so an attacker cannot probe which emails are registered. |
-| Error leaking | Exceptions in prediction routes are logged server-side with `logger.error()`; the HTTP response returns a generic message with no internal detail. |
-| CORS | Only `localhost:3000` is whitelisted. Replace with your production domain before deploying. |
-| SQL injection | All queries go through SQLModel's parameterised `select()` API — no raw SQL. |
-| Secrets | API keys read from `.env` via `pydantic-settings`; `.env` is in `.gitignore`. |
+| Mass-assignment | `/register` accepts `UserCreate` schema — clients cannot set `hashed_password`, `rank_title`, or `football_iq_points` |
+| Password exposure | `response_model=UserRead` on `/register` — hash never leaves the server |
+| Google users | Stored with a bcrypt hash of `secrets.token_urlsafe(32)` — unguessable, never exposed |
+| XSS / token theft | Access token lives in JS memory only; refresh token is httpOnly, never readable by JS |
+| CSRF | Refresh cookie is `SameSite=None; Secure` and path-scoped to `/auth/refresh` only |
+| Brute force | `/login` rate-limited to 10/min per IP; `/register` to 5/min |
+| User enumeration | Duplicate-user error is identical whether username or email matched |
+| SQL injection | All queries use SQLModel's parameterised `select()` — no raw SQL |
+| Secrets | All keys read from `.env` via `pydantic-settings`; `.env` is gitignored |
+| CORS | Whitelisted origins only (`localhost:3000`, `fanxi.vercel.app`) |
 
 ---
 
-## API Reference
+## Squad Data Priority
 
-### Users
-| Method | Path | Description |
-|--------|------|-------------|
-| `POST` | `/register` | Register a new Scout. Returns `UserRead` (no password hash). |
+For each World Cup team, squads are resolved in this order:
 
-**Request body (`UserCreate`)**
-```json
-{
-  "username": "venomraw",
-  "email": "user@example.com",
-  "password": "minimum8chars",
-  "country_allegiance": "Argentina"
-}
-```
-
-### Tactical Predictions (React frontend)
-| Method | Path | Description |
-|--------|------|-------------|
-| `POST` | `/predictions/lock/{match_id}` | Save or overwrite a lineup. Query param: `?user_id=1` |
-| `GET`  | `/predictions/match/{match_id}` | Fetch locked lineup for a match |
-| `GET`  | `/predictions/history/{user_id}` | All snapshots for a scout (newest first) |
-
-**Request body (`LockSelectionRequest`)**
-```json
-{
-  "lineup": {
-    "GK": { "name": "E. Martínez", "number": 23 },
-    "ST": { "name": "L. Messi", "number": 10 }
-  },
-  "tactics": { "mentality": 70, "lineHeight": 55, "width": 60 },
-  "timestamp": "2026-06-14T18:00:00Z",
-  "status": "LOCKED"
-}
-```
-
-### League & Fixture Data
-| Method | Path | Description |
-|--------|------|-------------|
-| `GET` | `/leagues/` | List all leagues |
-| `GET` | `/leagues/{league_code}/teams` | Teams in a league (e.g. `laliga`) |
-| `GET` | `/teams/{team_id}/matches` | Fixtures for a team |
+1. **Static data** — `backend/app/data/static_squads.py` (48 teams × 23 players, always available)
+2. **DB cache** — `TeamSquadCache` table (refreshed from API, protects daily quota)
+3. **API-Football** — live fetch if cache is stale
+4. **Positional fallback** — placeholder slots if API is unavailable
 
 ---
 
@@ -144,23 +158,43 @@ FanXI runs two parallel interfaces backed by the same FastAPI server:
 
 ```bash
 cd backend
-
-# Create and activate a virtual environment
 python -m venv .venv
 source .venv/bin/activate        # Windows: .venv\Scripts\activate
-
-# Install dependencies
 pip install -r requirements.txt
-
-# Create a .env file with your API key
-echo "FOOTBALL_API_KEY=your_key_here" > .env
-
-# Start the server (auto-reloads on file changes)
-uvicorn app.main:app --reload
 ```
 
-The backend starts at `http://127.0.0.1:8000`.
-Interactive API docs: `http://127.0.0.1:8000/docs`
+Create `backend/.env`:
+
+```env
+FOOTBALL_API_KEY=your_key
+FOOTBALL_API_BASE_URL=https://v3.football.api-sports.io
+FOOTBALL_LALIGA_ID=140
+FOOTBALL_SEASON=2024
+
+GUARDIAN_API_KEY=your_key
+NEWSDATA_API_KEY=your_key
+YOUTUBE_API_KEY=your_key
+
+RESEND_API_KEY=your_key
+FRONTEND_URL=http://localhost:3000
+
+SECRET_KEY=your_jwt_secret_64chars
+
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+GOOGLE_REDIRECT_URI=http://localhost:8000/auth/google/callback
+
+GROQ_API_KEY=your_groq_key
+
+# Leave blank for local SQLite, or set a Neon/PostgreSQL URL for production
+DATABASE_URL=
+```
+
+```bash
+uvicorn app.main:app --reload
+# API: http://localhost:8000
+# Docs: http://localhost:8000/docs
+```
 
 ### Frontend
 
@@ -168,63 +202,83 @@ Interactive API docs: `http://127.0.0.1:8000/docs`
 cd frontend
 npm install
 npm run dev
+# http://localhost:3000
 ```
-
-The frontend starts at `http://localhost:3000`.
 
 ---
 
 ## Project Structure
 
 ```
-FANXI/
+FanXI/
 ├── backend/
 │   ├── app/
 │   │   ├── api/
-│   │   │   ├── users.py          # POST /register
-│   │   │   ├── predictions.py    # /predictions/* routes + scoring helpers
-│   │   │   ├── leagues.py        # /leagues/* routes
-│   │   │   └── teams.py          # /teams/* routes
+│   │   │   ├── users.py          # auth routes: register, login, Google OAuth, refresh, reset
+│   │   │   ├── predictions.py    # lock / fetch / history + scoring helpers
+│   │   │   ├── squads.py         # squad data with static → cache → API fallback
+│   │   │   ├── matches.py        # match fixtures
+│   │   │   ├── leagues.py        # league listing
+│   │   │   ├── teams.py          # team data
+│   │   │   ├── intel.py          # nation intel (news, YouTube)
+│   │   │   └── ai.py             # Groq AI scoring endpoint
 │   │   ├── core/
-│   │   │   └── security.py       # bcrypt hash / verify helpers
+│   │   │   ├── security.py       # bcrypt, JWT access + refresh tokens
+│   │   │   └── email.py          # Resend password reset emails
 │   │   ├── services/
 │   │   │   ├── football_api.py   # httpx calls to API-Football
 │   │   │   ├── prediction_engine.py  # tactical scoring logic
 │   │   │   └── card_generator.py # Pillow lineup card renderer
-│   │   ├── templates/            # Jinja2 HTML templates
+│   │   ├── data/
+│   │   │   └── static_squads.py  # 48 WC 2026 teams × 23 players
 │   │   ├── config.py             # pydantic-settings env config
 │   │   ├── db.py                 # engine, get_session, init_db
 │   │   ├── models.py             # SQLModel table definitions
 │   │   ├── schemas.py            # Pydantic request/response schemas
-│   │   ├── main.py               # app factory, middleware, router registry
-│   │   └── web.py                # Jinja2 HTML routes
+│   │   ├── limiter.py            # slowapi rate limiter instance
+│   │   ├── main.py               # app factory, CORS, router registry
+│   │   └── web.py                # Jinja2 HTML routes (legacy)
 │   └── requirements.txt
 └── frontend/
     ├── app/
-    │   ├── layout.tsx
-    │   └── page.tsx              # renders PitchBoard
-    └── src/components/
-        └── pitch/
-            ├── PitchBoard.tsx    # main component: bench, pitch, tabs, lock
-            ├── PitchSlot.tsx     # droppable pitch position
-            ├── DraggablePlayer.tsx
-            └── MatchEvents.tsx   # fouls/cards/first scorer predictions
+    │   ├── layout.tsx             # fonts, stadium background, global providers
+    │   ├── page.tsx               # hub: hero, pitch builder, leagues, footer
+    │   ├── login/page.tsx         # login + register + Google OAuth
+    │   ├── auth/callback/page.tsx # Google OAuth redirect handler
+    │   ├── leaderboard/page.tsx
+    │   ├── nation/page.tsx
+    │   ├── matches/page.tsx
+    │   ├── ai/page.tsx
+    │   ├── profile/[username]/page.tsx
+    │   ├── guide/page.tsx
+    │   ├── forgot-password/page.tsx
+    │   ├── reset-password/page.tsx
+    │   └── globals.css            # design tokens, glassmorphism, typography
+    └── src/
+        ├── components/
+        │   ├── pitch/
+        │   │   ├── PitchBoard.tsx
+        │   │   ├── PitchSlot.tsx
+        │   │   ├── DraggablePlayer.tsx
+        │   │   └── MatchEvents.tsx
+        │   ├── hub/
+        │   │   ├── UserStats.tsx
+        │   │   ├── MiniLeaderboard.tsx
+        │   │   └── Countdown.tsx
+        │   ├── NavBar.tsx
+        │   ├── TeamPicker.tsx
+        │   ├── KickoffBar.tsx
+        │   └── CustomCursor.tsx
+        └── context/
+            ├── AuthContext.tsx    # login, loginWithToken, logout, authFetch
+            └── ThemeContext.tsx   # per-team colour theming
 ```
-
----
-
-## Roadmap
-
-- **Milestone 2** — Live data: real World Cup squads via Provider/Strategy pattern, live scores during 2026 tournament
-- **Milestone 3** — Authentication: JWT access tokens, bcrypt login, role-based access control
-- **Milestone 4** — Global Scout Map: visualise predictions worldwide, leaderboard with tactical scoring
 
 ---
 
 ## Author
 
-**Venomraw** (Binamra Sigdel)
-*Cybersecurity Student & Lead Developer*
+**Venomraw** (Binamra Sigdel) — Cybersecurity Student & Lead Developer
 
 - [LinkedIn](https://www.linkedin.com/in/binamra-sigdel-377553156/)
 - [GitHub](https://github.com/venomraw)

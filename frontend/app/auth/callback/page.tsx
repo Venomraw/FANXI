@@ -12,8 +12,9 @@ function CallbackHandler() {
     const token = searchParams.get('token');
     if (!token) { router.replace('/login'); return; }
 
-    loginWithToken(token).then(ok => {
-      router.replace(ok ? '/' : '/login');
+    loginWithToken(token).then(userData => {
+      if (!userData) { router.replace('/login'); return; }
+      router.replace(userData.onboarding_complete ? '/' : '/onboarding');
     });
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

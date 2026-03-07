@@ -64,7 +64,17 @@ class User(SQLModel, table=True):
     country_allegiance: str
     football_iq_points: int = Field(default=0)
     rank_title: str = Field(default="Scout")
-    google_id: Optional[str] = Field(default=None, index=True)  # set for Google OAuth users
+    google_id: Optional[str] = Field(default=None, index=True)
+    display_name: Optional[str] = None
+    avatar_id: Optional[str] = None
+    favorite_nation: Optional[str] = None
+    favorite_club: Optional[str] = None
+    preferred_formation: Optional[str] = None
+    tactical_style: Optional[str] = None
+    wc_winner_pick: Optional[str] = None
+    top_scorer_pick: Optional[str] = None
+    biggest_upset_pick: Optional[str] = None
+    onboarding_complete: bool = Field(default=False)
 
 
 # ---------------------------------------------------------------------------

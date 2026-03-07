@@ -52,6 +52,7 @@ export default function Home() {
 
   useEffect(() => {
     if (!isLoading && !user) router.push('/login');
+    if (!isLoading && user && !user.onboarding_complete) router.push('/onboarding');
   }, [user, isLoading, router]);
 
   useEffect(() => {
