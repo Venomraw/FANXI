@@ -1,8 +1,10 @@
 'use client';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useTheme } from '@/src/context/ThemeContext';
 import { useAuth } from '@/src/context/AuthContext';
+
+const LANGUAGES = ['EN', 'ES', 'FR', 'PT', 'DE'];
 
 const NAV_LINKS = [
   { label: 'Hub',         href: '/'            },
@@ -23,6 +25,32 @@ export default function NavBar({ subtitle }: NavBarProps) {
   const router = useRouter();
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [lang, setLang] = useState(() =>
+    typeof window !== 'undefined' ? (localStorage.getItem('fanxi_lang') ?? 'EN') : 'EN'
+  );
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setDropdownOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, []);
+
+  function handleLang(l: string) {
+    setLang(l);
+    localStorage.setItem('fanxi_lang', l);
+  }
+
+  function handleLogout() {
+    setDropdownOpen(false);
+    logout();
+    router.push('/login');
+  }
 
   const isActive = (href: string) =>
     href === '/' ? pathname === '/' : pathname.startsWith(href);
@@ -152,56 +180,139 @@ export default function NavBar({ subtitle }: NavBarProps) {
               <div className="hidden sm:block h-6 w-px" style={{ background: 'var(--border)' }} />
             )}
 
-            {/* User — avatar + name, no box */}
+            {/* User dropdown */}
             {user && (
-              <div className="flex items-center gap-3">
-                {/* Avatar — clickable → own profile */}
+              <div ref={dropdownRef} className="relative">
+                {/* Trigger */}
                 <button
-                  onClick={() => router.push('/profile')}
-                  className="w-9 h-9 rounded-full flex items-center justify-center font-display font-semibold flex-shrink-0 theme-transition transition-all"
-                  style={{
-                    background: `color-mix(in srgb, ${primary} 22%, transparent)`,
-                    color: primary,
-                    border: `1.5px solid color-mix(in srgb, ${primary} 45%, transparent)`,
-                    fontSize: '15px',
-                  }}
-                  title={`View ${user.username}'s profile`}
+                  onClick={() => setDropdownOpen(o => !o)}
+                  className="flex items-center gap-2.5 transition-all duration-200"
+                  style={{ background: 'none', border: 'none', padding: '6px 4px' }}
                 >
-                  {user.username[0].toUpperCase()}
+                  {/* Avatar */}
+                  <div
+                    className="w-9 h-9 rounded-full flex items-center justify-center font-display font-semibold flex-shrink-0 theme-transition"
+                    style={{
+                      background: `color-mix(in srgb, ${primary} 22%, transparent)`,
+                      color: primary,
+                      border: `1.5px solid color-mix(in srgb, ${primary} 45%, transparent)`,
+                      fontSize: '15px',
+                    }}
+                  >
+                    {user.username[0].toUpperCase()}
+                  </div>
+                  {/* Name + rank */}
+                  <div className="hidden sm:flex flex-col text-left">
+                    <span className="font-sans font-semibold leading-tight" style={{ fontSize: '13px', color: 'var(--text)' }}>
+                      {user.display_name || user.username}
+                    </span>
+                    <span className="font-mono uppercase leading-tight theme-transition" style={{ fontSize: '9px', letterSpacing: '1.2px', color: primary }}>
+                      {user.rank_title} · {user.football_iq_points}pts
+                    </span>
+                  </div>
+                  {/* Chevron */}
+                  <svg
+                    width="10" height="6" viewBox="0 0 10 6" fill="none"
+                    className="hidden sm:block transition-transform duration-200"
+                    style={{ color: 'var(--muted)', transform: dropdownOpen ? 'rotate(180deg)' : 'none' }}
+                  >
+                    <path d="M1 1L5 5L9 1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
                 </button>
 
-                <div className="hidden sm:flex flex-col">
-                  <span
-                    className="font-sans font-semibold leading-tight"
-                    style={{ fontSize: '14px', color: 'var(--text)' }}
+                {/* Dropdown panel */}
+                {dropdownOpen && (
+                  <div
+                    className="absolute right-0 mt-2 w-56 py-1 z-[200]"
+                    style={{
+                      background: 'rgba(6,10,6,0.97)',
+                      backdropFilter: 'blur(32px)',
+                      WebkitBackdropFilter: 'blur(32px)',
+                      border: '1px solid var(--border)',
+                      boxShadow: '0 16px 48px rgba(0,0,0,0.6)',
+                    }}
                   >
-                    {user.username}
-                  </span>
-                  <span
-                    className="font-mono uppercase leading-tight theme-transition"
-                    style={{ fontSize: '9px', letterSpacing: '1.2px', color: primary }}
-                  >
-                    {user.rank_title} · {user.football_iq_points}pts
-                  </span>
-                </div>
+                    {/* Header */}
+                    <div className="px-4 py-3 border-b" style={{ borderColor: 'var(--border)' }}>
+                      <p className="font-sans font-semibold text-[13px]" style={{ color: 'var(--text)' }}>
+                        {user.display_name || user.username}
+                      </p>
+                      <p className="font-mono text-[9px] tracking-widest uppercase mt-0.5" style={{ color: primary }}>
+                        {user.rank_title} · {user.football_iq_points} pts
+                      </p>
+                    </div>
 
-                <button
-                  onClick={() => { logout(); router.push('/login'); }}
-                  className="transition-colors"
-                  style={{
-                    color: 'rgba(255,255,255,0.18)',
-                    background: 'none',
-                    border: 'none',
-                    fontSize: '16px',
-                    lineHeight: 1,
-                    padding: '4px',
-                  }}
-                  title="Logout"
-                  onMouseEnter={e => (e.currentTarget.style.color = '#FF2D55')}
-                  onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.18)')}
-                >
-                  ⏻
-                </button>
+                    {/* Menu items */}
+                    {[
+                      { icon: '👤', label: 'Profile',        action: () => { router.push('/profile'); setDropdownOpen(false); } },
+                      { icon: '⚙️', label: 'Settings',       action: () => { router.push('/settings'); setDropdownOpen(false); } },
+                      { icon: '🏆', label: 'My Predictions', action: () => { router.push('/?tab=history'); setDropdownOpen(false); } },
+                    ].map(item => (
+                      <button
+                        key={item.label}
+                        onClick={item.action}
+                        className="w-full flex items-center gap-3 px-4 py-2.5 font-sans font-semibold text-[13px] text-left transition-colors"
+                        style={{ color: 'var(--muted)', background: 'none', border: 'none' }}
+                        onMouseEnter={e => {
+                          e.currentTarget.style.color = 'var(--text)';
+                          e.currentTarget.style.background = `color-mix(in srgb, ${primary} 6%, transparent)`;
+                        }}
+                        onMouseLeave={e => {
+                          e.currentTarget.style.color = 'var(--muted)';
+                          e.currentTarget.style.background = 'none';
+                        }}
+                      >
+                        <span className="text-base w-5 text-center">{item.icon}</span>
+                        {item.label}
+                      </button>
+                    ))}
+
+                    {/* Language switcher */}
+                    <div className="px-4 py-2.5 border-t" style={{ borderColor: 'var(--border)' }}>
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="text-base">🌍</span>
+                        <span className="font-sans font-semibold text-[13px]" style={{ color: 'var(--muted)' }}>Language</span>
+                      </div>
+                      <div className="flex gap-1">
+                        {LANGUAGES.map(l => (
+                          <button
+                            key={l}
+                            onClick={() => handleLang(l)}
+                            className="flex-1 py-1 font-mono text-[9px] tracking-wider transition-all"
+                            style={{
+                              background: lang === l ? primary : 'transparent',
+                              color: lang === l ? 'var(--dark)' : 'var(--muted)',
+                              border: `1px solid ${lang === l ? primary : 'var(--border)'}`,
+                              fontWeight: lang === l ? 700 : 400,
+                            }}
+                          >
+                            {l}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Separator + logout */}
+                    <div className="border-t mt-1" style={{ borderColor: 'var(--border)' }}>
+                      <button
+                        onClick={handleLogout}
+                        className="w-full flex items-center gap-3 px-4 py-2.5 font-sans font-semibold text-[13px] text-left transition-colors"
+                        style={{ color: 'rgba(255,255,255,0.35)', background: 'none', border: 'none' }}
+                        onMouseEnter={e => {
+                          e.currentTarget.style.color = '#FF2D55';
+                          e.currentTarget.style.background = 'rgba(255,45,85,0.06)';
+                        }}
+                        onMouseLeave={e => {
+                          e.currentTarget.style.color = 'rgba(255,255,255,0.35)';
+                          e.currentTarget.style.background = 'none';
+                        }}
+                      >
+                        <span className="text-base w-5 text-center">⏻</span>
+                        Logout
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 
@@ -290,6 +401,59 @@ export default function NavBar({ subtitle }: NavBarProps) {
                   <span>{team.name}</span>
                   <span className="font-mono text-[10px] opacity-50 ml-auto tracking-wider">Change</span>
                 </button>
+              )}
+
+              {/* Mobile user menu */}
+              {user && (
+                <div className="border-t mt-2 pt-2 flex flex-col gap-1" style={{ borderColor: 'var(--border)' }}>
+                  {[
+                    { icon: '👤', label: 'Profile',        href: '/profile'       },
+                    { icon: '⚙️', label: 'Settings',       href: '/settings'      },
+                    { icon: '🏆', label: 'My Predictions', href: '/?tab=history'  },
+                  ].map(item => (
+                    <a
+                      key={item.label}
+                      href={item.href}
+                      onClick={() => setMobileOpen(false)}
+                      className="flex items-center gap-3 px-4 py-3 font-sans font-semibold"
+                      style={{ fontSize: '15px', color: 'var(--muted)' }}
+                    >
+                      <span>{item.icon}</span>
+                      {item.label}
+                    </a>
+                  ))}
+
+                  {/* Mobile language */}
+                  <div className="px-4 py-3">
+                    <p className="font-mono text-[9px] tracking-widest uppercase mb-2" style={{ color: 'var(--muted)' }}>🌍 Language</p>
+                    <div className="flex gap-1">
+                      {LANGUAGES.map(l => (
+                        <button
+                          key={l}
+                          onClick={() => handleLang(l)}
+                          className="flex-1 py-1.5 font-mono text-[10px] tracking-wider transition-all"
+                          style={{
+                            background: lang === l ? primary : 'transparent',
+                            color: lang === l ? 'var(--dark)' : 'var(--muted)',
+                            border: `1px solid ${lang === l ? primary : 'var(--border)'}`,
+                            fontWeight: lang === l ? 700 : 400,
+                          }}
+                        >
+                          {l}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={handleLogout}
+                    className="flex items-center gap-3 px-4 py-3 font-sans font-semibold text-left w-full"
+                    style={{ fontSize: '15px', color: 'rgba(255,45,85,0.7)', background: 'none', border: 'none' }}
+                  >
+                    <span>⏻</span>
+                    Logout
+                  </button>
+                </div>
               )}
             </div>
           </div>
