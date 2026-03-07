@@ -208,11 +208,16 @@ export default function Home() {
       </section>
 
       {/* ── HOW IT WORKS ── */}
-      <section className="py-24 border-b overflow-hidden" style={{ background: 'transparent', borderColor: 'var(--border)' }}>
-        <div className="max-w-[1400px] mx-auto px-7">
+      <section className="py-24 border-b relative" style={{ background: 'transparent', borderColor: 'var(--border)' }}>
+        {/* Dark overlay for text contrast without hiding the stadium */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.55) 40%, rgba(0,0,0,0.55) 60%, rgba(0,0,0,0.35) 100%)' }}
+        />
+        <div className="relative z-10 max-w-[1400px] mx-auto px-7">
 
           {/* Header */}
-          <div className="mb-16 reveal">
+          <div className="mb-16 reveal" style={{ paddingTop: '4px' }}>
             <div className="font-mono text-[11px] tracking-widest uppercase mb-3 theme-transition" style={{ color: primary }}>
               // Match Day Experience
             </div>
@@ -225,7 +230,7 @@ export default function Home() {
           </div>
 
           {/* Timeline bar — desktop only */}
-          <div className="hidden lg:flex items-center mb-10 relative">
+          <div className="hidden lg:flex items-center mb-10 relative z-20">
             <div className="absolute left-0 right-0 h-px" style={{ background: 'var(--border)', top: '50%' }} />
             {[
               { phase: 'PRE-MATCH', time: '-1h 05m', color: primary },
@@ -249,10 +254,10 @@ export default function Home() {
           </div>
 
           {/* Phase cards */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-px" style={{ background: 'var(--border)' }}>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 relative z-10">
 
             {/* PRE-MATCH */}
-            <div className="relative p-8 flex flex-col gap-5 overflow-hidden reveal" style={{ background: 'transparent' }}>
+            <div className="relative p-8 flex flex-col gap-5 overflow-hidden reveal" style={{ background: 'rgba(0,0,0,0.40)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.10)' }}>
               {/* Background watermark */}
               <div
                 className="absolute right-4 top-4 font-display font-semibold leading-none select-none pointer-events-none"
@@ -302,7 +307,7 @@ export default function Home() {
             </div>
 
             {/* HALF-TIME */}
-            <div className="relative p-8 flex flex-col gap-5 overflow-hidden reveal" style={{ background: 'transparent' }}>
+            <div className="relative p-8 flex flex-col gap-5 overflow-hidden reveal" style={{ background: 'rgba(0,0,0,0.40)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.10)' }}>
               <div
                 className="absolute right-4 top-4 font-display font-semibold leading-none select-none pointer-events-none"
                 style={{ fontSize: '120px', color: 'var(--gold)', opacity: 0.04, lineHeight: 1 }}
@@ -350,7 +355,7 @@ export default function Home() {
             </div>
 
             {/* FULL-TIME */}
-            <div className="relative p-8 flex flex-col gap-5 overflow-hidden reveal" style={{ background: 'transparent' }}>
+            <div className="relative p-8 flex flex-col gap-5 overflow-hidden reveal" style={{ background: 'rgba(0,0,0,0.40)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.10)' }}>
               <div
                 className="absolute right-4 top-4 font-display font-semibold leading-none select-none pointer-events-none"
                 style={{ fontSize: '120px', color: 'var(--blue)', opacity: 0.04, lineHeight: 1 }}
@@ -401,8 +406,8 @@ export default function Home() {
 
           {/* Bottom AI feedback preview */}
           <div
-            className="mt-px p-6 flex flex-col sm:flex-row items-center gap-4 border-t reveal"
-            style={{ background: 'transparent', borderColor: 'var(--border)' }}
+            className="mt-4 p-6 flex flex-col sm:flex-row items-center gap-4 reveal relative z-10"
+            style={{ background: 'rgba(0,0,0,0.40)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.10)' }}
           >
             <div className="text-2xl flex-shrink-0">🤖</div>
             <div className="flex-1">
@@ -422,7 +427,7 @@ export default function Home() {
             </div>
           </div>
 
-        </div>
+        </div>{/* /z-10 container */}
       </section>
 
       {/* ── PITCH BUILDER (main interactive section) ── */}
