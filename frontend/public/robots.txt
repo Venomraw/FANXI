@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /onboarding
+Disallow: /settings
+Disallow: /auth/
+Disallow: /reset-password
+Disallow: /forgot-password
+
+Sitemap: https://fanxi.vercel.app/sitemap.xml

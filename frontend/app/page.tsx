@@ -5,6 +5,7 @@ import NavBar from '@/src/components/NavBar';
 import { useTheme } from '@/src/context/ThemeContext';
 import { useAuth } from '@/src/context/AuthContext';
 import { useToast } from '@/src/context/ToastContext';
+import { formatMatchTime } from '@/src/utils/timezone';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -46,11 +47,6 @@ function hoursUntil(iso: string) {
   return (new Date(iso).getTime() - Date.now()) / 3_600_000;
 }
 
-function formatKickoff(iso: string) {
-  const d = new Date(iso);
-  return d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' })
-    + ' · ' + d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
-}
 
 const RANK_COLORS: Record<string, string> = {
   Legend:    '#FFD700',
@@ -527,7 +523,7 @@ export default function Home() {
                       </div>
                     </div>
                     <div className="font-mono text-[10px] tracking-wide" style={{ color: 'var(--muted)' }}>
-                      {formatKickoff(m.kickoff)}
+                      {formatMatchTime(m.kickoff)}
                     </div>
                     {isNewUser && (
                       <div className="font-mono text-[9px] uppercase tracking-widest" style={{ color: 'rgba(255,210,63,0.6)' }}>

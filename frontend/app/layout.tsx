@@ -15,22 +15,50 @@ const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
   variable: "--font-grotesk",
+  display: "swap",
 });
 
 const syne = Syne({
   subsets: ["latin"],
   variable: "--font-syne",
+  display: "swap",
 });
 
 // Mono — used ONLY for micro labels, countdown units, small tactical tags
 const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
   variable: "--font-jetbrains",
+  display: "swap",
 });
 
+const BASE_URL = 'https://fanxi.vercel.app';
+
 export const metadata: Metadata = {
-  title: "FanXI — World Cup 2026 Tactical Hub",
-  description: "The world's first tactical-first football prediction engine.",
+  metadataBase: new URL(BASE_URL),
+  title: {
+    default: "FanXI — World Cup 2026 Tactical Hub",
+    template: "%s | FanXI",
+  },
+  description: "The world's first tactical-first football prediction engine. Build your XI, predict the lineup, and prove your tactical IQ.",
+  keywords: ["World Cup 2026", "football prediction", "tactical lineup", "fantasy football", "FIFA World Cup"],
+  authors: [{ name: "FanXI" }],
+  openGraph: {
+    type: "website",
+    siteName: "FanXI",
+    title: "FanXI — World Cup 2026 Tactical Hub",
+    description: "Build your XI, predict the lineup, prove your tactical IQ.",
+    url: BASE_URL,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "FanXI — World Cup 2026 Tactical Hub",
+    description: "Build your XI, predict the lineup, prove your tactical IQ.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true },
+  },
 };
 
 export default function RootLayout({

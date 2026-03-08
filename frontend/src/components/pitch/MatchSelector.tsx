@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { useTheme } from '@/src/context/ThemeContext';
+import { formatMatchTime } from '@/src/utils/timezone';
 
 export interface WCMatch {
   id: number;
@@ -18,16 +19,6 @@ interface Props {
   onSelect: (match: WCMatch) => void;
 }
 
-function fmtDate(iso: string) {
-  const d = new Date(iso);
-  if (isNaN(d.getTime())) return iso;
-  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-}
-function fmtTime(iso: string) {
-  const d = new Date(iso);
-  if (isNaN(d.getTime())) return '';
-  return d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
-}
 
 export default function MatchSelector({ selectedId, onSelect }: Props) {
   const { primary } = useTheme();
@@ -114,7 +105,7 @@ export default function MatchSelector({ selectedId, onSelect }: Props) {
             {/* Date/time */}
             <p className="font-mono text-[10px] mt-3 text-center theme-transition"
               style={{ color: active ? `${primary}aa` : 'rgba(255,255,255,0.25)' }}>
-              {fmtDate(m.kickoff)} · {fmtTime(m.kickoff)}
+              {formatMatchTime(m.kickoff)}
             </p>
           </button>
         );

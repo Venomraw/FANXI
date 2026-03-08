@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useTheme } from '@/src/context/ThemeContext';
 import { useAuth } from '@/src/context/AuthContext';
 import NavBar from '@/src/components/NavBar';
+import { formatMatchTime, formatMatchDateHeading, getTimezoneLabel } from '@/src/utils/timezone';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -30,23 +31,6 @@ const GROUPS = ['A','B','C','D','E','F','G','H','I','J','K','L'];
 // Helpers
 // ---------------------------------------------------------------------------
 
-function formatDate(iso: string): string {
-  const d = new Date(iso);
-  return d.toLocaleDateString('en-GB', {
-    weekday: 'short', day: 'numeric', month: 'short', year: 'numeric',
-  });
-}
-
-function formatTime(iso: string): string {
-  const d = new Date(iso);
-  return d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
-}
-
-function formatDateHeading(iso: string): string {
-  return new Date(iso).toLocaleDateString('en-GB', {
-    weekday: 'long', day: 'numeric', month: 'long',
-  });
-}
 
 function hoursUntil(iso: string): number {
   return (new Date(iso).getTime() - Date.now()) / 3_600_000;
@@ -55,7 +39,7 @@ function hoursUntil(iso: string): number {
 function groupByDateHeading(matches: Match[]): [string, Match[]][] {
   const map = new Map<string, Match[]>();
   for (const m of matches) {
-    const key = formatDateHeading(m.kickoff);
+    const key = formatMatchDateHeading(m.kickoff);
     if (!map.has(key)) map.set(key, []);
     map.get(key)!.push(m);
   }
@@ -159,7 +143,7 @@ function MatchCard({
         <div className="flex items-center justify-between gap-4 flex-wrap">
           <div className="flex flex-col gap-0.5">
             <span className="font-sans text-[13px]" style={{ color: 'var(--muted)' }}>
-              {formatDate(match.kickoff)} · {formatTime(match.kickoff)} local
+              {formatMatchTime(match.kickoff)}
             </span>
             <span className="font-mono text-[11px] tracking-[0.5px]" style={{ color: 'rgba(255,255,255,0.3)' }}>
               {match.venue}
@@ -311,6 +295,9 @@ export default function MatchesPage() {
           </h1>
           <p className="font-sans text-[15px]" style={{ color: 'var(--muted)' }}>
             72 group stage matches · 12 groups · June 11 – 27, 2026
+            <span className="font-mono text-[11px] ml-3" style={{ color: 'rgba(255,255,255,0.25)' }}>
+              · {getTimezoneLabel()}
+            </span>
           </p>
         </div>
 

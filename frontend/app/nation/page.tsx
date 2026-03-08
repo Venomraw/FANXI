@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useTheme } from '@/src/context/ThemeContext';
 import { useAuth } from '@/src/context/AuthContext';
 import NavBar from '@/src/components/NavBar';
+import { formatMatchTime } from '@/src/utils/timezone';
 
 // ── Static WC 2026 team list ────────────────────────────────────────────────
 
@@ -165,15 +166,6 @@ function formatScore(n: number): string {
   return n >= 1000 ? `${(n / 1000).toFixed(1)}k` : String(n);
 }
 
-function formatKickoff(iso: string): string {
-  try {
-    return new Date(iso).toLocaleDateString('en-US', {
-      month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit',
-    });
-  } catch {
-    return iso;
-  }
-}
 
 // ── AI text renderer ─────────────────────────────────────────────────────────
 
@@ -620,7 +612,7 @@ function FixtureRow({
       {/* Date + venue */}
       <div className="hidden md:block text-right flex-shrink-0" style={{ minWidth: '130px' }}>
         <div className="font-mono text-[10px]" style={{ color: 'var(--muted)' }}>
-          {formatKickoff(fixture.kickoff)}
+          {formatMatchTime(fixture.kickoff)}
         </div>
         <div className="font-mono text-[9px] truncate" style={{ color: 'var(--muted)', maxWidth: '130px' }}>
           {fixture.venue.split(',')[0]}

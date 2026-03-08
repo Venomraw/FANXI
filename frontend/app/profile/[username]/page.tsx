@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useTheme } from '@/src/context/ThemeContext';
 import { useAuth } from '@/src/context/AuthContext';
+import { formatMatchTime } from '@/src/utils/timezone';
 import NavBar from '@/src/components/NavBar';
 
 // ---------------------------------------------------------------------------
@@ -637,7 +638,7 @@ export default function ProfilePage() {
                         Match #{pred.match_id}
                       </p>
                       <p className="font-mono text-[11px]" style={{ color: 'var(--muted)' }}>
-                        {new Date(pred.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+                        {formatMatchTime(pred.created_at, { showTimezone: false })}
                       </p>
                     </div>
                   </div>

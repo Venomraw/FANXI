@@ -2,7 +2,6 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
-    unoptimized: true, // Bypasses the 500/404 processing errors for dev
     remotePatterns: [
       { protocol: 'https', hostname: 'images.si.com' },
       { protocol: 'https', hostname: 'images.psg.fr' },
