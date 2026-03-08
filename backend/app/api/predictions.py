@@ -446,6 +446,163 @@ def score_match(
 
 
 # ---------------------------------------------------------------------------
+# Post-match score reveal — full player comparison + breakdown
+# ---------------------------------------------------------------------------
+
+@router.get("/matches/{match_id}/score-reveal")
+@limiter.limit("30/minute")
+def score_reveal(
+    request: Request,
+    match_id: int,
+    session: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user),
+):
+    """
+    Full post-match reveal: player-by-player comparison, IQ breakdown, rank.
+    Used by the cinematic score reveal overlay on the live match page.
+    """
+    from app.services import football_data as _fd
+
+    pred = session.exec(
+        select(MatchPrediction).where(
+            MatchPrediction.match_id == match_id,
+            MatchPrediction.user_id == current_user.id,
+        )
+    ).first()
+    if not pred:
+        raise HTTPException(status_code=404, detail="No prediction found for this match")
+
+    stats    = _fd.get_match_stats(match_id)
+    lineups  = _fd.get_match_lineups(match_id)
+    events   = _fd.get_match_events(match_id)
+
+    score_data   = stats.get("score", {})
+    home_goals   = score_data.get("home") or 0
+    away_goals   = score_data.get("away") or 0
+    match_status = stats.get("status", "")
+
+    # Which side did the user predict?
+    team_name = (pred.team_name or "").lower()
+    home_name = stats.get("home_team", "").lower()
+    is_home   = bool(team_name and (team_name in home_name or home_name in team_name))
+    actual_lu = lineups.get("home" if is_home else "away") or {}
+    actual_starters = {
+        (p.get("name") or "").lower()
+        for p in actual_lu.get("startXI", [])
+    }
+    actual_formation   = actual_lu.get("formation")
+    predicted_formation = (pred.tactics_data or {}).get("formation", "")
+
+    # Player-by-player comparison
+    players_compared: list[dict] = []
+    for slot, player in (pred.lineup_data or {}).items():
+        if isinstance(player, dict) and player.get("name"):
+            nm = player["name"]
+            players_compared.append({
+                "slot": slot,
+                "name": nm,
+                "position": player.get("position", ""),
+                "correct": (nm.lower() in actual_starters) if actual_starters else None,
+            })
+
+    correct_count   = sum(1 for p in players_compared if p["correct"])
+    total_predicted = len(players_compared)
+    accuracy_pct    = int((correct_count / total_predicted) * 100) if total_predicted else 0
+
+    # Scoring
+    total_pts = 0
+
+    # Formation: ≥7 correct = earned the formation pts
+    formation_pts = 0
+    if actual_starters and correct_count >= 7:
+        formation_pts = 10
+        total_pts += formation_pts
+
+    # Captain / first scorer
+    captain_pts = 0
+    first_scorer_pts = 0
+    captain_correct = False
+    pp = pred.player_predictions or {}
+    first_scorer_pick = (pp.get("first_goalscorer") or "").lower()
+    goals_timeline   = [e for e in events if e.get("type") == "goal"]
+    actual_first_scorer = (goals_timeline[0].get("scorer") or "").lower() if goals_timeline else None
+    if first_scorer_pick and actual_first_scorer and first_scorer_pick == actual_first_scorer:
+        captain_pts      = 20
+        first_scorer_pts = 25
+        captain_correct  = True
+        total_pts += captain_pts + first_scorer_pts
+
+    # Result
+    result_pts     = 0
+    result_correct = None
+    if pred.match_result and match_status == "FINISHED":
+        if home_goals > away_goals:
+            actual_result = "home"
+        elif away_goals > home_goals:
+            actual_result = "away"
+        else:
+            actual_result = "draw"
+        result_correct = pred.match_result == actual_result
+        if result_correct:
+            result_pts = 15
+            total_pts += result_pts
+
+    # Clean sheet
+    clean_sheet_pts = 0
+    if match_status == "FINISHED":
+        if is_home and away_goals == 0:
+            clean_sheet_pts = 15
+            total_pts += clean_sheet_pts
+        elif not is_home and home_goals == 0:
+            clean_sheet_pts = 15
+            total_pts += clean_sheet_pts
+
+    # Rank
+    all_users     = session.exec(select(User).order_by(User.football_iq_points.desc())).all()
+    current_rank  = next((i + 1 for i, u in enumerate(all_users) if u.id == current_user.id), None)
+    total_scouts  = len(all_users)
+    better_than_pct = int(
+        ((total_scouts - (current_rank or total_scouts)) / max(total_scouts, 1)) * 100
+    )
+
+    return {
+        "match_id":     match_id,
+        "match_status": match_status,
+        "home_team":    stats.get("home_team", ""),
+        "away_team":    stats.get("away_team", ""),
+        "home_score":   home_goals,
+        "away_score":   away_goals,
+        "comparison": {
+            "correct_count":      correct_count,
+            "total_predicted":    total_predicted,
+            "accuracy_pct":       accuracy_pct,
+            "players":            players_compared,
+            "formation_match":    bool(
+                actual_formation and predicted_formation
+                and actual_formation == predicted_formation
+            ),
+            "predicted_formation": predicted_formation,
+            "actual_formation":    actual_formation,
+        },
+        "score_breakdown": {
+            "formation_pts":    formation_pts,
+            "captain_pts":      captain_pts,
+            "first_scorer_pts": first_scorer_pts,
+            "result_pts":       result_pts,
+            "clean_sheet_pts":  clean_sheet_pts,
+            "total_pts":        total_pts,
+            "result_correct":   result_correct,
+            "captain_correct":  captain_correct,
+        },
+        "rank": {
+            "current_rank":    current_rank,
+            "total_scouts":    total_scouts,
+            "better_than_pct": better_than_pct,
+        },
+    }
+
+
+# ---------------------------------------------------------------------------
 # Live scorecard — compare user's prediction against current match reality
 # ---------------------------------------------------------------------------
 
