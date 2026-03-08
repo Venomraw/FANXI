@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import NavBar from '@/src/components/NavBar';
 import { useTheme } from '@/src/context/ThemeContext';
 import { useAuth } from '@/src/context/AuthContext';
+import { useToast } from '@/src/context/ToastContext';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -147,6 +148,7 @@ export default function Home() {
   const { team, primary } = useTheme();
   const { user, isLoading } = useAuth();
   const router = useRouter();
+  const { toast } = useToast();
 
   const [liveMatches, setLiveMatches] = useState<Match[]>([]);
   const [upcomingMatches, setUpcomingMatches] = useState<Match[]>([]);
@@ -175,14 +177,19 @@ export default function Home() {
         if (allRes.status === 'fulfilled') {
           const all: Match[] = Array.isArray(allRes.value) ? allRes.value : [];
           setUpcomingMatches(all.filter(m => hoursUntil(m.kickoff) > 0).slice(0, 4));
+        } else {
+          toast.error('Could not load fixtures — check your connection');
         }
         if (predRes.status === 'fulfilled') setPredictions(Array.isArray(predRes.value) ? predRes.value.slice(0, 4) : []);
         if (lbRes.status === 'fulfilled') setLeaderboard(Array.isArray(lbRes.value) ? lbRes.value.slice(0, 5) : []);
+      } catch {
+        toast.error('Connection issue — some data may not load');
       } finally {
         setDataLoading(false);
       }
     };
     load();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, API]);
 
   useEffect(() => {
@@ -197,6 +204,7 @@ export default function Home() {
 
   if (isLoading || !user) return null;
 
+  const isNewUser = !dataLoading && predictions.length === 0;
   const tickerFull = [...TICKER_ITEMS, ...TICKER_ITEMS].join('  ·  ');
   const greeting = new Date().getHours() < 12 ? 'Good morning' : new Date().getHours() < 18 ? 'Good afternoon' : 'Good evening';
 
@@ -316,34 +324,81 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Right: stats grid */}
-            <div
-              className="hidden lg:grid grid-cols-2 gap-px border theme-transition"
-              style={{ borderColor: 'var(--border)', background: 'var(--border)', minWidth: '280px' }}
-            >
-              {[
-                { num: '48',   label: 'Nations'   },
-                { num: '104',  label: 'Matches'   },
-                { num: String(predictions.length), label: 'My Predictions' },
-                { num: String(user.football_iq_points), label: 'IQ Points' },
-              ].map(s => (
-                <div
-                  key={s.label}
-                  className="flex flex-col justify-center items-center py-9 theme-transition"
-                  style={{ background: 'var(--dark3)' }}
-                >
-                  <div
-                    className="font-display font-semibold leading-none theme-transition"
-                    style={{ fontSize: 'clamp(30px, 3vw, 44px)', color: primary }}
-                  >
-                    {s.num}
+            {/* Right: new-user CTA or stats grid */}
+            {isNewUser ? (
+              <div
+                className="hidden lg:flex flex-col justify-center gap-5 p-8 border"
+                style={{
+                  background: 'rgba(0,0,0,0.45)',
+                  borderColor: 'rgba(255,210,63,0.3)',
+                  backdropFilter: 'blur(16px)',
+                  minWidth: '280px',
+                  boxShadow: '0 0 40px rgba(255,210,63,0.06)',
+                }}
+              >
+                <div>
+                  <div className="font-mono text-[10px] uppercase tracking-widest mb-2" style={{ color: 'var(--gold)' }}>
+                    // Your First Call
                   </div>
-                  <div className="font-mono text-[9px] tracking-widest uppercase mt-1.5 text-center" style={{ color: 'var(--muted)' }}>
-                    {s.label}
-                  </div>
+                  <h3 className="font-display font-semibold leading-tight mb-3" style={{ fontSize: '22px' }}>
+                    Ready to prove your<br />
+                    <span style={{ color: 'var(--gold)' }}>tactical IQ?</span>
+                  </h3>
+                  <p className="font-sans text-[13px] leading-relaxed" style={{ color: 'var(--muted)' }}>
+                    Pick your starting XI, set your formation
+                    and captain — then watch how you compare
+                    to scouts worldwide when the lineup drops.
+                  </p>
                 </div>
-              ))}
-            </div>
+                <button
+                  onClick={() => router.push('/matches')}
+                  className="flex items-center justify-center gap-2 py-3.5 font-sans font-semibold text-[13px] transition-all hover:-translate-y-0.5"
+                  style={{
+                    background: '#dc2626',
+                    color: '#fff',
+                    clipPath: 'polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px))',
+                    boxShadow: '0 0 20px rgba(220,38,38,0.35)',
+                  }}
+                >
+                  Make Your First Prediction →
+                </button>
+                <div className="flex items-center gap-3 pt-2 border-t" style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
+                  <span className="font-mono text-[9px] uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.25)' }}>48 nations</span>
+                  <span style={{ color: 'rgba(255,255,255,0.12)' }}>·</span>
+                  <span className="font-mono text-[9px] uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.25)' }}>104 matches</span>
+                  <span style={{ color: 'rgba(255,255,255,0.12)' }}>·</span>
+                  <span className="font-mono text-[9px] uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.25)' }}>Free to play</span>
+                </div>
+              </div>
+            ) : (
+              <div
+                className="hidden lg:grid grid-cols-2 gap-px border theme-transition"
+                style={{ borderColor: 'var(--border)', background: 'var(--border)', minWidth: '280px' }}
+              >
+                {[
+                  { num: '48',   label: 'Nations'   },
+                  { num: '104',  label: 'Matches'   },
+                  { num: String(predictions.length), label: 'My Predictions' },
+                  { num: String(user.football_iq_points), label: 'IQ Points' },
+                ].map(s => (
+                  <div
+                    key={s.label}
+                    className="flex flex-col justify-center items-center py-9 theme-transition"
+                    style={{ background: 'var(--dark3)' }}
+                  >
+                    <div
+                      className="font-display font-semibold leading-none theme-transition"
+                      style={{ fontSize: 'clamp(30px, 3vw, 44px)', color: primary }}
+                    >
+                      {s.num}
+                    </div>
+                    <div className="font-mono text-[9px] tracking-widest uppercase mt-1.5 text-center" style={{ color: 'var(--muted)' }}>
+                      {s.label}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </section>
@@ -358,33 +413,55 @@ export default function Home() {
       {/* ── QUICK ACTIONS ── */}
       <section className="py-14" style={{ background: 'transparent' }}>
         <div className="max-w-[1400px] mx-auto px-7">
-          <div className="font-mono text-[11px] tracking-widest uppercase mb-5 theme-transition" style={{ color: primary }}>
-            // Quick Actions
+          <div className="flex items-center gap-3 mb-5">
+            <div className="font-mono text-[11px] tracking-widest uppercase theme-transition" style={{ color: primary }}>
+              // Quick Actions
+            </div>
+            {isNewUser && (
+              <div className="font-mono text-[9px] uppercase tracking-widest px-2 py-0.5 animate-pulse"
+                style={{ color: 'var(--gold)', border: '1px solid rgba(255,210,63,0.3)', background: 'rgba(255,210,63,0.08)' }}>
+                Start here ↓
+              </div>
+            )}
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {QUICK_ACTIONS.map(a => (
-              <button
-                key={a.label}
-                onClick={a.action}
-                className="flex flex-col items-start gap-3 p-6 border text-left transition-all duration-200 hover:-translate-y-0.5 group"
-                style={{ background: 'rgba(0,0,0,0.35)', borderColor: 'var(--border)', backdropFilter: 'blur(12px)' }}
-                onMouseEnter={e => (e.currentTarget.style.borderColor = `color-mix(in srgb, ${a.color} 50%, transparent)`)}
-                onMouseLeave={e => (e.currentTarget.style.borderColor = 'var(--border)')}
-              >
-                <span className="text-3xl leading-none">{a.icon}</span>
-                <div>
-                  <div className="font-display font-semibold text-[18px] mb-1" style={{ color: a.color }}>
-                    {a.label}
+            {QUICK_ACTIONS.map((a, idx) => {
+              const highlight = isNewUser && idx === 0;
+              return (
+                <button
+                  key={a.label}
+                  onClick={a.action}
+                  className="flex flex-col items-start gap-3 p-6 border text-left transition-all duration-200 hover:-translate-y-0.5 group relative"
+                  style={{
+                    background: highlight ? 'rgba(220,38,38,0.08)' : 'rgba(0,0,0,0.35)',
+                    borderColor: highlight ? 'rgba(220,38,38,0.5)' : 'var(--border)',
+                    backdropFilter: 'blur(12px)',
+                    animation: highlight ? 'predictPulse 2.5s ease-in-out infinite' : undefined,
+                  }}
+                  onMouseEnter={e => (e.currentTarget.style.borderColor = `color-mix(in srgb, ${a.color} 50%, transparent)`)}
+                  onMouseLeave={e => (e.currentTarget.style.borderColor = highlight ? 'rgba(220,38,38,0.5)' : 'var(--border)')}
+                >
+                  {highlight && (
+                    <div className="absolute -top-2.5 left-4 font-mono text-[9px] uppercase tracking-widest px-2 py-0.5"
+                      style={{ background: '#dc2626', color: '#fff' }}>
+                      Start here
+                    </div>
+                  )}
+                  <span className="text-3xl leading-none">{a.icon}</span>
+                  <div>
+                    <div className="font-display font-semibold text-[18px] mb-1" style={{ color: a.color }}>
+                      {a.label}
+                    </div>
+                    <div className="font-sans text-[12px]" style={{ color: 'var(--muted)' }}>
+                      {a.desc}
+                    </div>
                   </div>
-                  <div className="font-sans text-[12px]" style={{ color: 'var(--muted)' }}>
-                    {a.desc}
+                  <div className="mt-auto font-mono text-[10px] tracking-widest uppercase" style={{ color: a.color, opacity: 0.6 }}>
+                    Open →
                   </div>
-                </div>
-                <div className="mt-auto font-mono text-[10px] tracking-widest uppercase" style={{ color: a.color, opacity: 0.6 }}>
-                  Open →
-                </div>
-              </button>
-            ))}
+                </button>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -452,6 +529,11 @@ export default function Home() {
                     <div className="font-mono text-[10px] tracking-wide" style={{ color: 'var(--muted)' }}>
                       {formatKickoff(m.kickoff)}
                     </div>
+                    {isNewUser && (
+                      <div className="font-mono text-[9px] uppercase tracking-widest" style={{ color: 'rgba(255,210,63,0.6)' }}>
+                        🔒 Lock in before kickoff to score
+                      </div>
+                    )}
                     <button
                       onClick={() => router.push(`/predict?match=${m.id}&team=${encodeURIComponent(m.home_team)}&away=${encodeURIComponent(m.away_team)}`)}
                       className="w-full py-2 font-sans font-semibold text-[12px] transition-all mt-auto theme-transition"
@@ -620,16 +702,33 @@ export default function Home() {
                       className="border p-4 flex items-center gap-3"
                       style={{ background: `color-mix(in srgb, ${primary} 8%, rgba(0,0,0,0.35))`, borderColor: `color-mix(in srgb, ${primary} 35%, transparent)`, backdropFilter: 'blur(12px)' }}
                     >
-                      <span className="font-mono text-[10px] tracking-widest uppercase" style={{ color: 'var(--muted)' }}>—</span>
-                      <div className="flex-1">
-                        <div className="font-sans font-semibold text-[14px]" style={{ color: primary }}>
-                          {user.username} <span className="font-mono text-[9px] tracking-widest uppercase">(you)</span>
+                      {isNewUser ? (
+                        <div className="w-full text-center py-1">
+                          <span
+                            className="font-mono text-[10px] uppercase tracking-widest px-3 py-1.5"
+                            style={{
+                              color: 'var(--gold)',
+                              border: '1px solid rgba(255,210,63,0.25)',
+                              background: 'rgba(255,210,63,0.06)',
+                            }}
+                          >
+                            Make 1 prediction to unlock your IQ rank
+                          </span>
                         </div>
-                        <div className="font-mono text-[9px] tracking-widest uppercase" style={{ color: 'var(--muted)' }}>{user.rank_title}</div>
-                      </div>
-                      <div className="font-display font-semibold text-[18px]" style={{ color: 'var(--gold)' }}>
-                        {user.football_iq_points} <span className="font-mono text-[9px] tracking-widest uppercase" style={{ color: 'var(--muted)' }}>pts</span>
-                      </div>
+                      ) : (
+                        <>
+                          <span className="font-mono text-[10px] tracking-widest uppercase" style={{ color: 'var(--muted)' }}>—</span>
+                          <div className="flex-1">
+                            <div className="font-sans font-semibold text-[14px]" style={{ color: primary }}>
+                              {user.username} <span className="font-mono text-[9px] tracking-widest uppercase">(you)</span>
+                            </div>
+                            <div className="font-mono text-[9px] tracking-widest uppercase" style={{ color: 'var(--muted)' }}>{user.rank_title}</div>
+                          </div>
+                          <div className="font-display font-semibold text-[18px]" style={{ color: 'var(--gold)' }}>
+                            {user.football_iq_points} <span className="font-mono text-[9px] tracking-widest uppercase" style={{ color: 'var(--muted)' }}>pts</span>
+                          </div>
+                        </>
+                      )}
                     </div>
                   )}
                 </div>

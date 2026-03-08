@@ -1,3 +1,5 @@
+from datetime import datetime, timezone
+
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -113,6 +115,16 @@ app.include_router(match_ws.router)
 
 # HTML interface (Jinja2 templates — the original La Liga prototype)
 app.include_router(web.router)
+
+
+# ---------------------------------------------------------------------------
+# Health check — no auth, no DB. Used by frontend to detect cold-start wakeup.
+# ---------------------------------------------------------------------------
+
+@app.get("/health", tags=["health"])
+async def health_check():
+    """Instant liveness probe. Returns 200 as soon as the server is up."""
+    return {"status": "ok", "timestamp": datetime.now(timezone.utc).isoformat()}
 
 
 # ---------------------------------------------------------------------------

@@ -1,0 +1,85 @@
+'use client';
+import { useCallback, useEffect, useState } from 'react';
+
+export type BackendStatus = 'checking' | 'waking' | 'ready' | 'timeout';
+
+interface UseBackendReadyReturn {
+  status: BackendStatus;
+  elapsed: number;
+  retry: () => void;
+}
+
+export function useBackendReady(): UseBackendReadyReturn {
+  const [status, setStatus] = useState<BackendStatus>('checking');
+  const [elapsed, setElapsed] = useState(0);
+  const [retryKey, setRetryKey] = useState(0);
+
+  const retry = useCallback(() => {
+    setStatus('checking');
+    setElapsed(0);
+    setRetryKey(k => k + 1);
+  }, []);
+
+  useEffect(() => {
+    const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000';
+    let cancelled = false;
+    let pingId:    ReturnType<typeof setInterval>  | undefined = undefined;
+    let elapsedId: ReturnType<typeof setInterval>  | undefined = undefined;
+    let wakingId:  ReturnType<typeof setTimeout>   | undefined = undefined;
+
+    function cleanup() {
+      if (pingId    !== undefined) clearInterval(pingId);
+      if (elapsedId !== undefined) clearInterval(elapsedId);
+      if (wakingId  !== undefined) clearTimeout(wakingId);
+    }
+
+    function onReady() {
+      if (cancelled) return;
+      setStatus('ready');
+      cleanup();
+    }
+
+    async function ping() {
+      try {
+        const res = await fetch(`${API}/health`, {
+          cache: 'no-store',
+          signal: AbortSignal.timeout(4000),
+        });
+        if (res.ok) onReady();
+      } catch {
+        // backend still waking — next ping will retry
+      }
+    }
+
+    // Immediate first ping
+    ping();
+
+    // Show waking overlay only if backend hasn't responded within 1 second
+    wakingId = setTimeout(() => {
+      if (!cancelled) setStatus(s => s === 'checking' ? 'waking' : s);
+    }, 1000);
+
+    // Keep pinging every 2 seconds
+    pingId = setInterval(ping, 2000);
+
+    // Tick elapsed; timeout after 60 seconds
+    elapsedId = setInterval(() => {
+      if (cancelled) return;
+      setElapsed(prev => {
+        const next = prev + 1;
+        if (next >= 60) {
+          setStatus(s => s === 'waking' ? 'timeout' : s);
+          cleanup();
+        }
+        return next;
+      });
+    }, 1000);
+
+    return () => {
+      cancelled = true;
+      cleanup();
+    };
+  }, [retryKey]);
+
+  return { status, elapsed, retry };
+}

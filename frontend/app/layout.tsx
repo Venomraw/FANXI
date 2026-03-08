@@ -4,9 +4,11 @@ import "./globals.css";
 import { ThemeProvider } from "@/src/context/ThemeContext";
 import { AuthProvider } from "@/src/context/AuthContext";
 import { LanguageProvider } from "@/src/context/LanguageContext";
+import { ToastProvider } from "@/src/context/ToastContext";
 import TeamPicker from "@/src/components/TeamPicker";
 import CustomCursor from "@/src/components/CustomCursor";
 import KickoffBar from "@/src/components/KickoffBar";
+import BackendProvider from "@/src/components/BackendProvider";
 
 // Primary display — Space Grotesk 600 replaces Bebas Neue
 const spaceGrotesk = Space_Grotesk({
@@ -55,16 +57,20 @@ export default function RootLayout({
           backgroundPosition: 'center center',
           backgroundRepeat: 'no-repeat',
         }} />
-        <AuthProvider>
-          <LanguageProvider>
-          <ThemeProvider>
-            <CustomCursor />
-            <KickoffBar />
-            <TeamPicker />
-            {children}
-          </ThemeProvider>
-          </LanguageProvider>
-        </AuthProvider>
+        <BackendProvider>
+          <ToastProvider>
+            <AuthProvider>
+              <LanguageProvider>
+                <ThemeProvider>
+                  <CustomCursor />
+                  <KickoffBar />
+                  <TeamPicker />
+                  {children}
+                </ThemeProvider>
+              </LanguageProvider>
+            </AuthProvider>
+          </ToastProvider>
+        </BackendProvider>
       </body>
     </html>
   );
