@@ -5,13 +5,19 @@ API keys out of the browser.
 """
 
 import asyncio
+import json
 import re
 import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
 
 import httpx
 from fastapi import APIRouter, HTTPException, Query
+from fastapi.responses import StreamingResponse
+from groq import Groq
+from pydantic import BaseModel
+
 from app.config import settings
+from app.data.static_squads import STATIC_SQUADS
 
 RSS_SOURCES = [
     {
@@ -395,3 +401,109 @@ async def get_youtube_videos(team_name: str):
         if item.get("id", {}).get("videoId")
     ]
     return {"videos": videos}
+
+
+# ── Squad ──────────────────────────────────────────────────────────────────────
+
+@router.get("/squad/{team_name}")
+async def get_squad(team_name: str):
+    """Return the full squad for a WC 2026 nation from static data."""
+    # Exact match
+    if team_name in STATIC_SQUADS:
+        return {"squad": STATIC_SQUADS[team_name], "team": team_name}
+    team_lower = team_name.lower()
+    # Case-insensitive exact
+    for key in STATIC_SQUADS:
+        if key.lower() == team_lower:
+            return {"squad": STATIC_SQUADS[key], "team": key}
+    # Substring fuzzy
+    for key in STATIC_SQUADS:
+        if team_lower in key.lower() or key.lower() in team_lower:
+            return {"squad": STATIC_SQUADS[key], "team": key}
+    return {"squad": [], "team": team_name}
+
+
+# ── Fixtures + Standings ───────────────────────────────────────────────────────
+
+@router.get("/fixtures/{team_name}")
+async def get_team_fixtures(team_name: str):
+    """Return group-stage fixtures and current standings for a WC 2026 nation."""
+    # Import here to avoid circular import at module level
+    from app.api.matches import _ALL_FIXTURES, _GROUP_DATA
+
+    team_lower = team_name.lower()
+    group_key: str | None = None
+    group_data: dict | None = None
+
+    for grp, data in _GROUP_DATA.items():
+        for tname, _ in data["teams"]:
+            if tname.lower() == team_lower or team_lower in tname.lower() or tname.lower() in team_lower:
+                group_key = grp
+                group_data = data
+                break
+        if group_key:
+            break
+
+    if not group_key or not group_data:
+        return {"fixtures": [], "standings": [], "group": None}
+
+    group_fixtures = [f for f in _ALL_FIXTURES if f["group"] == group_key]
+
+    standings = [
+        {
+            "team": tname,
+            "flag": flag,
+            "played": 0, "won": 0, "drawn": 0, "lost": 0,
+            "gf": 0, "ga": 0, "gd": 0, "points": 0,
+        }
+        for tname, flag in group_data["teams"]
+    ]
+
+    return {"fixtures": group_fixtures, "standings": standings, "group": group_key}
+
+
+# ── AI Analysis Stream ─────────────────────────────────────────────────────────
+
+class AIAnalysisRequest(BaseModel):
+    team_name: str
+
+
+@router.post("/ai-analysis/stream")
+async def ai_analysis_stream(body: AIAnalysisRequest) -> StreamingResponse:
+    """Stream a Groq scout report for a WC 2026 nation."""
+    if not settings.groq_api_key:
+        raise HTTPException(status_code=503, detail="AI not configured")
+
+    from app.api.ai import SYSTEM_PROMPTS
+
+    async def generate():
+        try:
+            client = Groq(api_key=settings.groq_api_key)
+            user_prompt = (
+                f"Generate a comprehensive tactical scout report for {body.team_name} "
+                f"at the FIFA World Cup 2026. Cover their expected formation, key players "
+                f"to watch, strengths, vulnerabilities, and your tournament rating."
+            )
+            stream = client.chat.completions.create(
+                model="llama-3.3-70b-versatile",
+                max_tokens=2048,
+                temperature=0.7,
+                stream=True,
+                messages=[
+                    {"role": "system", "content": SYSTEM_PROMPTS["scout_report"]},
+                    {"role": "user", "content": user_prompt},
+                ],
+            )
+            for chunk in stream:
+                delta = chunk.choices[0].delta
+                if delta.content:
+                    yield f"data: {json.dumps({'text': delta.content})}\n\n"
+            yield "data: [DONE]\n\n"
+        except Exception as e:
+            yield f"data: {json.dumps({'error': str(e)})}\n\n"
+
+    return StreamingResponse(
+        generate(),
+        media_type="text/event-stream",
+        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
+    )
