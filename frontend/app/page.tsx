@@ -1,24 +1,74 @@
 'use client';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Suspense } from 'react';
-import PitchBoard from "@/src/components/pitch/PitchBoard";
-import UserStats from "@/src/components/hub/UserStats";
-import MiniLeaderboard from "@/src/components/hub/MiniLeaderboard";
-import NavBar from "@/src/components/NavBar";
-import { useTheme } from "@/src/context/ThemeContext";
-import { useAuth } from "@/src/context/AuthContext";
+import NavBar from '@/src/components/NavBar';
+import { useTheme } from '@/src/context/ThemeContext';
+import { useAuth } from '@/src/context/AuthContext';
 
+// ─── Types ────────────────────────────────────────────────────────────────────
+
+interface Match {
+  id: number;
+  home_team: string;
+  home_flag: string;
+  away_team: string;
+  away_flag: string;
+  kickoff: string;
+  venue: string;
+  round: string;
+  group: string;
+}
+
+interface Prediction {
+  id: number;
+  match_id: number;
+  home_team?: string;
+  away_team?: string;
+  home_flag?: string;
+  away_flag?: string;
+  formation?: string;
+  locked: boolean;
+  created_at: string;
+}
+
+interface LeaderboardEntry {
+  rank: number;
+  username: string;
+  country_allegiance: string;
+  football_iq_points: number;
+  rank_title: string;
+}
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
+function hoursUntil(iso: string) {
+  return (new Date(iso).getTime() - Date.now()) / 3_600_000;
+}
+
+function formatKickoff(iso: string) {
+  const d = new Date(iso);
+  return d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' })
+    + ' · ' + d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+}
+
+const RANK_COLORS: Record<string, string> = {
+  Legend:    '#FFD700',
+  Commander: '#C084FC',
+  Tactician: '#60A5FA',
+  Analyst:   '#34D399',
+  Scout:     '#9CA3AF',
+};
+
+const RANK_MEDALS: Record<number, string> = { 1: '🥇', 2: '🥈', 3: '🥉' };
 
 const TICKER_ITEMS = [
-  '⚽ WORLD CUP 2026 — JUNE 11 → JULY 19',
-  '🌎 USA · CANADA · MEXICO — 48 NATIONS · 104 MATCHES',
-  '🧠 PREDICT THE STARTING XI',
-  '⚡ LOCK YOUR PREDICTION 1H BEFORE KICKOFF',
-  '🎯 48 NATIONS · 104 MATCHES',
-  '🤖 AI SCORES YOUR FOOTBALL IQ IN REAL TIME',
-  '🔄 HALF-TIME PREDICTIONS — SUBS & TACTICS',
-  '🌎 FREE-TO-PLAY · NO CREDIT CARD',
+  'WORLD CUP 2026 — JUNE 11 → JULY 19',
+  'USA · CANADA · MEXICO — 48 NATIONS · 104 MATCHES',
+  'PREDICT THE STARTING XI',
+  'LOCK YOUR PREDICTION 1H BEFORE KICKOFF',
+  'AI SCORES YOUR FOOTBALL IQ IN REAL TIME',
+  'HALF-TIME PREDICTIONS — SUBS & TACTICS',
+  'FREE-TO-PLAY · NO CREDIT CARD',
 ];
 
 const LEAGUES = [
@@ -45,11 +95,66 @@ const LEAGUES = [
   },
 ];
 
+// ─── Sub-components ────────────────────────────────────────────────────────────
+
+function LiveBanner({ matches, primary, onWatch }: {
+  matches: Match[];
+  primary: string;
+  onWatch: (id: number) => void;
+}) {
+  if (!matches.length) return null;
+  return (
+    <div
+      className="border-b"
+      style={{ background: 'rgba(255,45,85,0.06)', borderColor: 'rgba(255,45,85,0.25)' }}
+    >
+      <div className="max-w-[1400px] mx-auto px-7 py-3 flex items-center gap-4 flex-wrap">
+        <div className="flex items-center gap-2 flex-shrink-0">
+          <span className="w-2 h-2 rounded-full animate-pulse" style={{ background: '#FF2D55' }} />
+          <span className="font-mono text-[10px] tracking-widest uppercase" style={{ color: '#FF2D55' }}>
+            Live Now
+          </span>
+        </div>
+        <div className="flex gap-3 flex-wrap">
+          {matches.map(m => (
+            <button
+              key={m.id}
+              onClick={() => onWatch(m.id)}
+              className="flex items-center gap-2 font-sans font-semibold text-[13px] px-3 py-1 transition-all"
+              style={{
+                background: 'rgba(255,45,85,0.1)',
+                border: '1px solid rgba(255,45,85,0.3)',
+                color: 'var(--text)',
+              }}
+            >
+              <span>{m.home_flag}</span>
+              <span>{m.home_team}</span>
+              <span style={{ color: 'rgba(255,255,255,0.35)' }}>vs</span>
+              <span>{m.away_team}</span>
+              <span>{m.away_flag}</span>
+              <span className="font-mono text-[10px]" style={{ color: '#FF2D55' }}>WATCH →</span>
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function Home() {
   const { team, primary } = useTheme();
-  const { user, logout, isLoading } = useAuth();
+  const { user, isLoading } = useAuth();
   const router = useRouter();
+
+  const [liveMatches, setLiveMatches] = useState<Match[]>([]);
+  const [upcomingMatches, setUpcomingMatches] = useState<Match[]>([]);
+  const [predictions, setPredictions] = useState<Prediction[]>([]);
+  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
+  const [dataLoading, setDataLoading] = useState(true);
+
+  const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
   useEffect(() => {
     if (!isLoading && !user) router.push('/login');
@@ -57,10 +162,34 @@ export default function Home() {
   }, [user, isLoading, router]);
 
   useEffect(() => {
+    if (!user) return;
+    const load = async () => {
+      try {
+        const [liveRes, allRes, predRes, lbRes] = await Promise.allSettled([
+          fetch(`${API}/matches/live`).then(r => r.json()),
+          fetch(`${API}/matches/all`).then(r => r.json()),
+          fetch(`${API}/predictions/history/${user.id}`).then(r => r.json()),
+          fetch(`${API}/predictions/leaderboard`).then(r => r.json()),
+        ]);
+        if (liveRes.status === 'fulfilled') setLiveMatches(Array.isArray(liveRes.value) ? liveRes.value : []);
+        if (allRes.status === 'fulfilled') {
+          const all: Match[] = Array.isArray(allRes.value) ? allRes.value : [];
+          setUpcomingMatches(all.filter(m => hoursUntil(m.kickoff) > 0).slice(0, 4));
+        }
+        if (predRes.status === 'fulfilled') setPredictions(Array.isArray(predRes.value) ? predRes.value.slice(0, 4) : []);
+        if (lbRes.status === 'fulfilled') setLeaderboard(Array.isArray(lbRes.value) ? lbRes.value.slice(0, 5) : []);
+      } finally {
+        setDataLoading(false);
+      }
+    };
+    load();
+  }, [user, API]);
+
+  useEffect(() => {
     const els = document.querySelectorAll('.reveal');
     const observer = new IntersectionObserver(
       entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }),
-      { threshold: 0.15 }
+      { threshold: 0.12 }
     );
     els.forEach(el => observer.observe(el));
     return () => observer.disconnect();
@@ -69,113 +198,152 @@ export default function Home() {
   if (isLoading || !user) return null;
 
   const tickerFull = [...TICKER_ITEMS, ...TICKER_ITEMS].join('  ·  ');
+  const greeting = new Date().getHours() < 12 ? 'Good morning' : new Date().getHours() < 18 ? 'Good afternoon' : 'Good evening';
+
+  const QUICK_ACTIONS = [
+    {
+      icon: '⚽',
+      label: 'Predict XI',
+      desc: 'Build your tactical prediction',
+      color: primary,
+      action: () => router.push('/predict'),
+    },
+    {
+      icon: '📅',
+      label: 'Fixtures',
+      desc: 'Browse all WC 2026 matches',
+      color: 'var(--gold)',
+      action: () => router.push('/matches'),
+    },
+    {
+      icon: '🌍',
+      label: 'Nation Intel',
+      desc: 'Squad analysis & news',
+      color: 'var(--blue)',
+      action: () => router.push('/nation'),
+    },
+    {
+      icon: '🤖',
+      label: 'AI Coach',
+      desc: 'Tactical insights & tips',
+      color: '#C084FC',
+      action: () => router.push('/ai'),
+    },
+  ];
 
   return (
     <div className="flex min-h-screen flex-col font-sans" style={{ background: 'transparent', color: 'var(--text)' }}>
-
       <NavBar subtitle="HUB" />
 
-      {/* ── HERO ── */}
+      {/* Live banner */}
+      <LiveBanner matches={liveMatches} primary={primary} onWatch={id => router.push(`/matches/${id}/live`)} />
+
+      {/* ── PERSONAL HERO ── */}
       <section
-        className="relative flex flex-col justify-center overflow-hidden"
-        style={{
-          minHeight: 'auto',
-          paddingTop: '20px',
-          paddingBottom: '100px',
-          background: 'transparent',
-        }}
+        className="relative overflow-hidden"
+        style={{ paddingTop: '56px', paddingBottom: '64px', background: 'transparent' }}
       >
-        {/* Animated grid BG */}
         <div className="grid-bg-primary absolute inset-0 pointer-events-none" />
-        {/* Gold orb */}
         <div
-          className="absolute right-0 top-1/4 pointer-events-none hidden lg:block"
-          style={{ width: '500px', height: '500px', background: 'radial-gradient(circle, rgba(255,210,63,0.06), transparent 70%)', borderRadius: '50%' }}
+          className="absolute right-0 top-0 bottom-0 pointer-events-none hidden lg:block"
+          style={{ width: '45%', background: `radial-gradient(ellipse at right center, color-mix(in srgb, ${primary} 5%, transparent), transparent 70%)` }}
         />
 
-        <div className="relative z-10 max-w-[1400px] mx-auto w-full px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-16 items-center">
+        <div className="relative z-10 max-w-[1400px] mx-auto px-7">
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-10 items-center">
 
-            {/* ── Left: title + body + CTAs ── */}
+            {/* Left: greeting */}
             <div>
-              <div className="font-mono text-[11px] tracking-widest uppercase mb-7 theme-transition" style={{ color: primary }}>
-                ⚡ FIFA World Cup 2026 — June 11 → July 19 · USA · Canada · Mexico
+              <div className="font-mono text-[11px] tracking-widest uppercase mb-4 theme-transition" style={{ color: primary }}>
+                {greeting}, Scout
               </div>
-
               <h1
-                className="font-display font-semibold leading-none mb-6"
-                style={{ fontSize: 'clamp(72px, 10vw, 160px)', letterSpacing: '-1px', lineHeight: '0.88' }}
+                className="font-display font-semibold leading-none mb-5"
+                style={{ fontSize: 'clamp(52px, 8vw, 100px)', letterSpacing: '-1px', lineHeight: '0.9' }}
               >
-                PREDICT THE<br />
-                <span style={{ color: primary }}>STARTING XI</span>
+                {user.display_name || user.username}
               </h1>
-
-              <p
-                className="font-sans font-semibold mb-10"
-                style={{ fontSize: 'clamp(16px, 1.4vw, 20px)', letterSpacing: '0.5px', color: 'var(--gold)' }}
-              >
-                48 Nations · 104 Matches · 1 World Cup
-              </p>
-
-              <p className="text-[15px] leading-relaxed mb-12 max-w-lg" style={{ color: 'var(--muted)' }}>
-                The world's first tactical prediction platform for the World Cup. Predict lineups, formations, tactics and match stats — then watch AI score your football IQ in real time.
-              </p>
-
-              <div className="flex gap-4 flex-wrap">
-                <button
-                  onClick={() => document.getElementById('builder')?.scrollIntoView({ behavior: 'smooth' })}
-                  className="flex items-center gap-2 px-8 py-4 font-sans font-semibold text-[13px] transition-all hover:-translate-y-0.5 glow-primary"
-                  style={{ background: primary, color: 'var(--dark)', clipPath: 'polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,12px 100%,0 calc(100% - 12px))' }}
+              <div className="flex items-center gap-3 mb-8 flex-wrap">
+                <span
+                  className="font-mono text-[11px] tracking-widest uppercase px-3 py-1.5"
+                  style={{
+                    background: `color-mix(in srgb, ${primary} 12%, transparent)`,
+                    color: primary,
+                    border: `1px solid color-mix(in srgb, ${primary} 30%, transparent)`,
+                  }}
                 >
-                  ⚽ Make Your Prediction
+                  {user.rank_title}
+                </span>
+                <span
+                  className="font-display font-semibold"
+                  style={{ fontSize: '22px', color: 'var(--gold)' }}
+                >
+                  {user.football_iq_points} <span className="font-mono text-[11px] tracking-widest uppercase" style={{ color: 'var(--muted)' }}>IQ pts</span>
+                </span>
+                {user.favorite_nation && (
+                  <span className="font-mono text-[11px] tracking-widest uppercase" style={{ color: 'var(--muted)' }}>
+                    {user.favorite_nation}
+                  </span>
+                )}
+              </div>
+              <div className="flex gap-3 flex-wrap">
+                <button
+                  onClick={() => router.push('/predict')}
+                  className="flex items-center gap-2 px-7 py-3.5 font-sans font-semibold text-[13px] transition-all hover:-translate-y-0.5 glow-primary"
+                  style={{
+                    background: primary,
+                    color: 'var(--dark)',
+                    clipPath: 'polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px))',
+                  }}
+                >
+                  Predict Now →
                 </button>
                 <button
                   onClick={() => router.push('/leaderboard')}
-                  className="flex items-center gap-2 px-8 py-4 font-sans font-semibold text-[13px] border transition-all"
+                  className="flex items-center gap-2 px-7 py-3.5 font-sans font-semibold text-[13px] border transition-all"
                   style={{ borderColor: 'var(--border)', color: 'var(--text)' }}
-                  onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = primary; (e.currentTarget as HTMLButtonElement).style.color = primary; }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = 'var(--border)'; (e.currentTarget as HTMLButtonElement).style.color = 'var(--text)'; }}
+                  onMouseEnter={e => {
+                    (e.currentTarget as HTMLButtonElement).style.borderColor = primary;
+                    (e.currentTarget as HTMLButtonElement).style.color = primary;
+                  }}
+                  onMouseLeave={e => {
+                    (e.currentTarget as HTMLButtonElement).style.borderColor = 'var(--border)';
+                    (e.currentTarget as HTMLButtonElement).style.color = 'var(--text)';
+                  }}
                 >
-                  🏆 Leaderboard
+                  Leaderboard
                 </button>
               </div>
             </div>
 
-            {/* ── Right: stats panel ── */}
+            {/* Right: stats grid */}
             <div
               className="hidden lg:grid grid-cols-2 gap-px border theme-transition"
-              style={{ borderColor: 'var(--border)', background: 'var(--border)' }}
+              style={{ borderColor: 'var(--border)', background: 'var(--border)', minWidth: '280px' }}
             >
               {[
-                { num: '48',   label: 'Nations'       },
-                { num: '104',  label: 'Matches'       },
-                { num: '1.1K', label: 'Players'       },
-                { num: '2.4K', label: 'Scouts'        },
+                { num: '48',   label: 'Nations'   },
+                { num: '104',  label: 'Matches'   },
+                { num: String(predictions.length), label: 'My Predictions' },
+                { num: String(user.football_iq_points), label: 'IQ Points' },
               ].map(s => (
                 <div
                   key={s.label}
-                  className="flex flex-col justify-center items-center py-10 theme-transition"
-                  style={{ background: 'transparent', transition: 'background 0.3s ease' }}
-                  onMouseEnter={e => {
-                    (e.currentTarget as HTMLDivElement).style.background = `color-mix(in srgb, ${primary} 8%, var(--dark3))`;
-                  }}
-                  onMouseLeave={e => {
-                    (e.currentTarget as HTMLDivElement).style.background = 'var(--dark3)';
-                  }}
+                  className="flex flex-col justify-center items-center py-9 theme-transition"
+                  style={{ background: 'var(--dark3)' }}
                 >
                   <div
                     className="font-display font-semibold leading-none theme-transition"
-                    style={{ fontSize: 'clamp(36px, 3.5vw, 52px)', lineHeight: '1', color: primary }}
+                    style={{ fontSize: 'clamp(30px, 3vw, 44px)', color: primary }}
                   >
                     {s.num}
                   </div>
-                  <div className="font-mono text-[10px] tracking-widest uppercase mt-2 text-center" style={{ color: 'var(--muted)' }}>
+                  <div className="font-mono text-[9px] tracking-widest uppercase mt-1.5 text-center" style={{ color: 'var(--muted)' }}>
                     {s.label}
                   </div>
                 </div>
               ))}
             </div>
-
           </div>
         </div>
       </section>
@@ -187,286 +355,369 @@ export default function Home() {
         </div>
       </div>
 
-      {/* ── GUIDE CTA ── */}
-      <section className="py-14 border-t border-b" style={{ background: 'transparent', borderColor: 'var(--border)' }}>
-        <div className="max-w-[1400px] mx-auto px-7 flex flex-col sm:flex-row items-center justify-between gap-6">
-          <div>
-            <div className="font-mono text-[11px] tracking-widest uppercase mb-2" style={{ color: primary }}>// New to FanXI?</div>
-            <h2 className="font-display font-semibold leading-none" style={{ fontSize: 'clamp(28px, 4vw, 48px)', letterSpacing: '1px' }}>
-              Read the <span style={{ color: primary }}>Scout Manual</span>
-            </h2>
-            <p className="text-[13px] mt-2" style={{ color: 'var(--muted)' }}>How to play · Scoring rules · Rank system · Pro tips</p>
+      {/* ── QUICK ACTIONS ── */}
+      <section className="py-14" style={{ background: 'transparent' }}>
+        <div className="max-w-[1400px] mx-auto px-7">
+          <div className="font-mono text-[11px] tracking-widest uppercase mb-5 theme-transition" style={{ color: primary }}>
+            // Quick Actions
           </div>
-          <button
-            onClick={() => router.push('/guide')}
-            className="flex-shrink-0 flex items-center gap-2 px-8 py-4 font-sans font-semibold text-[13px] transition-all hover:-translate-y-0.5 btn-cut btn-shimmer"
-            style={{ background: primary, color: 'var(--dark)', boxShadow: `0 0 20px color-mix(in srgb, ${primary} 35%, transparent)` }}
-          >
-            Open Guide →
-          </button>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {QUICK_ACTIONS.map(a => (
+              <button
+                key={a.label}
+                onClick={a.action}
+                className="flex flex-col items-start gap-3 p-6 border text-left transition-all duration-200 hover:-translate-y-0.5 group"
+                style={{ background: 'rgba(0,0,0,0.35)', borderColor: 'var(--border)', backdropFilter: 'blur(12px)' }}
+                onMouseEnter={e => (e.currentTarget.style.borderColor = `color-mix(in srgb, ${a.color} 50%, transparent)`)}
+                onMouseLeave={e => (e.currentTarget.style.borderColor = 'var(--border)')}
+              >
+                <span className="text-3xl leading-none">{a.icon}</span>
+                <div>
+                  <div className="font-display font-semibold text-[18px] mb-1" style={{ color: a.color }}>
+                    {a.label}
+                  </div>
+                  <div className="font-sans text-[12px]" style={{ color: 'var(--muted)' }}>
+                    {a.desc}
+                  </div>
+                </div>
+                <div className="mt-auto font-mono text-[10px] tracking-widest uppercase" style={{ color: a.color, opacity: 0.6 }}>
+                  Open →
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── UPCOMING MATCHES ── */}
+      {upcomingMatches.length > 0 && (
+        <section className="py-14 border-t" style={{ background: 'transparent', borderColor: 'var(--border)' }}>
+          <div className="max-w-[1400px] mx-auto px-7">
+            <div className="flex items-end justify-between mb-6">
+              <div>
+                <div className="font-mono text-[11px] tracking-widest uppercase mb-2 theme-transition" style={{ color: primary }}>
+                  // Next Up
+                </div>
+                <h2 className="font-display font-semibold leading-none" style={{ fontSize: 'clamp(32px, 4vw, 52px)' }}>
+                  UPCOMING <span style={{ color: primary }}>MATCHES</span>
+                </h2>
+              </div>
+              <button
+                onClick={() => router.push('/matches')}
+                className="font-mono text-[10px] tracking-widest uppercase px-4 py-2 transition-all hidden sm:block"
+                style={{ color: 'var(--muted)', border: '1px solid var(--border)' }}
+                onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.color = primary; (e.currentTarget as HTMLButtonElement).style.borderColor = `color-mix(in srgb, ${primary} 40%, transparent)`; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.color = 'var(--muted)'; (e.currentTarget as HTMLButtonElement).style.borderColor = 'var(--border)'; }}
+              >
+                View All →
+              </button>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+              {upcomingMatches.map(m => {
+                const hours = hoursUntil(m.kickoff);
+                const isSoon = hours < 48;
+                return (
+                  <div
+                    key={m.id}
+                    className="border p-5 flex flex-col gap-3 transition-all duration-200"
+                    style={{ background: 'rgba(0,0,0,0.35)', borderColor: 'var(--border)', backdropFilter: 'blur(12px)' }}
+                    onMouseEnter={e => (e.currentTarget.style.borderColor = `color-mix(in srgb, ${primary} 40%, transparent)`)}
+                    onMouseLeave={e => (e.currentTarget.style.borderColor = 'var(--border)')}
+                  >
+                    <div className="flex items-center gap-2">
+                      <span
+                        className="font-mono text-[9px] tracking-widest uppercase px-1.5 py-0.5"
+                        style={{ color: primary, border: `1px solid color-mix(in srgb, ${primary} 25%, transparent)`, background: `color-mix(in srgb, ${primary} 8%, transparent)` }}
+                      >
+                        {m.round}
+                      </span>
+                      {isSoon && (
+                        <span className="font-mono text-[9px] tracking-widest uppercase px-1.5 py-0.5 animate-pulse"
+                          style={{ color: '#00FF85', border: '1px solid rgba(0,255,133,0.3)', background: 'rgba(0,255,133,0.08)' }}>
+                          {Math.floor(hours)}h
+                        </span>
+                      )}
+                    </div>
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex flex-col items-center gap-1 flex-1">
+                        <span className="text-2xl">{m.home_flag}</span>
+                        <span className="font-display font-semibold text-[14px] text-center leading-tight">{m.home_team}</span>
+                      </div>
+                      <span className="font-mono text-[10px]" style={{ color: 'rgba(255,255,255,0.25)' }}>VS</span>
+                      <div className="flex flex-col items-center gap-1 flex-1">
+                        <span className="text-2xl">{m.away_flag}</span>
+                        <span className="font-display font-semibold text-[14px] text-center leading-tight">{m.away_team}</span>
+                      </div>
+                    </div>
+                    <div className="font-mono text-[10px] tracking-wide" style={{ color: 'var(--muted)' }}>
+                      {formatKickoff(m.kickoff)}
+                    </div>
+                    <button
+                      onClick={() => router.push(`/predict?match=${m.id}&team=${encodeURIComponent(m.home_team)}&away=${encodeURIComponent(m.away_team)}`)}
+                      className="w-full py-2 font-sans font-semibold text-[12px] transition-all mt-auto theme-transition"
+                      style={{ background: `color-mix(in srgb, ${primary} 14%, transparent)`, color: primary, border: `1px solid color-mix(in srgb, ${primary} 30%, transparent)` }}
+                      onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = `color-mix(in srgb, ${primary} 24%, transparent)`; }}
+                      onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = `color-mix(in srgb, ${primary} 14%, transparent)`; }}
+                    >
+                      Predict →
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ── MY PREDICTIONS + LEADERBOARD ── */}
+      <section className="py-14 border-t" style={{ background: 'transparent', borderColor: 'var(--border)' }}>
+        <div className="max-w-[1400px] mx-auto px-7">
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-8">
+
+            {/* My Predictions */}
+            <div>
+              <div className="font-mono text-[11px] tracking-widest uppercase mb-2 theme-transition" style={{ color: primary }}>
+                // My Activity
+              </div>
+              <div className="flex items-end justify-between mb-6">
+                <h2 className="font-display font-semibold leading-none" style={{ fontSize: 'clamp(28px, 4vw, 44px)' }}>
+                  MY <span style={{ color: primary }}>PREDICTIONS</span>
+                </h2>
+                <button
+                  onClick={() => router.push('/predict?tab=history')}
+                  className="font-mono text-[10px] tracking-widest uppercase px-4 py-2 transition-all hidden sm:block"
+                  style={{ color: 'var(--muted)', border: '1px solid var(--border)' }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.color = primary; (e.currentTarget as HTMLButtonElement).style.borderColor = `color-mix(in srgb, ${primary} 40%, transparent)`; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.color = 'var(--muted)'; (e.currentTarget as HTMLButtonElement).style.borderColor = 'var(--border)'; }}
+                >
+                  View All →
+                </button>
+              </div>
+
+              {dataLoading ? (
+                <div className="flex items-center gap-2 py-8" style={{ color: 'var(--muted)' }}>
+                  <span className="font-mono text-[11px] tracking-widest uppercase">Loading...</span>
+                </div>
+              ) : predictions.length === 0 ? (
+                <div
+                  className="border p-8 text-center"
+                  style={{ background: 'rgba(0,0,0,0.3)', borderColor: 'var(--border)', backdropFilter: 'blur(12px)' }}
+                >
+                  <div className="text-3xl mb-3">⚽</div>
+                  <p className="font-sans text-[14px] mb-4" style={{ color: 'var(--muted)' }}>
+                    No predictions yet. Start by picking a match.
+                  </p>
+                  <button
+                    onClick={() => router.push('/predict')}
+                    className="font-sans font-semibold text-[13px] px-6 py-2.5 transition-all"
+                    style={{ background: primary, color: 'var(--dark)' }}
+                  >
+                    Make First Prediction
+                  </button>
+                </div>
+              ) : (
+                <div className="flex flex-col gap-3">
+                  {predictions.map(p => (
+                    <div
+                      key={p.id}
+                      className="border p-4 flex items-center gap-4 transition-all cursor-pointer"
+                      style={{ background: 'rgba(0,0,0,0.35)', borderColor: 'var(--border)', backdropFilter: 'blur(12px)' }}
+                      onClick={() => router.push(`/matches/${p.match_id}/live`)}
+                      onMouseEnter={e => (e.currentTarget.style.borderColor = `color-mix(in srgb, ${primary} 35%, transparent)`)}
+                      onMouseLeave={e => (e.currentTarget.style.borderColor = 'var(--border)')}
+                    >
+                      <div className="flex items-center gap-2 flex-1 min-w-0">
+                        <span className="text-xl">{p.home_flag || '🏳'}</span>
+                        <span className="font-display font-semibold text-[14px] truncate">{p.home_team || `Match #${p.match_id}`}</span>
+                        <span className="font-mono text-[10px]" style={{ color: 'rgba(255,255,255,0.25)' }}>vs</span>
+                        <span className="font-display font-semibold text-[14px] truncate">{p.away_team || ''}</span>
+                        <span className="text-xl">{p.away_flag || ''}</span>
+                      </div>
+                      {p.formation && (
+                        <span
+                          className="font-mono text-[10px] tracking-widest uppercase px-2 py-1 flex-shrink-0"
+                          style={{ color: primary, border: `1px solid color-mix(in srgb, ${primary} 25%, transparent)`, background: `color-mix(in srgb, ${primary} 8%, transparent)` }}
+                        >
+                          {p.formation}
+                        </span>
+                      )}
+                      <span
+                        className="font-mono text-[10px] tracking-widest uppercase px-2 py-1 flex-shrink-0"
+                        style={p.locked
+                          ? { color: '#00FF85', border: '1px solid rgba(0,255,133,0.3)', background: 'rgba(0,255,133,0.08)' }
+                          : { color: 'var(--muted)', border: '1px solid var(--border)' }
+                        }
+                      >
+                        {p.locked ? 'Locked' : 'Draft'}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Leaderboard preview */}
+            <div>
+              <div className="font-mono text-[11px] tracking-widest uppercase mb-2 theme-transition" style={{ color: 'var(--gold)' }}>
+                // Global Rankings
+              </div>
+              <div className="flex items-end justify-between mb-6">
+                <h2 className="font-display font-semibold leading-none" style={{ fontSize: 'clamp(28px, 4vw, 44px)' }}>
+                  TOP <span style={{ color: 'var(--gold)' }}>5</span>
+                </h2>
+                <button
+                  onClick={() => router.push('/leaderboard')}
+                  className="font-mono text-[10px] tracking-widest uppercase px-4 py-2 transition-all hidden sm:block"
+                  style={{ color: 'var(--muted)', border: '1px solid var(--border)' }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.color = 'var(--gold)'; (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(255,210,63,0.4)'; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.color = 'var(--muted)'; (e.currentTarget as HTMLButtonElement).style.borderColor = 'var(--border)'; }}
+                >
+                  Full Board →
+                </button>
+              </div>
+
+              {dataLoading ? (
+                <div className="flex items-center gap-2 py-8" style={{ color: 'var(--muted)' }}>
+                  <span className="font-mono text-[11px] tracking-widest uppercase">Loading...</span>
+                </div>
+              ) : (
+                <div className="flex flex-col gap-2">
+                  {leaderboard.map(entry => {
+                    const isMe = entry.username === user.username;
+                    const rankColor = RANK_COLORS[entry.rank_title] || 'var(--muted)';
+                    return (
+                      <div
+                        key={entry.rank}
+                        className="border p-4 flex items-center gap-3 transition-all"
+                        style={{
+                          background: isMe ? `color-mix(in srgb, ${primary} 8%, rgba(0,0,0,0.35))` : 'rgba(0,0,0,0.35)',
+                          borderColor: isMe ? `color-mix(in srgb, ${primary} 35%, transparent)` : 'var(--border)',
+                          backdropFilter: 'blur(12px)',
+                        }}
+                      >
+                        <span className="font-display font-semibold w-6 text-center flex-shrink-0" style={{ fontSize: '20px' }}>
+                          {RANK_MEDALS[entry.rank] || `${entry.rank}`}
+                        </span>
+                        <div className="flex-1 min-w-0">
+                          <div className="font-sans font-semibold text-[14px] truncate" style={{ color: isMe ? primary : 'var(--text)' }}>
+                            {entry.username} {isMe && <span className="font-mono text-[9px] tracking-widest uppercase" style={{ color: primary }}>(you)</span>}
+                          </div>
+                          <div className="font-mono text-[9px] tracking-widest uppercase" style={{ color: rankColor }}>
+                            {entry.rank_title}
+                          </div>
+                        </div>
+                        <div className="font-display font-semibold text-[18px] flex-shrink-0" style={{ color: 'var(--gold)' }}>
+                          {entry.football_iq_points}
+                          <span className="font-mono text-[9px] tracking-widest uppercase ml-1" style={{ color: 'var(--muted)' }}>pts</span>
+                        </div>
+                      </div>
+                    );
+                  })}
+
+                  {/* My rank if not in top 5 */}
+                  {leaderboard.length > 0 && !leaderboard.find(e => e.username === user.username) && (
+                    <div
+                      className="border p-4 flex items-center gap-3"
+                      style={{ background: `color-mix(in srgb, ${primary} 8%, rgba(0,0,0,0.35))`, borderColor: `color-mix(in srgb, ${primary} 35%, transparent)`, backdropFilter: 'blur(12px)' }}
+                    >
+                      <span className="font-mono text-[10px] tracking-widest uppercase" style={{ color: 'var(--muted)' }}>—</span>
+                      <div className="flex-1">
+                        <div className="font-sans font-semibold text-[14px]" style={{ color: primary }}>
+                          {user.username} <span className="font-mono text-[9px] tracking-widest uppercase">(you)</span>
+                        </div>
+                        <div className="font-mono text-[9px] tracking-widest uppercase" style={{ color: 'var(--muted)' }}>{user.rank_title}</div>
+                      </div>
+                      <div className="font-display font-semibold text-[18px]" style={{ color: 'var(--gold)' }}>
+                        {user.football_iq_points} <span className="font-mono text-[9px] tracking-widest uppercase" style={{ color: 'var(--muted)' }}>pts</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </section>
 
       {/* ── HOW IT WORKS ── */}
-      <section className="py-24 border-b relative" style={{ background: 'transparent', borderColor: 'var(--border)' }}>
-        {/* Dark overlay for text contrast without hiding the stadium */}
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.55) 40%, rgba(0,0,0,0.55) 60%, rgba(0,0,0,0.35) 100%)' }}
-        />
+      <section className="py-24 border-t relative" style={{ background: 'transparent', borderColor: 'var(--border)' }}>
+        <div className="absolute inset-0 pointer-events-none" style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.45) 50%, rgba(0,0,0,0.25) 100%)' }} />
         <div className="relative z-10 max-w-[1400px] mx-auto px-7">
-
-          {/* Header */}
-          <div className="mb-16 reveal" style={{ paddingTop: '4px' }}>
+          <div className="mb-12 reveal">
             <div className="font-mono text-[11px] tracking-widest uppercase mb-3 theme-transition" style={{ color: primary }}>
               // Match Day Experience
             </div>
-            <h2
-              className="font-display font-semibold leading-none"
-              style={{ fontSize: 'clamp(44px, 6vw, 86px)', letterSpacing: '1px', lineHeight: '0.95' }}
-            >
+            <h2 className="font-display font-semibold leading-none" style={{ fontSize: 'clamp(44px, 6vw, 86px)', letterSpacing: '1px', lineHeight: '0.95' }}>
               HOW IT<br /><span style={{ color: primary }}>WORKS</span>
             </h2>
           </div>
 
-          {/* Timeline bar — desktop only */}
-          <div className="hidden lg:flex items-center mb-10 relative z-20">
-            <div className="absolute left-0 right-0 h-px" style={{ background: 'var(--border)', top: '50%' }} />
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 relative z-10">
             {[
-              { phase: 'PRE-MATCH', time: '-1h 05m', color: primary },
-              { phase: 'HALF-TIME', time: "45'",     color: 'var(--gold)' },
-              { phase: 'FULL-TIME', time: "90'+",    color: 'var(--blue)' },
-            ].map((p, i) => (
-              <div key={p.phase} className="relative flex-1 flex flex-col items-center gap-2">
-                {/* Dot */}
-                <div
-                  className="w-3 h-3 rounded-full border-2 z-10 theme-transition"
-                  style={{ background: 'transparent', borderColor: p.color, boxShadow: `0 0 10px ${p.color}` }}
-                />
-                <span className="font-mono text-[9px] tracking-widest uppercase" style={{ color: p.color }}>
-                  {p.phase}
-                </span>
-                <span className="font-display font-semibold" style={{ fontSize: '22px', color: p.color }}>
-                  {p.time}
-                </span>
+              {
+                num: '01', phase: 'PRE-MATCH', time: '-1h 05m', color: primary,
+                icon: '⚡', title: 'Predict the Starting XI',
+                body: 'Study the squad and pick who you think starts. Set your formation, name your captain, then predict match stats.',
+                items: ['11 starting players', 'Formation & shape', 'Captain pick', 'Score, corners, BTTS'],
+                badge: '🔒 Locks before kickoff',
+              },
+              {
+                num: '02', phase: 'HALF-TIME', time: "45'", color: 'var(--gold)',
+                icon: '⏱️', title: 'Adjust Your Haki',
+                body: 'You saw the first half. Now predict how the manager reacts — substitutions, shape shifts and second-half approach.',
+                items: ['1st, 2nd & 3rd sub (in & out)', 'Formation change?', 'Second half mentality', 'Next goalscorer'],
+                badge: "🔒 Locks at 60'",
+              },
+              {
+                num: '03', phase: 'FULL-TIME', time: '90\'+', color: 'var(--blue)',
+                icon: '🤖', title: 'AI Scores Your IQ',
+                body: 'The moment the official lineup drops, AI instantly compares your predictions and gives personalised feedback.',
+                items: ['Starting XI accuracy %', 'Tactical read score', 'Sub prediction rating', 'Football IQ points awarded'],
+                badge: '🏆 Results & leaderboard live',
+              },
+            ].map(c => (
+              <div
+                key={c.num}
+                className="relative p-8 flex flex-col gap-5 overflow-hidden reveal"
+                style={{ background: 'rgba(0,0,0,0.40)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.10)' }}
+              >
+                <div className="absolute right-4 top-4 font-display font-semibold leading-none select-none pointer-events-none"
+                  style={{ fontSize: '120px', color: c.color, opacity: 0.04, lineHeight: 1 }}>{c.num}</div>
+                <div className="flex items-center justify-between">
+                  <span className="font-mono text-[9px] tracking-widest uppercase px-2 py-1"
+                    style={{ background: `color-mix(in srgb, ${c.color} 10%, transparent)`, color: c.color, border: `1px solid color-mix(in srgb, ${c.color} 25%, transparent)` }}>
+                    {c.phase}
+                  </span>
+                  <span className="font-display font-semibold" style={{ fontSize: '26px', color: c.color }}>{c.time}</span>
+                </div>
+                <div>
+                  <div className="text-3xl mb-3">{c.icon}</div>
+                  <h3 className="font-display font-semibold mb-2" style={{ fontSize: '22px' }}>{c.title}</h3>
+                  <p className="text-[13px] leading-relaxed" style={{ color: 'var(--muted)' }}>{c.body}</p>
+                </div>
+                <ul className="flex flex-col gap-2">
+                  {c.items.map(item => (
+                    <li key={item} className="flex items-center gap-2 text-[13px]" style={{ color: 'var(--muted)' }}>
+                      <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: c.color }} />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+                <div className="flex items-center gap-2 px-4 py-2.5 font-mono text-[10px] tracking-widest uppercase mt-auto w-fit"
+                  style={{ background: `color-mix(in srgb, ${c.color} 8%, transparent)`, color: c.color, border: `1px solid color-mix(in srgb, ${c.color} 22%, transparent)` }}>
+                  {c.badge}
+                </div>
               </div>
             ))}
-          </div>
-
-          {/* Phase cards */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 relative z-10">
-
-            {/* PRE-MATCH */}
-            <div className="relative p-8 flex flex-col gap-5 overflow-hidden reveal" style={{ background: 'rgba(0,0,0,0.40)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.10)' }}>
-              {/* Background watermark */}
-              <div
-                className="absolute right-4 top-4 font-display font-semibold leading-none select-none pointer-events-none"
-                style={{ fontSize: '120px', color: primary, opacity: 0.04, lineHeight: 1 }}
-              >
-                01
-              </div>
-
-              {/* Phase badge */}
-              <div className="flex items-center justify-between">
-                <span
-                  className="font-mono text-[9px] tracking-widest uppercase px-2 py-1"
-                  style={{ background: `color-mix(in srgb, ${primary} 12%, transparent)`, color: primary, border: `1px solid color-mix(in srgb, ${primary} 25%, transparent)` }}
-                >
-                  PRE-MATCH
-                </span>
-                <span className="font-display font-semibold theme-transition" style={{ fontSize: '28px', color: primary }}>
-                  -1h 05m
-                </span>
-              </div>
-
-              <div>
-                <div className="text-3xl mb-3">⚡</div>
-                <h3 className="font-display font-semibold mb-2" style={{ fontSize: '24px', letterSpacing: '0.5px' }}>
-                  Predict the Starting XI
-                </h3>
-                <p className="text-[13px] leading-relaxed" style={{ color: 'var(--muted)' }}>
-                  Study the squad and pick who you think starts. Set your formation, name your captain, then predict match stats.
-                </p>
-              </div>
-
-              <ul className="flex flex-col gap-2">
-                {['11 starting players', 'Formation & shape', 'Captain pick', 'Score, corners, BTTS'].map(item => (
-                  <li key={item} className="flex items-center gap-2 text-[13px]" style={{ color: 'var(--muted)' }}>
-                    <span className="w-1.5 h-1.5 rounded-full flex-shrink-0 theme-transition" style={{ background: primary }} />
-                    {item}
-                  </li>
-                ))}
-              </ul>
-
-              <div
-                className="flex items-center gap-2 px-4 py-2.5 font-mono text-[10px] tracking-widest uppercase mt-auto w-fit"
-                style={{ background: `color-mix(in srgb, ${primary} 10%, transparent)`, color: primary, border: `1px solid color-mix(in srgb, ${primary} 25%, transparent)` }}
-              >
-                🔒 Locks before kickoff
-              </div>
-            </div>
-
-            {/* HALF-TIME */}
-            <div className="relative p-8 flex flex-col gap-5 overflow-hidden reveal" style={{ background: 'rgba(0,0,0,0.40)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.10)' }}>
-              <div
-                className="absolute right-4 top-4 font-display font-semibold leading-none select-none pointer-events-none"
-                style={{ fontSize: '120px', color: 'var(--gold)', opacity: 0.04, lineHeight: 1 }}
-              >
-                02
-              </div>
-
-              <div className="flex items-center justify-between">
-                <span
-                  className="font-mono text-[9px] tracking-widest uppercase px-2 py-1"
-                  style={{ background: 'rgba(255,210,63,0.10)', color: 'var(--gold)', border: '1px solid rgba(255,210,63,0.25)' }}
-                >
-                  HALF-TIME
-                </span>
-                <span className="font-display font-semibold" style={{ fontSize: '28px', color: 'var(--gold)' }}>
-                  45&apos;
-                </span>
-              </div>
-
-              <div>
-                <div className="text-3xl mb-3">⏱️</div>
-                <h3 className="font-display font-semibold mb-2" style={{ fontSize: '24px', letterSpacing: '0.5px' }}>
-                  Adjust Your Haki
-                </h3>
-                <p className="text-[13px] leading-relaxed" style={{ color: 'var(--muted)' }}>
-                  You saw the first half. Now predict how the manager reacts — substitutions, shape shifts and second-half approach.
-                </p>
-              </div>
-
-              <ul className="flex flex-col gap-2">
-                {['1st, 2nd & 3rd sub (in & out)', 'Formation change?', 'Second half mentality', 'Next goalscorer'].map(item => (
-                  <li key={item} className="flex items-center gap-2 text-[13px]" style={{ color: 'var(--muted)' }}>
-                    <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: 'var(--gold)' }} />
-                    {item}
-                  </li>
-                ))}
-              </ul>
-
-              <div
-                className="flex items-center gap-2 px-4 py-2.5 font-mono text-[10px] tracking-widest uppercase mt-auto w-fit"
-                style={{ background: 'rgba(255,210,63,0.08)', color: 'var(--gold)', border: '1px solid rgba(255,210,63,0.22)' }}
-              >
-                🔒 Locks at 60&apos;
-              </div>
-            </div>
-
-            {/* FULL-TIME */}
-            <div className="relative p-8 flex flex-col gap-5 overflow-hidden reveal" style={{ background: 'rgba(0,0,0,0.40)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.10)' }}>
-              <div
-                className="absolute right-4 top-4 font-display font-semibold leading-none select-none pointer-events-none"
-                style={{ fontSize: '120px', color: 'var(--blue)', opacity: 0.04, lineHeight: 1 }}
-              >
-                03
-              </div>
-
-              <div className="flex items-center justify-between">
-                <span
-                  className="font-mono text-[9px] tracking-widest uppercase px-2 py-1"
-                  style={{ background: 'rgba(0,209,255,0.10)', color: 'var(--blue)', border: '1px solid rgba(0,209,255,0.25)' }}
-                >
-                  FULL-TIME
-                </span>
-                <span className="font-display font-semibold" style={{ fontSize: '28px', color: 'var(--blue)' }}>
-                  90&apos;+
-                </span>
-              </div>
-
-              <div>
-                <div className="text-3xl mb-3">🤖</div>
-                <h3 className="font-display font-semibold mb-2" style={{ fontSize: '24px', letterSpacing: '0.5px' }}>
-                  AI Scores Your IQ
-                </h3>
-                <p className="text-[13px] leading-relaxed" style={{ color: 'var(--muted)' }}>
-                  The moment the official lineup drops, AI instantly compares your predictions and gives personalised feedback.
-                </p>
-              </div>
-
-              <ul className="flex flex-col gap-2">
-                {['Starting XI accuracy %', 'Tactical read score', 'Sub prediction rating', 'Football IQ points awarded'].map(item => (
-                  <li key={item} className="flex items-center gap-2 text-[13px]" style={{ color: 'var(--muted)' }}>
-                    <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: 'var(--blue)' }} />
-                    {item}
-                  </li>
-                ))}
-              </ul>
-
-              <div
-                className="flex items-center gap-2 px-4 py-2.5 font-mono text-[10px] tracking-widest uppercase mt-auto w-fit"
-                style={{ background: 'rgba(0,209,255,0.08)', color: 'var(--blue)', border: '1px solid rgba(0,209,255,0.22)' }}
-              >
-                🏆 Results &amp; leaderboard live
-              </div>
-            </div>
-
-          </div>
-
-          {/* Bottom AI feedback preview */}
-          <div
-            className="mt-4 p-6 flex flex-col sm:flex-row items-center gap-4 reveal relative z-10"
-            style={{ background: 'rgba(0,0,0,0.40)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.10)' }}
-          >
-            <div className="text-2xl flex-shrink-0">🤖</div>
-            <div className="flex-1">
-              <p className="font-sans font-semibold text-[14px] mb-1" style={{ color: 'var(--text)' }}>
-                Example AI feedback after the lineup drops:
-              </p>
-              <p className="font-mono text-[12px]" style={{ color: 'var(--muted)' }}>
-                <span style={{ color: primary }}>&quot;You got 9/11 starters correct — better than 81% of scouts worldwide.
-                You predicted 4-3-3, they played 4-2-3-1. Your captain Messi scored — double points activated!&quot;</span>
-              </p>
-            </div>
-            <div
-              className="flex-shrink-0 px-4 py-2 font-mono text-[10px] tracking-widest uppercase"
-              style={{ background: `color-mix(in srgb, ${primary} 10%, transparent)`, color: primary, border: `1px solid color-mix(in srgb, ${primary} 25%, transparent)` }}
-            >
-              +42 IQ pts
-            </div>
-          </div>
-
-        </div>{/* /z-10 container */}
-      </section>
-
-      {/* ── PITCH BUILDER (main interactive section) ── */}
-      <section id="builder" className="py-24" style={{ background: 'transparent' }}>
-        <div className="max-w-[1400px] mx-auto px-7">
-          <div className="font-mono text-[11px] tracking-widest uppercase mb-3" style={{ color: primary }}>// Tactical Engine</div>
-          <h2
-            className="font-display font-semibold mb-10 leading-none"
-            style={{ fontSize: 'clamp(44px, 6vw, 86px)', letterSpacing: '1px', lineHeight: '0.95' }}
-          >
-            YOUR <span style={{ color: primary }}>XI</span>
-          </h2>
-          <main>
-            <Suspense fallback={
-              <div className="flex items-center justify-center py-24">
-                <span className="font-mono text-[11px] tracking-widest uppercase" style={{ color: 'var(--muted)' }}>
-                  Loading Tactical Engine...
-                </span>
-              </div>
-            }>
-              <PitchBoard />
-            </Suspense>
-          </main>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-8">
-            <UserStats />
-            <MiniLeaderboard />
           </div>
         </div>
       </section>
 
-
       {/* ── LEAGUES ── */}
-      <section id="leagues" className="py-24" style={{ background: 'transparent' }}>
+      <section id="leagues" className="py-24 border-t" style={{ background: 'transparent', borderColor: 'var(--border)' }}>
         <div className="max-w-[1400px] mx-auto px-7">
-          <div className="font-mono text-[11px] tracking-widest uppercase mb-3" style={{ color: primary }}>// Competition</div>
-          <h2
-            className="font-display font-semibold mb-14 leading-none"
-            style={{ fontSize: 'clamp(44px, 6vw, 86px)', letterSpacing: '1px', lineHeight: '0.95' }}
-          >
+          <div className="font-mono text-[11px] tracking-widest uppercase mb-3 theme-transition" style={{ color: primary }}>// Competition</div>
+          <h2 className="font-display font-semibold mb-14 leading-none" style={{ fontSize: 'clamp(44px, 6vw, 86px)', letterSpacing: '1px', lineHeight: '0.95' }}>
             LEAGUE<br />FORMATS
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -474,23 +725,21 @@ export default function Home() {
               <div
                 key={league.title}
                 className="relative p-10 border transition-all duration-300 hover:-translate-y-1 cursor-default"
-                style={{ background: 'transparent', borderColor: league.featured ? 'rgba(255,210,63,0.3)' : 'var(--border)' }}
+                style={{ background: 'rgba(0,0,0,0.35)', borderColor: league.featured ? 'rgba(255,210,63,0.3)' : 'var(--border)', backdropFilter: 'blur(12px)' }}
                 onMouseEnter={e => ((e.currentTarget as HTMLDivElement).style.borderColor = league.featured ? 'var(--gold)' : primary)}
                 onMouseLeave={e => ((e.currentTarget as HTMLDivElement).style.borderColor = league.featured ? 'rgba(255,210,63,0.3)' : 'var(--border)')}
               >
                 {league.featured && (
-                  <span
-                    className="absolute top-4 right-4 font-mono text-[8px] font-bold tracking-wide uppercase px-2 py-1"
-                    style={{ background: 'var(--gold)', color: 'var(--dark)' }}
-                  >⭐ Popular</span>
+                  <span className="absolute top-4 right-4 font-mono text-[8px] font-bold tracking-wide uppercase px-2 py-1"
+                    style={{ background: 'var(--gold)', color: 'var(--dark)' }}>
+                    Popular
+                  </span>
                 )}
                 <div className="text-4xl mb-4">{league.icon}</div>
-                <h3 className="font-display font-semibold mb-3 tracking-wide" style={{ fontSize: '28px', letterSpacing: '1px' }}>{league.title}</h3>
+                <h3 className="font-display font-semibold mb-3 tracking-wide" style={{ fontSize: '26px', letterSpacing: '1px' }}>{league.title}</h3>
                 <p className="text-[13px] leading-relaxed mb-5" style={{ color: 'var(--muted)' }}>{league.desc}</p>
                 <div className="flex gap-3 flex-wrap">
-                  {league.meta.map(m => (
-                    <span key={m} className="font-mono text-[9px] tracking-wide" style={{ color: primary }}>{m}</span>
-                  ))}
+                  {league.meta.map(m => <span key={m} className="font-mono text-[9px] tracking-wide" style={{ color: primary }}>{m}</span>)}
                 </div>
               </div>
             ))}
@@ -502,8 +751,6 @@ export default function Home() {
       <footer className="pt-14 pb-9 border-t" style={{ background: 'transparent', borderColor: 'var(--border)' }}>
         <div className="max-w-[1400px] mx-auto px-7">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-14 mb-14">
-
-            {/* Brand */}
             <div className="col-span-2 md:col-span-1">
               <div className="font-display font-semibold text-4xl mb-3 tracking-wider" style={{ color: primary }}>
                 Fan<span style={{ color: 'var(--gold)' }}>XI</span>
@@ -512,90 +759,52 @@ export default function Home() {
                 The ultimate tactical prediction platform for the 2026 FIFA World Cup. Built for fans who think like coaches — from Dallas, Texas.
               </p>
             </div>
-
-            {/* Platform links */}
             <div>
               <div className="font-mono text-[9px] tracking-widest uppercase mb-4" style={{ color: primary }}>Platform</div>
               <ul className="space-y-2">
-                {[
-                  ['Team Builder',  '#builder'],
-                  ['Leaderboard',   '/leaderboard'],
-                  ['Leagues',       '#leagues'],
-                  ['Scoring',       '#scoring'],
-                ].map(([label, href]) => (
-                  <li key={label}>
-                    <a
-                      href={href}
-                      className="text-[13px] transition-colors"
-                      style={{ color: 'var(--muted)' }}
-                      onMouseEnter={e => (e.currentTarget.style.color = 'var(--text)')}
-                      onMouseLeave={e => (e.currentTarget.style.color = 'var(--muted)')}
-                    >{label}</a>
-                  </li>
+                {[['Predict', '/predict'], ['Leaderboard', '/leaderboard'], ['Matches', '/matches'], ['Guide', '/guide']].map(([label, href]) => (
+                  <li key={label}><a href={href} className="text-[13px] transition-colors" style={{ color: 'var(--muted)' }}
+                    onMouseEnter={e => (e.currentTarget.style.color = 'var(--text)')}
+                    onMouseLeave={e => (e.currentTarget.style.color = 'var(--muted)')}>{label}</a></li>
                 ))}
               </ul>
             </div>
-
-            {/* Info links */}
             <div>
               <div className="font-mono text-[9px] tracking-widest uppercase mb-4" style={{ color: primary }}>Info</div>
               <ul className="space-y-2">
-                {[
-                  ['Scoring Rules',  '#scoring'],
-                  ['How It Works',   '#how-it-works'],
-                  ['Nation Intel',   '/nation'],
-                ].map(([label, href]) => (
-                  <li key={label}>
-                    <a
-                      href={href}
-                      className="text-[13px] transition-colors"
-                      style={{ color: 'var(--muted)' }}
-                      onMouseEnter={e => (e.currentTarget.style.color = 'var(--text)')}
-                      onMouseLeave={e => (e.currentTarget.style.color = 'var(--muted)')}
-                    >{label}</a>
-                  </li>
+                {[['How It Works', '#'], ['Nation Intel', '/nation'], ['Guide', '/guide']].map(([label, href]) => (
+                  <li key={label}><a href={href} className="text-[13px] transition-colors" style={{ color: 'var(--muted)' }}
+                    onMouseEnter={e => (e.currentTarget.style.color = 'var(--text)')}
+                    onMouseLeave={e => (e.currentTarget.style.color = 'var(--muted)')}>{label}</a></li>
                 ))}
               </ul>
             </div>
-
-            {/* Dev links */}
             <div>
               <div className="font-mono text-[9px] tracking-widest uppercase mb-4" style={{ color: primary }}>Dev</div>
               <ul className="space-y-2">
                 {([
-                  { label: 'GitHub ↗',      href: 'https://github.com/venomraw',                            external: true  },
-                  { label: 'LinkedIn ↗',    href: 'https://www.linkedin.com/in/binamra-sigdel-377553156/', external: true  },
-                  { label: 'MIT License',   href: '#',                                                      external: false },
-                  { label: 'Privacy Policy',href: '#',                                                      external: false },
+                  { label: 'GitHub ↗', href: 'https://github.com/venomraw', external: true },
+                  { label: 'LinkedIn ↗', href: 'https://www.linkedin.com/in/binamra-sigdel-377553156/', external: true },
+                  { label: 'MIT License', href: '#', external: false },
                 ] as { label: string; href: string; external: boolean }[]).map(({ label, href, external }) => (
-                  <li key={label}>
-                    <a
-                      href={href}
-                      target={external ? '_blank' : undefined}
-                      rel={external ? 'noopener noreferrer' : undefined}
-                      className="text-[13px] transition-colors"
-                      style={{ color: 'var(--muted)' }}
-                      onMouseEnter={e => (e.currentTarget.style.color = 'var(--text)')}
-                      onMouseLeave={e => (e.currentTarget.style.color = 'var(--muted)')}
-                    >{label}</a>
-                  </li>
+                  <li key={label}><a href={href} target={external ? '_blank' : undefined} rel={external ? 'noopener noreferrer' : undefined}
+                    className="text-[13px] transition-colors" style={{ color: 'var(--muted)' }}
+                    onMouseEnter={e => (e.currentTarget.style.color = 'var(--text)')}
+                    onMouseLeave={e => (e.currentTarget.style.color = 'var(--muted)')}>{label}</a></li>
                 ))}
               </ul>
             </div>
           </div>
-
-          {/* Footer bottom bar */}
           <div className="flex justify-between items-center pt-7 border-t flex-wrap gap-2" style={{ borderColor: 'var(--border)' }}>
             <span className="font-mono text-[10px] tracking-wider" style={{ color: 'var(--muted)' }}>
               © 2026 FanXI · Built by Venomraw · Free-to-play · Not affiliated with FIFA.
             </span>
             <span className="font-mono text-[10px] tracking-wider" style={{ color: primary }}>
-              DALLAS · TEXAS · USA 🏟️
+              DALLAS · TEXAS · USA
             </span>
           </div>
         </div>
       </footer>
-
     </div>
   );
 }

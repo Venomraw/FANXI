@@ -9,6 +9,7 @@ const LANGUAGES: LangCode[] = ['EN', 'ES', 'FR', 'PT', 'DE'];
 
 const NAV_LINKS = [
   { label: 'Hub',         href: '/'            },
+  { label: 'Predict',     href: '/predict'     },
   { label: 'Matches',     href: '/matches'     },
   { label: 'Intel',       href: '/nation'      },
   { label: 'AI',          href: '/ai'          },
@@ -244,7 +245,7 @@ export default function NavBar({ subtitle }: NavBarProps) {
                     {[
                       { icon: '👤', label: t('profile'),       action: () => { router.push('/profile'); setDropdownOpen(false); } },
                       { icon: '⚙️', label: t('settings'),      action: () => { router.push('/settings'); setDropdownOpen(false); } },
-                      { icon: '🏆', label: t('myPredictions'), action: () => { router.push('/?tab=history'); setDropdownOpen(false); } },
+                      { icon: '🏆', label: t('myPredictions'), action: () => { router.push('/predict?tab=history'); setDropdownOpen(false); } },
                     ].map(item => (
                       <button
                         key={item.label}
@@ -407,7 +408,7 @@ export default function NavBar({ subtitle }: NavBarProps) {
                   {[
                     { icon: '👤', label: 'Profile',        href: '/profile'       },
                     { icon: '⚙️', label: 'Settings',       href: '/settings'      },
-                    { icon: '🏆', label: 'My Predictions', href: '/?tab=history'  },
+                    { icon: '🏆', label: 'My Predictions', href: '/predict?tab=history'  },
                   ].map(item => (
                     <a
                       key={item.label}

@@ -254,7 +254,7 @@ export default function MatchesPage() {
   }, [user]);
 
   const handlePredict = (matchId: number, homeTeam: string, awayTeam: string) => {
-    router.push(`/?match=${matchId}&team=${encodeURIComponent(homeTeam)}&away=${encodeURIComponent(awayTeam)}`);
+    router.push(`/predict?match=${matchId}&team=${encodeURIComponent(homeTeam)}&away=${encodeURIComponent(awayTeam)}`);
   };
 
   // ── Derived lists ──────────────────────────────────────────────────────────
