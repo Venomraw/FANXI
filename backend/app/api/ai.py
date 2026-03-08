@@ -1,5 +1,5 @@
 """
-FANXI AI — Four-mode tactical assistant powered by Groq (Llama 3).
+FANXI AI — Five-mode tactical assistant powered by Groq (Llama 3.3 70B).
 """
 
 from fastapi import APIRouter, HTTPException
@@ -13,9 +13,39 @@ from app.config import settings
 
 router = APIRouter(prefix="/ai", tags=["ai"])
 
+# ── WC 2026 global context injected into every prompt ─────────────────────────
+
+WC2026_CONTEXT = (
+    "\n\nTOURNAMENT CONTEXT: You are analyzing the FIFA World Cup 2026, hosted across "
+    "USA, Canada, and Mexico (June 11 – July 19, 2026). 48 teams compete across 12 "
+    "groups of 4; top 2 + 8 best third-place teams advance to the Round of 32. "
+    "Key contenders: Brazil (Vinicius Jr, Rodrygo, Endrick, Paquetá), France (Mbappé, "
+    "Camavinga, Tchouaméni), England (Bellingham, Saka, Foden, Palmer), Argentina "
+    "(Messi's likely final WC, De Paul, Álvarez), Spain (Pedri, Gavi, Yamal, Modrić), "
+    "Germany (Wirtz, Musiala, Havertz), Portugal (B.Silva, Rúben Neves, Gonçalo Ramos). "
+    "The platform FANXI lets fans predict starting XIs, formations, and match stats. "
+    "Always give WC 2026-specific, tournament-relevant analysis when applicable."
+)
+
 # ── System prompts ─────────────────────────────────────────────────────────────
 
 SYSTEM_PROMPTS: dict[str, str] = {
+    "scout_report": (
+        "You are FANXI's elite scout — part spy, part professor, part football obsessive. "
+        "Your job is to generate a comprehensive pre-match tactical dossier for any "
+        "WC 2026 nation when asked.\n\n"
+        "Always structure your report EXACTLY with these sections:\n"
+        "⚡ QUICK VERDICT — a 2-sentence power summary of this team right now\n"
+        "📐 EXPECTED FORMATION — most likely shape + brief tactical explanation\n"
+        "👥 KEY PLAYERS TO WATCH — 3-4 players, name each and explain their specific role\n"
+        "💪 STRENGTHS — their 3 biggest tactical advantages in bullet form\n"
+        "⚠️ HOW TO HURT THEM — 2-3 specific vulnerabilities opponents can exploit\n"
+        "🎯 PREDICTION TIPS — what a smart scout should predict for this team\n"
+        "🧠 WC 2026 RATING — a score out of 100 for their tournament prospects + one-line verdict\n\n"
+        "Be specific and use real player names. Ground analysis in their actual 2024-25 form. "
+        "No vague generalities."
+        + WC2026_CONTEXT
+    ),
     "critique": (
         "You are FANXI's elite tactical analyst — a blend of Pep Guardiola's obsession "
         "with structure and Jose Mourinho's cold pragmatism.\n\n"
@@ -28,6 +58,7 @@ SYSTEM_PROMPTS: dict[str, str] = {
         "⚠️ VULNERABILITIES — tactical risks or mismatches\n"
         "🔄 SUGGESTED TWEAKS — 1-3 specific changes with reasoning\n"
         "🧠 TACTICAL IQ — a score out of 100 with a one-line verdict"
+        + WC2026_CONTEXT
     ),
     "formation": (
         "You are FANXI's formation strategist — think of yourself as a hybrid of "
@@ -35,11 +66,12 @@ SYSTEM_PROMPTS: dict[str, str] = {
         "Given information about a team's strengths and the opponent's style, suggest "
         "the optimal formation with a clear tactical rationale.\n\n"
         "Always include:\n"
-        "- 📐 RECOMMENDED FORMATION — with a brief name (e.g. \"The High Block 4-2-3-1\")\n"
-        "- 🎯 WHY IT WORKS — specific reasons this shape exploits the opponent\n"
-        "- 👤 KEY ROLES — which positions are most important and why\n"
-        "- ⚠️ RISKS TO MANAGE — what could go wrong and how to mitigate it\n\n"
+        "📐 RECOMMENDED FORMATION — with a brief name (e.g. 'The High Block 4-2-3-1')\n"
+        "🎯 WHY IT WORKS — specific reasons this shape exploits the opponent\n"
+        "👤 KEY ROLES — which positions are most important and why\n"
+        "⚠️ RISKS TO MANAGE — what could go wrong and how to mitigate it\n\n"
         "Think like a chess player. Every choice is a trade-off. Be specific, not generic."
+        + WC2026_CONTEXT
     ),
     "chat": (
         "You are FANXI's tactical football brain — deeply versed in modern football theory: "
@@ -52,6 +84,7 @@ SYSTEM_PROMPTS: dict[str, str] = {
         "answer. If it's deep, go deep. Never be vague or generic.\n\n"
         "You can use analogies, diagrams described in text, or step-by-step breakdowns "
         "to explain complex concepts clearly."
+        + WC2026_CONTEXT
     ),
     "commentary": (
         "You are FANXI's post-match narrator — part analyst, part storyteller, "
@@ -65,6 +98,7 @@ SYSTEM_PROMPTS: dict[str, str] = {
         "🧠 TACTICAL IQ SCORE — out of 100, with a one-paragraph explanation\n"
         "🏆 VERDICT — a memorable closing line summing up their prediction performance\n\n"
         "Make it feel like a real post-match TV breakdown. Be vivid, specific, and entertaining."
+        + WC2026_CONTEXT
     ),
 }
 
@@ -75,7 +109,7 @@ class Message(BaseModel):
     content: str
 
 class ChatRequest(BaseModel):
-    mode: Literal["critique", "formation", "chat", "commentary"]
+    mode: Literal["scout_report", "critique", "formation", "chat", "commentary"]
     messages: list[Message]
 
 class ChatResponse(BaseModel):
@@ -103,7 +137,7 @@ async def ai_chat(body: ChatRequest) -> ChatResponse:
 
         result = client.chat.completions.create(
             model="llama-3.3-70b-versatile",
-            max_tokens=1024,
+            max_tokens=2048,
             temperature=0.7,
             messages=messages,
         )
@@ -131,7 +165,7 @@ async def ai_chat_stream(body: ChatRequest) -> StreamingResponse:
 
             stream = client.chat.completions.create(
                 model="llama-3.3-70b-versatile",
-                max_tokens=1024,
+                max_tokens=2048,
                 temperature=0.7,
                 stream=True,
                 messages=messages,
