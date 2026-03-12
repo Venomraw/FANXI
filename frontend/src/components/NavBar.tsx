@@ -7,14 +7,16 @@ import { useLanguage, LangCode } from '@/src/context/LanguageContext';
 
 const LANGUAGES: LangCode[] = ['EN', 'ES', 'FR', 'PT', 'DE'];
 
-const NAV_LINKS = [
-  { label: 'Hub',         href: '/'            },
-  { label: 'Predict',     href: '/predict'     },
-  { label: 'Matches',     href: '/matches'     },
+const PUBLIC_LINKS = [
+  { label: 'Fixtures',    href: '/matches'     },
   { label: 'Intel',       href: '/nation'      },
   { label: 'AI',          href: '/ai'          },
   { label: 'Leaderboard', href: '/leaderboard' },
-  { label: 'Guide',       href: '/guide'       },
+];
+
+const AUTH_LINKS = [
+  { label: 'Hub',     href: '/hub'     },
+  { label: 'Predict', href: '/predict' },
 ];
 
 interface NavBarProps {
@@ -52,7 +54,9 @@ export default function NavBar({ subtitle }: NavBarProps) {
   }
 
   const isActive = (href: string) =>
-    href === '/' ? pathname === '/' : pathname.startsWith(href);
+    href === '/' ? pathname === '/' : pathname === href || pathname.startsWith(href + '/');
+
+  const navLinks = user ? [...PUBLIC_LINKS, ...AUTH_LINKS] : PUBLIC_LINKS;
 
   return (
     <>
@@ -109,7 +113,7 @@ export default function NavBar({ subtitle }: NavBarProps) {
 
           {/* ── Nav links (desktop) ── */}
           <ul className="hidden lg:flex items-center list-none h-full" style={{ gap: '2px' }}>
-            {NAV_LINKS.map(({ label, href }) => {
+            {navLinks.map(({ label, href }) => {
               const active = isActive(href);
               return (
                 <li key={label} className="relative h-full flex items-center">
@@ -149,8 +153,53 @@ export default function NavBar({ subtitle }: NavBarProps) {
           {/* ── Right side ── */}
           <div className="flex items-center gap-4">
 
+            {/* Guest buttons (not logged in) */}
+            {!user && (
+              <div className="hidden sm:flex items-center gap-3">
+                <button
+                  onClick={() => router.push('/login')}
+                  className="font-sans font-semibold transition-all duration-200"
+                  style={{
+                    fontSize: '13px',
+                    color: 'var(--muted)',
+                    background: 'none',
+                    border: 'none',
+                    padding: '8px 14px',
+                    letterSpacing: '0.5px',
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.color = 'var(--text)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.color = 'var(--muted)'; }}
+                >
+                  Sign In
+                </button>
+                <button
+                  onClick={() => router.push('/login')}
+                  className="font-sans font-bold rounded-lg transition-all duration-200"
+                  style={{
+                    fontSize: '13px',
+                    color: '#fff',
+                    background: 'var(--red)',
+                    border: 'none',
+                    padding: '9px 20px',
+                    letterSpacing: '0.3px',
+                    boxShadow: '0 0 16px rgba(255,45,85,0.3)',
+                  }}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.background = '#ff4d6d';
+                    e.currentTarget.style.boxShadow = '0 0 24px rgba(255,45,85,0.45)';
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.background = 'var(--red)';
+                    e.currentTarget.style.boxShadow = '0 0 16px rgba(255,45,85,0.3)';
+                  }}
+                >
+                  Join Free →
+                </button>
+              </div>
+            )}
+
             {/* Team selector — clean, no border box */}
-            {team && (
+            {team && user && (
               <button
                 onClick={() => setShowPicker(true)}
                 className="hidden sm:flex items-center gap-2 transition-all duration-200 group"
@@ -360,7 +409,7 @@ export default function NavBar({ subtitle }: NavBarProps) {
             style={{ background: 'rgba(6,10,6,0.99)', borderTop: '1px solid var(--border)' }}
           >
             <div className="max-w-[1400px] mx-auto px-7 py-6 flex flex-col gap-1">
-              {NAV_LINKS.map(({ label, href }) => {
+              {navLinks.map(({ label, href }) => {
                 const active = isActive(href);
                 return (
                   <a
@@ -382,8 +431,28 @@ export default function NavBar({ subtitle }: NavBarProps) {
                 );
               })}
 
+              {/* Mobile guest buttons */}
+              {!user && (
+                <div className="flex flex-col gap-2 mt-3 pt-3" style={{ borderTop: '1px solid var(--border)' }}>
+                  <button
+                    onClick={() => { router.push('/login'); setMobileOpen(false); }}
+                    className="w-full py-3 font-sans font-semibold text-[15px] rounded-lg transition-all"
+                    style={{ background: 'var(--red)', color: '#fff', border: 'none' }}
+                  >
+                    Join Free →
+                  </button>
+                  <button
+                    onClick={() => { router.push('/login'); setMobileOpen(false); }}
+                    className="w-full py-3 font-sans font-semibold text-[15px] rounded-lg transition-all"
+                    style={{ background: 'transparent', color: 'var(--muted)', border: '1px solid var(--border)' }}
+                  >
+                    Sign In
+                  </button>
+                </div>
+              )}
+
               {/* Mobile team selector */}
-              {team && (
+              {team && user && (
                 <button
                   onClick={() => { setShowPicker(true); setMobileOpen(false); }}
                   className="flex items-center gap-3 px-4 py-3.5 font-sans font-semibold w-full text-left transition-all mt-2"

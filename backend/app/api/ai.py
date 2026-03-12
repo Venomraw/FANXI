@@ -2,10 +2,11 @@
 FANXI AI — Five-mode tactical assistant powered by Groq (Llama 3.3 70B).
 """
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Query
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from typing import Literal
+from datetime import datetime, timedelta
 from groq import Groq
 import json
 
@@ -116,6 +117,74 @@ class ChatResponse(BaseModel):
     response: str
     model: str = "llama-3.3-70b-versatile"
     provider: str = "groq"
+
+# ── Daily brief cache ─────────────────────────────────────────────────────────
+
+_brief_cache: dict = {"content": None, "generated_at": None}
+
+FALLBACK_BRIEF = (
+    "Brazil's high press against compact European defences will define the tactical "
+    "narrative of WC 2026 — watch how Vinicius Jr exploits the half-spaces created "
+    "by Endrick's intelligent movement off the ball. "
+    "France's midfield engine of Camavinga and Tchouaméni gives them the platform to "
+    "neutralise any opponent, but their over-reliance on Mbappé in transition "
+    "remains their biggest tactical tell. "
+    "Spain's Lamine Yamal at 18 could be the tournament's true breakout star — "
+    "his ability to beat defenders in tight spaces makes him nearly unmarkable "
+    "in open play."
+)
+
+
+@router.get("/daily-brief")
+async def get_daily_brief(refresh: bool = Query(default=False)):
+    """
+    Returns a 3-sentence WC 2026 tactical insight.
+    Cached for 24 hours; pass ?refresh=true to force regeneration.
+    """
+    now = datetime.utcnow()
+
+    # Serve from cache if fresh and not forced refresh
+    if (
+        not refresh
+        and _brief_cache["content"]
+        and _brief_cache["generated_at"]
+        and (now - _brief_cache["generated_at"]) < timedelta(hours=24)
+    ):
+        return {"insight": _brief_cache["content"], "cached": True}
+
+    if not settings.groq_api_key:
+        return {"insight": FALLBACK_BRIEF, "cached": True}
+
+    try:
+        client = Groq(api_key=settings.groq_api_key)
+        result = client.chat.completions.create(
+            model="llama-3.3-70b-versatile",
+            max_tokens=220,
+            temperature=0.88,
+            messages=[
+                {
+                    "role": "system",
+                    "content": (
+                        "You are FanXI's tactical pulse generator. Write exactly 3 punchy, "
+                        "expert sentences about a specific tactical trend, team matchup, or "
+                        "player battle at the FIFA World Cup 2026. Use real names. Be opinionated."
+                        + WC2026_CONTEXT
+                    ),
+                },
+                {
+                    "role": "user",
+                    "content": "Generate today's World Cup 2026 tactical pulse — exactly 3 sentences.",
+                },
+            ],
+        )
+        content = result.choices[0].message.content or FALLBACK_BRIEF
+        _brief_cache["content"] = content
+        _brief_cache["generated_at"] = now
+        return {"insight": content, "cached": False}
+
+    except Exception:
+        return {"insight": FALLBACK_BRIEF, "cached": True}
+
 
 # ── Endpoint ───────────────────────────────────────────────────────────────────
 
