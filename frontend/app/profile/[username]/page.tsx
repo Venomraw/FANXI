@@ -5,6 +5,7 @@ import { useTheme } from '@/src/context/ThemeContext';
 import { useAuth } from '@/src/context/AuthContext';
 import { formatMatchTime } from '@/src/utils/timezone';
 import NavBar from '@/src/components/NavBar';
+import ShareCardButton from '@/src/components/ShareCardButton';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -447,12 +448,23 @@ export default function ProfilePage() {
       <div className="max-w-[1400px] mx-auto px-7 py-10 relative z-10">
 
         {/* ── STATS STRIP ── */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-8">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
           <StatCard label="Global Rank" value={`#${profile.global_rank}`} color={rankColor} />
           <StatCard label="IQ Points" value={profile.football_iq_points.toLocaleString()} color={primary} />
           <StatCard label="Predictions" value={profile.prediction_count} />
           <StatCard label="Completion" value={`${accuracy}%`} />
         </div>
+
+        {/* Share profile button — only visible to the profile owner */}
+        {authUser?.username === profile.username && (
+          <div className="flex mb-8">
+            <ShareCardButton
+              type="profile"
+              username={profile.username}
+              size="md"
+            />
+          </div>
+        )}
 
         {/* ── RANK PROGRESS BAR ── */}
         {next ? (

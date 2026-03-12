@@ -209,6 +209,9 @@ async def lock_prediction(
             for pos, player in prediction_data.lineup.items()
         }
         clean_tactics = prediction_data.tactics.model_dump()
+        # Persist formation name alongside slider values so card generator can read it
+        if prediction_data.formation:
+            clean_tactics["formation"] = prediction_data.formation
 
         # Serialize outcomes (all 5 core outcome prediction fields)
         outcomes = prediction_data.outcomes

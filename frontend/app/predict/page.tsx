@@ -1,11 +1,19 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { Suspense } from 'react';
 import { useRouter } from 'next/navigation';
 import NavBar from '@/src/components/NavBar';
 import PitchBoard from '@/src/components/pitch/PitchBoard';
+import ShareCardButton from '@/src/components/ShareCardButton';
 import { useAuth } from '@/src/context/AuthContext';
 import { useTheme } from '@/src/context/ThemeContext';
+
+interface LockSuccessData {
+  matchId: number;
+  homeTeam: string;
+  awayTeam: string;
+  formation: string;
+}
 
 // ── Tutorial steps ───────────────────────────────────────────────────────────
 
@@ -179,6 +187,11 @@ export default function PredictPage() {
   const { primary } = useTheme();
   const router = useRouter();
   const [showTutorial, setShowTutorial] = useState(false);
+  const [lockSuccess, setLockSuccess] = useState<LockSuccessData | null>(null);
+
+  const handleLockSuccess = useCallback((data: LockSuccessData) => {
+    setLockSuccess(data);
+  }, []);
 
   useEffect(() => {
     if (!isLoading && !user) router.push('/login');
@@ -256,7 +269,7 @@ export default function PredictPage() {
               </span>
             </div>
           }>
-            <PitchBoard />
+            <PitchBoard onLockSuccess={handleLockSuccess} />
           </Suspense>
         </div>
       </main>
@@ -267,6 +280,72 @@ export default function PredictPage() {
           primary={primary}
           onDone={() => setShowTutorial(false)}
         />
+      )}
+
+      {/* ── Lock success overlay ── */}
+      {lockSuccess && (
+        <div
+          className="fixed inset-0 z-[250] flex items-center justify-center p-4"
+          style={{ background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(8px)' }}
+        >
+          <div
+            className="w-full max-w-[420px] rounded-2xl p-8 flex flex-col items-center gap-6 text-center"
+            style={{
+              background: 'rgba(6,10,6,0.97)',
+              border: '1px solid rgba(0,255,133,0.25)',
+              boxShadow: '0 0 60px rgba(0,255,133,0.08)',
+            }}
+          >
+            <div
+              className="w-16 h-16 rounded-full flex items-center justify-center text-3xl"
+              style={{ background: 'rgba(0,255,133,0.1)', border: '1px solid rgba(0,255,133,0.25)' }}
+            >
+              ✅
+            </div>
+            <div>
+              <h3 className="font-display font-semibold mb-2" style={{ fontSize: '24px', color: 'var(--success)' }}>
+                Prediction Locked!
+              </h3>
+              <p className="font-sans" style={{ fontSize: '14px', color: 'var(--muted)' }}>
+                {lockSuccess.homeTeam} vs {lockSuccess.awayTeam} · {lockSuccess.formation}
+              </p>
+            </div>
+            <p className="font-sans text-[13px]" style={{ color: 'rgba(240,247,240,0.5)', lineHeight: 1.7 }}>
+              Your tactical IQ will be scored when the official lineup drops.
+            </p>
+            <div className="flex flex-col gap-3 w-full">
+              <ShareCardButton
+                type="prediction"
+                matchId={lockSuccess.matchId}
+                matchLabel={`${lockSuccess.homeTeam} vs ${lockSuccess.awayTeam}`}
+                size="md"
+              />
+              <button
+                onClick={() => router.push(`/matches/${lockSuccess.matchId}/live`)}
+                className="w-full py-3 rounded-lg font-sans font-semibold text-[14px] transition-all"
+                style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'var(--text)' }}
+              >
+                👀 Watch Live
+              </button>
+              <button
+                onClick={() => router.push('/leaderboard')}
+                className="w-full py-3 rounded-lg font-sans font-semibold text-[14px] transition-all"
+                style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: 'var(--text)' }}
+              >
+                🏆 View Leaderboard
+              </button>
+            </div>
+            <button
+              onClick={() => setLockSuccess(null)}
+              className="font-mono text-[10px] uppercase tracking-widest transition-colors"
+              style={{ background: 'none', border: 'none', color: 'var(--muted)' }}
+              onMouseEnter={e => { e.currentTarget.style.color = 'var(--text)'; }}
+              onMouseLeave={e => { e.currentTarget.style.color = 'var(--muted)'; }}
+            >
+              Continue editing →
+            </button>
+          </div>
+        </div>
       )}
     </div>
   );

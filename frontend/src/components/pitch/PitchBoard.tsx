@@ -52,7 +52,11 @@ interface HalfTimePredictions {
   nextGoalscorer:    string | null;
 }
 
-export default function PitchBoard() {
+interface PitchBoardProps {
+  onLockSuccess?: (data: { matchId: number; homeTeam: string; awayTeam: string; formation: string }) => void;
+}
+
+export default function PitchBoard({ onLockSuccess }: PitchBoardProps = {}) {
   const { primary, team } = useTheme();
   const { user, token } = useAuth();
   const searchParams = useSearchParams();
@@ -160,6 +164,7 @@ export default function PitchBoard() {
     const matchId = selectedMatch?.id ?? 1001;
     const finalData = {
       lineup, tactics,
+      formation: formation.name,
       team_name: activeTeam ?? undefined,
       outcomes: {
         match_result: outcomes.matchResult,
@@ -193,6 +198,12 @@ export default function PitchBoard() {
       if (res.ok) {
         setLockMsg({ ok: true, text: `🔒 Locked — ${selectedMatch?.home_team ?? 'Match'} vs ${selectedMatch?.away_team ?? '—'}` });
         fetchHistory();
+        onLockSuccess?.({
+          matchId,
+          homeTeam: selectedMatch?.home_team ?? '',
+          awayTeam: selectedMatch?.away_team ?? '',
+          formation: formation.name,
+        });
       } else {
         setLockMsg({ ok: false, text: '❌ Lock failed — try again.' });
       }

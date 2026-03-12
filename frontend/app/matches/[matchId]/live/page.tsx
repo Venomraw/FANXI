@@ -4,6 +4,7 @@ import { useParams } from 'next/navigation';
 import { useTheme } from '@/src/context/ThemeContext';
 import { useAuth } from '@/src/context/AuthContext';
 import NavBar from '@/src/components/NavBar';
+import ShareCardButton from '@/src/components/ShareCardButton';
 
 const API    = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 const WS_URL = process.env.NEXT_PUBLIC_WS_URL  || 'ws://localhost:8000';
@@ -906,6 +907,12 @@ export default function LiveMatchPage() {
                     <p className="font-mono text-[10px] uppercase tracking-[1.5px] mt-0.5" style={{ color: 'var(--muted)' }}>of {myScore.total_scouts.toLocaleString()} scouts</p>
                   </div>
                 </div>
+                <ShareCardButton
+                  type="prediction"
+                  matchId={matchId}
+                  matchLabel={`${homeTeam} vs ${awayTeam}`}
+                  size="sm"
+                />
                 {isFinished && (
                   <button onClick={openReveal} disabled={revealLoading} className="w-full py-2.5 font-sans font-semibold text-[13px] transition-all" style={{ background: `color-mix(in srgb, ${primary} 14%, transparent)`, color: primary, border: `1px solid color-mix(in srgb, ${primary} 30%, transparent)`, borderRadius: '6px' }}>
                     {revealLoading ? 'Loading…' : '🏆 See Full Reveal'}

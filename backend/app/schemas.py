@@ -130,6 +130,7 @@ class LockSelectionRequest(BaseModel):
     """
     lineup: Dict[str, PlayerInfo] # Maps position (e.g., 'ST') to PlayerInfo
     tactics: TacticsInfo
+    formation: Optional[str] = None  # Formation name e.g. "4-3-3" — stored in tactics_data
     outcomes: Optional[OutcomesPrediction] = None
     player_predictions: Optional[PlayerPredictions] = None
     team_name: Optional[str] = None
