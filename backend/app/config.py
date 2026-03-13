@@ -38,6 +38,9 @@ class Settings(BaseSettings):
     # Football-data.org (live match data)
     football_data_api_key: str = ""
 
+    # NewsAPI — for WC 2026 news feed
+    news_api_key: str = ""
+
     # Tell Pydantic where to read env vars from
     model_config = SettingsConfigDict(
         env_file=".env",

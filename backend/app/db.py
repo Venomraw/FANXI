@@ -62,6 +62,8 @@ def run_migrations() -> None:
         ("matchprediction", "over_under",         "JSON"),
         ("matchprediction", "ht_ft",              "JSON"),
         ("matchprediction", "player_predictions", "JSON"),
+        # User — admin flag
+        ("user", "is_admin", "BOOLEAN DEFAULT FALSE"),
         # MatchDB — real result columns for scoring
         ("matchdb", "home_goals",    "INTEGER"),
         ("matchdb", "away_goals",    "INTEGER"),

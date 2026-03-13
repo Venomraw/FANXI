@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from app.api import users, predictions, leagues, teams, intel, squads, matches, ai, cards
+from app.api import users, predictions, leagues, teams, intel, squads, matches, ai, cards, news
 from app.websocket import match_ws
 from app import web
 from app.db import init_db
@@ -110,6 +110,7 @@ app.include_router(squads.router)
 app.include_router(matches.router)
 app.include_router(ai.router)
 app.include_router(cards.router)
+app.include_router(news.router, prefix="/news", tags=["news"])
 
 # WebSocket
 app.include_router(match_ws.router)

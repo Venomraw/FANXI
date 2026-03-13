@@ -368,15 +368,20 @@ def get_leaderboard(request: Request, session: Session = Depends(get_session)):
 # ---------------------------------------------------------------------------
 
 @router.post("/admin/score/{match_id}")
+@limiter.limit("20/minute")
 def score_match(
+    request: Request,
     match_id: int,
     result: MatchResultInput,
     session: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user),
 ):
     """
-    Admin endpoint: submit the real result for a match.
+    Admin-only endpoint: submit the real result for a match.
     Scores every locked prediction for that match and awards IQ points to users.
     """
+    if not current_user.is_admin:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Admin access required.")
     predictions = session.exec(
         select(MatchPrediction).where(
             MatchPrediction.match_id == match_id,
