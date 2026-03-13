@@ -2,10 +2,8 @@ import CountdownBar from '@/src/components/landing/CountdownBar';
 import ChampionsTimeline from '@/src/components/landing/ChampionsTimeline';
 import TodayInHistory from '@/src/components/landing/TodayInHistory';
 import NewsStrip from '@/src/components/landing/NewsStrip';
+import UrgencyCountdown from '@/src/components/landing/UrgencyCountdown';
 import Link from 'next/link';
-
-// Days from 2026-03-13 to 2026-06-11
-const DAYS_TO_WC = 455;
 
 export default function HomePage() {
   return (
@@ -16,20 +14,20 @@ export default function HomePage() {
       {/* ─── HERO ────────────────────────────────────────────────────────────── */}
       <section
         className="relative min-h-screen flex flex-col justify-center"
-        style={{ paddingTop: '40px' }} /* account for CountdownBar height */
+        style={{ paddingTop: '40px' }}
       >
         {/* Background overlay — layered over the global stadium-bg */}
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
             background:
-              'linear-gradient(to bottom, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.55) 50%, rgba(0,0,0,0.25) 100%)',
+              'linear-gradient(to bottom, rgba(0,0,0,0.80) 0%, rgba(0,0,0,0.50) 50%, rgba(0,0,0,0.20) 100%)',
             zIndex: 0,
           }}
         />
 
         <div
-          className="relative max-w-7xl mx-auto px-6 pt-20 pb-20 w-full"
+          className="relative max-w-7xl mx-auto px-7 pt-20 pb-20 w-full"
           style={{ zIndex: 1 }}
         >
           {/* Top label */}
@@ -73,7 +71,7 @@ export default function HomePage() {
           {/* CTA row */}
           <div className="mt-8 flex gap-4 flex-wrap">
             <Link
-              href="/login"
+              href="/predict"
               className="font-display font-semibold text-white rounded-lg transition-all duration-200 hover:scale-105"
               style={{
                 background: '#dc2626',
@@ -81,12 +79,11 @@ export default function HomePage() {
                 fontSize: '18px',
                 display: 'inline-block',
               }}
-              onMouseEnter={undefined}
             >
-              Start Predicting
+              ⚽ Start Predicting
             </Link>
             <Link
-              href="/predict"
+              href="/matches"
               className="font-display text-white rounded-lg transition-all duration-200 hover:border-white"
               style={{
                 border: '1px solid rgba(255,255,255,0.3)',
@@ -95,7 +92,7 @@ export default function HomePage() {
                 display: 'inline-block',
               }}
             >
-              Browse Matches
+              Explore Fixtures →
             </Link>
           </div>
 
@@ -205,34 +202,7 @@ export default function HomePage() {
           >
             // THE CLOCK IS RUNNING
           </p>
-          <h2
-            className="font-sans text-white font-bold mb-6"
-            style={{ fontSize: 'clamp(32px, 5vw, 56px)' }}
-          >
-            World Cup 2026 starts in
-            <br />
-            <span className="text-red-600">{DAYS_TO_WC} days.</span>
-          </h2>
-          <p
-            className="font-display text-white/60 mb-10"
-            style={{ fontSize: '18px', lineHeight: 1.7 }}
-          >
-            Make your first prediction now.
-            <br />
-            Pick your lineups. Beat your rivals.
-          </p>
-          <Link
-            href="/login"
-            className="inline-flex items-center gap-3 font-display font-semibold text-white rounded-xl transition-all duration-200 hover:scale-105"
-            style={{
-              background: '#dc2626',
-              padding: '20px 40px',
-              fontSize: '20px',
-              boxShadow: '0 8px 32px rgba(220,38,38,0.3)',
-            }}
-          >
-            ⚽ Join Free — It Takes 2 Minutes
-          </Link>
+          <UrgencyCountdown />
         </div>
       </section>
     </main>

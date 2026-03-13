@@ -4,7 +4,6 @@ import { NextRequest, NextResponse } from 'next/server';
 const PROTECTED_ROUTES = [
   '/hub',
   '/predict',
-  '/leaderboard',
   '/profile',
   '/onboarding',
 ];
