@@ -1,4 +1,5 @@
 import CountdownBar from '@/src/components/landing/CountdownBar';
+import IdentityStrip from '@/src/components/landing/IdentityStrip';
 import ChampionsTimeline from '@/src/components/landing/ChampionsTimeline';
 import TodayInHistory from '@/src/components/landing/TodayInHistory';
 import NewsStrip from '@/src/components/landing/NewsStrip';
@@ -11,10 +12,15 @@ export default function HomePage() {
       {/* Countdown bar — fixed top, pushes content down */}
       <CountdownBar />
 
+      {/* ─── IDENTITY STRIP ────────────────────────────────────────────────── */}
+      <div style={{ paddingTop: '40px' }}>
+        <IdentityStrip />
+      </div>
+
       {/* ─── HERO ────────────────────────────────────────────────────────────── */}
       <section
         className="relative min-h-screen flex flex-col justify-center"
-        style={{ paddingTop: '40px' }}
+        style={{ marginTop: '-44px' }}
       >
         {/* Background overlay — layered over the global stadium-bg */}
         <div
@@ -27,7 +33,7 @@ export default function HomePage() {
         />
 
         <div
-          className="relative max-w-7xl mx-auto px-7 pt-20 pb-20 w-full"
+          className="relative max-w-7xl mx-auto px-7 pt-28 pb-20 w-full"
           style={{ zIndex: 1 }}
         >
           {/* Top label */}
@@ -35,7 +41,7 @@ export default function HomePage() {
             className="font-display font-semibold text-red-600 uppercase tracking-widest"
             style={{ fontSize: '13px' }}
           >
-            THE ROAD TO WORLD CUP 2026
+            FROM 1930 TO 2026. ONE TOURNAMENT.
           </span>
 
           {/* Main headline */}
