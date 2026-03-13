@@ -78,17 +78,6 @@ const SLIDES: Slide[] = [
       </>
     ),
   },
-  {
-    text: (
-      <>
-        <span className="text-white/60">🧠 Most predicted formation</span>
-        <span className="text-white/20 mx-2">·</span>
-        <span style={{ color: '#dc2626' }}>4-3-3</span>
-        <span className="text-white/20 mx-2">·</span>
-        <span style={{ color: '#f59e0b' }}>57% of FanXI scouts</span>
-      </>
-    ),
-  },
 ];
 
 export default function IdentityStrip() {
@@ -102,13 +91,13 @@ export default function IdentityStrip() {
         setIndex((prev) => (prev + 1) % SLIDES.length);
         setVisible(true);
       }, 400);
-    }, 4000);
+    }, 3000);
     return () => clearInterval(interval);
   }, []);
 
   return (
     <div
-      className="w-full flex items-center justify-center"
+      className="w-full hidden sm:flex items-center justify-center"
       style={{
         height: '44px',
         background: 'rgba(0,0,0,0.30)',
