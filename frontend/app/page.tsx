@@ -1,4 +1,5 @@
 import CountdownBar from '@/src/components/landing/CountdownBar';
+import LandingNav from '@/src/components/landing/LandingNav';
 import IdentityStrip from '@/src/components/landing/IdentityStrip';
 import ChampionsTimeline from '@/src/components/landing/ChampionsTimeline';
 import TodayInHistory from '@/src/components/landing/TodayInHistory';
@@ -12,8 +13,12 @@ export default function HomePage() {
       {/* Countdown bar — fixed top, pushes content down */}
       <CountdownBar />
 
+      {/* Navbar — transparent over hero, solid on scroll */}
+      <LandingNav />
+
       {/* ─── IDENTITY STRIP ────────────────────────────────────────────────── */}
-      <div style={{ paddingTop: '40px' }}>
+      {/* 40px countdown + 72px nav = 112px offset */}
+      <div style={{ paddingTop: '112px' }}>
         <IdentityStrip />
       </div>
 
