@@ -4,6 +4,9 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 
+// Muted trophy gold — consistent across component
+const GOLD = '#C6A96B';
+
 interface Champion {
   year: number;
   country: string;
@@ -15,35 +18,36 @@ interface Champion {
   goldenBoot: string;
   manager: string;
   funFact: string;
+  legacy: string;
   wins: number;
   flagColors: [string, string];
   is2026?: boolean;
 }
 
 const CHAMPIONS: Champion[] = [
-  { year: 1930, country: 'Uruguay', flag: '\u{1F1FA}\u{1F1FE}', abbr: 'URU', final: 'URU 4\u20132 ARG', host: 'Uruguay', topScorer: 'Guillermo St\u00e1bile (8 goals)', goldenBoot: 'Guillermo St\u00e1bile', manager: 'Alberto Suppici', funFact: 'First ever World Cup. No European teams attended due to travel costs.', wins: 2, flagColors: ['#5CBEFF', '#FFFFFF'] },
-  { year: 1934, country: 'Italy', flag: '\u{1F1EE}\u{1F1F9}', abbr: 'ITA', final: 'ITA 2\u20131 CZE (AET)', host: 'Italy', topScorer: 'Old\u0159ich Nejedl\u00fd (5 goals)', goldenBoot: 'Old\u0159ich Nejedl\u00fd', manager: 'Vittorio Pozzo', funFact: 'Uruguay refused to defend their title in protest.', wins: 4, flagColors: ['#009246', '#CE2B37'] },
-  { year: 1938, country: 'Italy', flag: '\u{1F1EE}\u{1F1F9}', abbr: 'ITA', final: 'ITA 4\u20132 HUN', host: 'France', topScorer: 'Le\u00f4nidas (7 goals)', goldenBoot: 'Le\u00f4nidas', manager: 'Vittorio Pozzo', funFact: 'Italy became the first team to defend the World Cup.', wins: 4, flagColors: ['#009246', '#CE2B37'] },
-  { year: 1950, country: 'Uruguay', flag: '\u{1F1FA}\u{1F1FE}', abbr: 'URU', final: 'URU 2\u20131 BRA (final group stage)', host: 'Brazil', topScorer: 'Ademir (9 goals)', goldenBoot: 'Ademir', manager: 'Juan L\u00f3pez', funFact: 'The Maracanazo \u2014 Uruguay shocked host Brazil in front of 200,000 fans.', wins: 2, flagColors: ['#5CBEFF', '#FFFFFF'] },
-  { year: 1954, country: 'West Germany', flag: '\u{1F1E9}\u{1F1EA}', abbr: 'GER', final: 'WGR 3\u20132 HUN', host: 'Switzerland', topScorer: 'S\u00e1ndor Kocsis (11 goals)', goldenBoot: 'S\u00e1ndor Kocsis', manager: 'Sepp Herberger', funFact: 'The Miracle of Bern \u2014 Hungary were unbeaten in 4 years before this final.', wins: 4, flagColors: ['#000000', '#DD0000'] },
-  { year: 1958, country: 'Brazil', flag: '\u{1F1E7}\u{1F1F7}', abbr: 'BRA', final: 'BRA 5\u20132 SWE', host: 'Sweden', topScorer: 'Just Fontaine (13 goals)', goldenBoot: 'Just Fontaine', manager: 'Vicente Feola', funFact: "A 17-year-old Pel\u00e9 scored twice in the final. Just Fontaine's record still stands.", wins: 5, flagColors: ['#009C3B', '#FFDF00'] },
-  { year: 1962, country: 'Brazil', flag: '\u{1F1E7}\u{1F1F7}', abbr: 'BRA', final: 'BRA 3\u20131 CZE', host: 'Chile', topScorer: 'Garrincha + Vav\u00e1 (4 goals each)', goldenBoot: 'Garrincha / Vav\u00e1', manager: 'Aymor\u00e9 Moreira', funFact: 'Pel\u00e9 was injured in the second game. Garrincha carried Brazil to glory.', wins: 5, flagColors: ['#009C3B', '#FFDF00'] },
-  { year: 1966, country: 'England', flag: '\u{1F3F4}\u{E0067}\u{E0062}\u{E0065}\u{E006E}\u{E0067}\u{E007F}', abbr: 'ENG', final: 'ENG 4\u20132 WGR (AET)', host: 'England', topScorer: 'Eus\u00e9bio (9 goals)', goldenBoot: 'Eus\u00e9bio', manager: 'Alf Ramsey', funFact: "England's only World Cup. Geoff Hurst scored a hat-trick in the final.", wins: 1, flagColors: ['#FFFFFF', '#CE1124'] },
-  { year: 1970, country: 'Brazil', flag: '\u{1F1E7}\u{1F1F7}', abbr: 'BRA', final: 'BRA 4\u20131 ITA', host: 'Mexico', topScorer: 'Gerd M\u00fcller (10 goals)', goldenBoot: 'Gerd M\u00fcller', manager: 'M\u00e1rio Zagallo', funFact: 'Widely considered the greatest World Cup team ever. Pel\u00e9 at his peak.', wins: 5, flagColors: ['#009C3B', '#FFDF00'] },
-  { year: 1974, country: 'West Germany', flag: '\u{1F1E9}\u{1F1EA}', abbr: 'GER', final: 'WGR 2\u20131 NED', host: 'West Germany', topScorer: 'Grzegorz Lato (7 goals)', goldenBoot: 'Grzegorz Lato', manager: 'Helmut Sch\u00f6n', funFact: "Johan Cruyff's Total Football Netherlands lost the final to the hosts.", wins: 4, flagColors: ['#000000', '#DD0000'] },
-  { year: 1978, country: 'Argentina', flag: '\u{1F1E6}\u{1F1F7}', abbr: 'ARG', final: 'ARG 3\u20131 NED (AET)', host: 'Argentina', topScorer: 'Mario Kempes (6 goals)', goldenBoot: 'Mario Kempes', manager: 'C\u00e9sar Luis Menotti', funFact: 'Hosts Argentina won on home soil. Ticker tape raining in Buenos Aires.', wins: 3, flagColors: ['#74ACDF', '#FFFFFF'] },
-  { year: 1982, country: 'Italy', flag: '\u{1F1EE}\u{1F1F9}', abbr: 'ITA', final: 'ITA 3\u20131 WGR', host: 'Spain', topScorer: 'Paolo Rossi (6 goals)', goldenBoot: 'Paolo Rossi', manager: 'Enzo Bearzot', funFact: 'Paolo Rossi returned from a match-fixing ban to become tournament hero.', wins: 4, flagColors: ['#009246', '#CE2B37'] },
-  { year: 1986, country: 'Argentina', flag: '\u{1F1E6}\u{1F1F7}', abbr: 'ARG', final: 'ARG 3\u20132 WGR', host: 'Mexico', topScorer: 'Gary Lineker (6 goals)', goldenBoot: 'Gary Lineker', manager: 'Carlos Bilardo', funFact: "Maradona's Hand of God and Goal of the Century \u2014 both in one game vs England.", wins: 3, flagColors: ['#74ACDF', '#FFFFFF'] },
-  { year: 1990, country: 'West Germany', flag: '\u{1F1E9}\u{1F1EA}', abbr: 'GER', final: 'WGR 1\u20130 ARG', host: 'Italy', topScorer: 'Salvatore Schillaci (6 goals)', goldenBoot: 'Salvatore Schillaci', manager: 'Franz Beckenbauer', funFact: 'The lowest-scoring World Cup final ever. Won by a penalty.', wins: 4, flagColors: ['#000000', '#DD0000'] },
-  { year: 1994, country: 'Brazil', flag: '\u{1F1E7}\u{1F1F7}', abbr: 'BRA', final: 'BRA 0\u20130 ITA (3\u20132 pens)', host: 'USA', topScorer: 'Hristo Stoichkov + Oleg Salenko (6 goals)', goldenBoot: 'Stoichkov / Salenko', manager: 'Carlos Alberto Parreira', funFact: "Roberto Baggio missed the decisive penalty. Italy's greatest heartbreak.", wins: 5, flagColors: ['#009C3B', '#FFDF00'] },
-  { year: 1998, country: 'France', flag: '\u{1F1EB}\u{1F1F7}', abbr: 'FRA', final: 'FRA 3\u20130 BRA', host: 'France', topScorer: 'Davor \u0160uker (6 goals)', goldenBoot: 'Davor \u0160uker', manager: 'Aim\u00e9 Jacquet', funFact: 'Zidane scored twice. Ronaldo played despite a mysterious illness before the final.', wins: 2, flagColors: ['#002395', '#ED2939'] },
-  { year: 2002, country: 'Brazil', flag: '\u{1F1E7}\u{1F1F7}', abbr: 'BRA', final: 'BRA 2\u20130 GER', host: 'South Korea/Japan', topScorer: 'Ronaldo (8 goals)', goldenBoot: 'Ronaldo', manager: 'Luiz Felipe Scolari', funFact: "Ronaldo's redemption. South Korea became the first Asian team to reach the semis.", wins: 5, flagColors: ['#009C3B', '#FFDF00'] },
-  { year: 2006, country: 'Italy', flag: '\u{1F1EE}\u{1F1F9}', abbr: 'ITA', final: 'ITA 1\u20131 FRA (5\u20133 pens)', host: 'Germany', topScorer: 'Miroslav Klose (5 goals)', goldenBoot: 'Miroslav Klose', manager: 'Marcello Lippi', funFact: 'Zidane headbutted Materazzi in his final ever match. Italy won on penalties.', wins: 4, flagColors: ['#009246', '#CE2B37'] },
-  { year: 2010, country: 'Spain', flag: '\u{1F1EA}\u{1F1F8}', abbr: 'ESP', final: 'ESP 1\u20130 NED (AET)', host: 'South Africa', topScorer: 'Thomas M\u00fcller + 4 others (5 goals)', goldenBoot: 'Thomas M\u00fcller', manager: 'Vicente del Bosque', funFact: "First African World Cup. Spain's tiki-taka dominated. Iniesta's extra-time winner.", wins: 1, flagColors: ['#AA151B', '#F1BF00'] },
-  { year: 2014, country: 'Germany', flag: '\u{1F1E9}\u{1F1EA}', abbr: 'GER', final: 'GER 1\u20130 ARG (AET)', host: 'Brazil', topScorer: 'James Rodr\u00edguez (6 goals)', goldenBoot: 'James Rodr\u00edguez', manager: 'Joachim L\u00f6w', funFact: 'Germany 7\u20131 Brazil in the semi-final. The most shocking result in WC history.', wins: 4, flagColors: ['#000000', '#DD0000'] },
-  { year: 2018, country: 'France', flag: '\u{1F1EB}\u{1F1F7}', abbr: 'FRA', final: 'FRA 4\u20132 CRO', host: 'Russia', topScorer: 'Harry Kane (6 goals)', goldenBoot: 'Harry Kane', manager: 'Didier Deschamps', funFact: "France won with the youngest squad since Pel\u00e9's Brazil. Mbapp\u00e9 was 19.", wins: 2, flagColors: ['#002395', '#ED2939'] },
-  { year: 2022, country: 'Argentina', flag: '\u{1F1E6}\u{1F1F7}', abbr: 'ARG', final: 'ARG 3\u20133 FRA (4\u20132 pens)', host: 'Qatar', topScorer: 'Kylian Mbapp\u00e9 (8 goals)', goldenBoot: 'Kylian Mbapp\u00e9', manager: 'Lionel Scaloni', funFact: 'Greatest final ever played. Mbapp\u00e9 scored a hat-trick. Messi finally won it.', wins: 3, flagColors: ['#74ACDF', '#FFFFFF'] },
-  { year: 2026, country: '???', flag: '\u{1F3C6}', abbr: '???', final: 'TBD', host: 'USA / Canada / Mexico', topScorer: '???', goldenBoot: '???', manager: '???', funFact: 'First 48-team World Cup. Who writes history?', wins: 0, flagColors: ['#FFD23F', '#dc2626'], is2026: true },
+  { year: 1930, country: 'Uruguay', flag: '\u{1F1FA}\u{1F1FE}', abbr: 'URU', final: 'URU 4\u20132 ARG', host: 'Uruguay', topScorer: 'Guillermo St\u00e1bile (8 goals)', goldenBoot: 'Guillermo St\u00e1bile', manager: 'Alberto Suppici', funFact: 'First ever World Cup. No European teams attended due to travel costs.', legacy: 'Uruguay announce themselves to the world.', wins: 2, flagColors: ['#5CBEFF', '#FFFFFF'] },
+  { year: 1934, country: 'Italy', flag: '\u{1F1EE}\u{1F1F9}', abbr: 'ITA', final: 'ITA 2\u20131 CZE (AET)', host: 'Italy', topScorer: 'Old\u0159ich Nejedl\u00fd (5 goals)', goldenBoot: 'Old\u0159ich Nejedl\u00fd', manager: 'Vittorio Pozzo', funFact: 'Uruguay refused to defend their title in protest.', legacy: "Italy's political statement through football.", wins: 4, flagColors: ['#009246', '#CE2B37'] },
+  { year: 1938, country: 'Italy', flag: '\u{1F1EE}\u{1F1F9}', abbr: 'ITA', final: 'ITA 4\u20132 HUN', host: 'France', topScorer: 'Le\u00f4nidas (7 goals)', goldenBoot: 'Le\u00f4nidas', manager: 'Vittorio Pozzo', funFact: 'Italy became the first team to defend the World Cup.', legacy: 'Italy defend \u2014 the last Cup before the war.', wins: 4, flagColors: ['#009246', '#CE2B37'] },
+  { year: 1950, country: 'Uruguay', flag: '\u{1F1FA}\u{1F1FE}', abbr: 'URU', final: 'URU 2\u20131 BRA (final group stage)', host: 'Brazil', topScorer: 'Ademir (9 goals)', goldenBoot: 'Ademir', manager: 'Juan L\u00f3pez', funFact: 'The Maracanazo \u2014 Uruguay shocked host Brazil in front of 200,000 fans.', legacy: 'The Maracanazo shocks 200,000 fans.', wins: 2, flagColors: ['#5CBEFF', '#FFFFFF'] },
+  { year: 1954, country: 'West Germany', flag: '\u{1F1E9}\u{1F1EA}', abbr: 'GER', final: 'WGR 3\u20132 HUN', host: 'Switzerland', topScorer: 'S\u00e1ndor Kocsis (11 goals)', goldenBoot: 'S\u00e1ndor Kocsis', manager: 'Sepp Herberger', funFact: 'The Miracle of Bern \u2014 Hungary were unbeaten in 4 years before this final.', legacy: 'The Miracle of Bern rewrites history.', wins: 4, flagColors: ['#000000', '#DD0000'] },
+  { year: 1958, country: 'Brazil', flag: '\u{1F1E7}\u{1F1F7}', abbr: 'BRA', final: 'BRA 5\u20132 SWE', host: 'Sweden', topScorer: 'Just Fontaine (13 goals)', goldenBoot: 'Just Fontaine', manager: 'Vicente Feola', funFact: "A 17-year-old Pel\u00e9 scored twice in the final. Just Fontaine's record still stands.", legacy: 'A 17-year-old Pel\u00e9 introduces Brazil to the world.', wins: 5, flagColors: ['#009C3B', '#FFDF00'] },
+  { year: 1962, country: 'Brazil', flag: '\u{1F1E7}\u{1F1F7}', abbr: 'BRA', final: 'BRA 3\u20131 CZE', host: 'Chile', topScorer: 'Garrincha + Vav\u00e1 (4 goals each)', goldenBoot: 'Garrincha / Vav\u00e1', manager: 'Aymor\u00e9 Moreira', funFact: 'Pel\u00e9 was injured in the second game. Garrincha carried Brazil to glory.', legacy: 'Garrincha carries Brazil without Pel\u00e9.', wins: 5, flagColors: ['#009C3B', '#FFDF00'] },
+  { year: 1966, country: 'England', flag: '\u{1F3F4}\u{E0067}\u{E0062}\u{E0065}\u{E006E}\u{E0067}\u{E007F}', abbr: 'ENG', final: 'ENG 4\u20132 WGR (AET)', host: 'England', topScorer: 'Eus\u00e9bio (9 goals)', goldenBoot: 'Eus\u00e9bio', manager: 'Alf Ramsey', funFact: "England's only World Cup. Geoff Hurst scored a hat-trick in the final.", legacy: "England's finest \u2014 and only \u2014 hour.", wins: 1, flagColors: ['#FFFFFF', '#CE1124'] },
+  { year: 1970, country: 'Brazil', flag: '\u{1F1E7}\u{1F1F7}', abbr: 'BRA', final: 'BRA 4\u20131 ITA', host: 'Mexico', topScorer: 'Gerd M\u00fcller (10 goals)', goldenBoot: 'Gerd M\u00fcller', manager: 'M\u00e1rio Zagallo', funFact: 'Widely considered the greatest World Cup team ever. Pel\u00e9 at his peak.', legacy: 'The greatest team ever assembled.', wins: 5, flagColors: ['#009C3B', '#FFDF00'] },
+  { year: 1974, country: 'West Germany', flag: '\u{1F1E9}\u{1F1EA}', abbr: 'GER', final: 'WGR 2\u20131 NED', host: 'West Germany', topScorer: 'Grzegorz Lato (7 goals)', goldenBoot: 'Grzegorz Lato', manager: 'Helmut Sch\u00f6n', funFact: "Johan Cruyff's Total Football Netherlands lost the final to the hosts.", legacy: 'Total Football falls at the final hurdle.', wins: 4, flagColors: ['#000000', '#DD0000'] },
+  { year: 1978, country: 'Argentina', flag: '\u{1F1E6}\u{1F1F7}', abbr: 'ARG', final: 'ARG 3\u20131 NED (AET)', host: 'Argentina', topScorer: 'Mario Kempes (6 goals)', goldenBoot: 'Mario Kempes', manager: 'C\u00e9sar Luis Menotti', funFact: 'Hosts Argentina won on home soil. Ticker tape raining in Buenos Aires.', legacy: 'Argentina win on home soil in a sea of ticker tape.', wins: 3, flagColors: ['#74ACDF', '#FFFFFF'] },
+  { year: 1982, country: 'Italy', flag: '\u{1F1EE}\u{1F1F9}', abbr: 'ITA', final: 'ITA 3\u20131 WGR', host: 'Spain', topScorer: 'Paolo Rossi (6 goals)', goldenBoot: 'Paolo Rossi', manager: 'Enzo Bearzot', funFact: 'Paolo Rossi returned from a match-fixing ban to become tournament hero.', legacy: "Paolo Rossi's redemption tour.", wins: 4, flagColors: ['#009246', '#CE2B37'] },
+  { year: 1986, country: 'Argentina', flag: '\u{1F1E6}\u{1F1F7}', abbr: 'ARG', final: 'ARG 3\u20132 WGR', host: 'Mexico', topScorer: 'Gary Lineker (6 goals)', goldenBoot: 'Gary Lineker', manager: 'Carlos Bilardo', funFact: "Maradona's Hand of God and Goal of the Century \u2014 both in one game vs England.", legacy: 'Maradona defines a generation.', wins: 3, flagColors: ['#74ACDF', '#FFFFFF'] },
+  { year: 1990, country: 'West Germany', flag: '\u{1F1E9}\u{1F1EA}', abbr: 'GER', final: 'WGR 1\u20130 ARG', host: 'Italy', topScorer: 'Salvatore Schillaci (6 goals)', goldenBoot: 'Salvatore Schillaci', manager: 'Franz Beckenbauer', funFact: 'The lowest-scoring World Cup final ever. Won by a penalty.', legacy: 'The most defensive World Cup ever played.', wins: 4, flagColors: ['#000000', '#DD0000'] },
+  { year: 1994, country: 'Brazil', flag: '\u{1F1E7}\u{1F1F7}', abbr: 'BRA', final: 'BRA 0\u20130 ITA (3\u20132 pens)', host: 'USA', topScorer: 'Hristo Stoichkov + Oleg Salenko (6 goals)', goldenBoot: 'Stoichkov / Salenko', manager: 'Carlos Alberto Parreira', funFact: "Roberto Baggio missed the decisive penalty. Italy's greatest heartbreak.", legacy: "Baggio's penalty miss echoes through history.", wins: 5, flagColors: ['#009C3B', '#FFDF00'] },
+  { year: 1998, country: 'France', flag: '\u{1F1EB}\u{1F1F7}', abbr: 'FRA', final: 'FRA 3\u20130 BRA', host: 'France', topScorer: 'Davor \u0160uker (6 goals)', goldenBoot: 'Davor \u0160uker', manager: 'Aim\u00e9 Jacquet', funFact: 'Zidane scored twice. Ronaldo played despite a mysterious illness before the final.', legacy: 'Zidane announces himself on the biggest stage.', wins: 2, flagColors: ['#002395', '#ED2939'] },
+  { year: 2002, country: 'Brazil', flag: '\u{1F1E7}\u{1F1F7}', abbr: 'BRA', final: 'BRA 2\u20130 GER', host: 'South Korea/Japan', topScorer: 'Ronaldo (8 goals)', goldenBoot: 'Ronaldo', manager: 'Luiz Felipe Scolari', funFact: "Ronaldo's redemption. South Korea became the first Asian team to reach the semis.", legacy: "Ronaldo's redemption. South Korea's miracle.", wins: 5, flagColors: ['#009C3B', '#FFDF00'] },
+  { year: 2006, country: 'Italy', flag: '\u{1F1EE}\u{1F1F9}', abbr: 'ITA', final: 'ITA 1\u20131 FRA (5\u20133 pens)', host: 'Germany', topScorer: 'Miroslav Klose (5 goals)', goldenBoot: 'Miroslav Klose', manager: 'Marcello Lippi', funFact: 'Zidane headbutted Materazzi in his final ever match. Italy won on penalties.', legacy: "Zidane's last act defines his legacy forever.", wins: 4, flagColors: ['#009246', '#CE2B37'] },
+  { year: 2010, country: 'Spain', flag: '\u{1F1EA}\u{1F1F8}', abbr: 'ESP', final: 'ESP 1\u20130 NED (AET)', host: 'South Africa', topScorer: 'Thomas M\u00fcller + 4 others (5 goals)', goldenBoot: 'Thomas M\u00fcller', manager: 'Vicente del Bosque', funFact: "First African World Cup. Spain's tiki-taka dominated. Iniesta's extra-time winner.", legacy: "The peak of tiki-taka. Iniesta's moment.", wins: 1, flagColors: ['#AA151B', '#F1BF00'] },
+  { year: 2014, country: 'Germany', flag: '\u{1F1E9}\u{1F1EA}', abbr: 'GER', final: 'GER 1\u20130 ARG (AET)', host: 'Brazil', topScorer: 'James Rodr\u00edguez (6 goals)', goldenBoot: 'James Rodr\u00edguez', manager: 'Joachim L\u00f6w', funFact: 'Germany 7\u20131 Brazil in the semi-final. The most shocking result in WC history.', legacy: 'Seven. One. Brazil will never forget.', wins: 4, flagColors: ['#000000', '#DD0000'] },
+  { year: 2018, country: 'France', flag: '\u{1F1EB}\u{1F1F7}', abbr: 'FRA', final: 'FRA 4\u20132 CRO', host: 'Russia', topScorer: 'Harry Kane (6 goals)', goldenBoot: 'Harry Kane', manager: 'Didier Deschamps', funFact: "France won with the youngest squad since Pel\u00e9's Brazil. Mbapp\u00e9 was 19.", legacy: "The youngest French squad since Pel\u00e9's Brazil.", wins: 2, flagColors: ['#002395', '#ED2939'] },
+  { year: 2022, country: 'Argentina', flag: '\u{1F1E6}\u{1F1F7}', abbr: 'ARG', final: 'ARG 3\u20133 FRA (4\u20132 pens)', host: 'Qatar', topScorer: 'Kylian Mbapp\u00e9 (8 goals)', goldenBoot: 'Kylian Mbapp\u00e9', manager: 'Lionel Scaloni', funFact: 'Greatest final ever played. Mbapp\u00e9 scored a hat-trick. Messi finally won it.', legacy: 'Messi completes the story.', wins: 3, flagColors: ['#74ACDF', '#FFFFFF'] },
+  { year: 2026, country: '???', flag: '\u{1F3C6}', abbr: '???', final: 'TBD', host: 'USA / Canada / Mexico', topScorer: '???', goldenBoot: '???', manager: '???', funFact: 'First 48-team World Cup. Who writes history?', legacy: 'The next chapter is unwritten.', wins: 0, flagColors: ['#FFD23F', '#dc2626'], is2026: true },
 ];
 
 const CHAMPION_IMAGES: Record<number, string | null> = {
@@ -84,7 +88,6 @@ const WIN_COUNT_PILLS: { flag: string; abbr: string; wins: number }[] = [
 const ITEM_WIDTH = 100;
 const AUTO_INTERVAL = 5000;
 const RESUME_DELAY = 15000;
-// Last real champion index (2022) — auto-slide loops back from here
 const LAST_CHAMPION_INDEX = CHAMPIONS.length - 2;
 
 function ChampionImage({ champion }: { champion: Champion }) {
@@ -121,38 +124,13 @@ function ChampionImage({ champion }: { champion: Champion }) {
           background: 'linear-gradient(to top, rgba(0,0,0,0.80) 0%, rgba(0,0,0,0.20) 40%, transparent 100%)',
         }}
       />
-      {/* Flag overlay */}
+      {/* Flag watermark — faint, no color circles */}
       <span
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
-        style={{ fontSize: '64px', opacity: 0.6 }}
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+        style={{ fontSize: '80px', opacity: 0.10 }}
       >
         {champion.flag}
       </span>
-      {/* Color circles */}
-      <div
-        className="absolute rounded-full pointer-events-none"
-        style={{
-          width: '180px',
-          height: '180px',
-          background: champion.flagColors[0],
-          opacity: 0.15,
-          filter: 'blur(50px)',
-          bottom: '-40px',
-          left: '-20px',
-        }}
-      />
-      <div
-        className="absolute rounded-full pointer-events-none"
-        style={{
-          width: '140px',
-          height: '140px',
-          background: champion.flagColors[1],
-          opacity: 0.12,
-          filter: 'blur(40px)',
-          top: '-20px',
-          right: '-10px',
-        }}
-      />
     </div>
   );
 }
@@ -173,7 +151,6 @@ export default function ChampionsTimeline() {
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
 
-  // Touch tracking
   const touchStartX = useRef(0);
   const touchStartY = useRef(0);
 
@@ -194,7 +171,6 @@ export default function ChampionsTimeline() {
     setCanScrollRight(rail.scrollLeft < rail.scrollWidth - rail.clientWidth - 10);
   }, []);
 
-  // Manual select — pauses auto-advance, resumes after 15s
   const handleManualSelect = useCallback((idx: number) => {
     if (idx < 0 || idx >= CHAMPIONS.length) return;
     setIsAutoAdvance(false);
@@ -208,10 +184,9 @@ export default function ChampionsTimeline() {
     }, RESUME_DELAY);
   }, [scrollToIndex]);
 
-  // Auto-advance timer
+  // Auto-advance
   useEffect(() => {
     if (isPaused || isHovered) return;
-
     const timer = setInterval(() => {
       setSelectedIndex((prev) => {
         const next = prev + 1 > LAST_CHAMPION_INDEX ? 0 : prev + 1;
@@ -224,18 +199,15 @@ export default function ChampionsTimeline() {
         return next;
       });
     }, AUTO_INTERVAL);
-
     return () => clearInterval(timer);
   }, [isPaused, isHovered, scrollToIndex]);
 
-  // Clean up resume timer on unmount
   useEffect(() => {
     return () => {
       if (resumeTimer.current) clearTimeout(resumeTimer.current);
     };
   }, []);
 
-  // Initial scroll + button state
   useEffect(() => {
     const timer = setTimeout(() => {
       scrollToIndex(selectedIndex);
@@ -245,7 +217,6 @@ export default function ChampionsTimeline() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Update scroll buttons on scroll
   useEffect(() => {
     const rail = railRef.current;
     if (!rail) return;
@@ -254,7 +225,6 @@ export default function ChampionsTimeline() {
     return () => rail.removeEventListener('scroll', handler);
   }, [updateScrollButtons]);
 
-  // Keyboard navigation
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.key === 'ArrowLeft') {
@@ -283,7 +253,6 @@ export default function ChampionsTimeline() {
     rail.scrollBy({ left: dir === 'left' ? -300 : 300, behavior: 'smooth' });
   };
 
-  // Touch/swipe on detail panel
   const onTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
     touchStartY.current = e.touches[0].clientY;
@@ -299,16 +268,23 @@ export default function ChampionsTimeline() {
 
   const prevChamp = selectedIndex > 0 ? CHAMPIONS[selectedIndex - 1] : null;
   const nextChamp = selectedIndex < CHAMPIONS.length - 1 ? CHAMPIONS[selectedIndex + 1] : null;
-
   const effectivelyPaused = isPaused || isHovered;
 
   return (
     <section
-      className="py-16 px-4"
+      className="relative py-16 px-4"
       style={{ background: 'rgba(0,0,0,0.90)' }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
+      {/* Stadium light gradient */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: 'radial-gradient(circle at top center, rgba(255,255,255,0.06), transparent 60%)',
+        }}
+      />
+
       <style>{`
         .champions-rail::-webkit-scrollbar { display: none; }
         @keyframes detailSlideIn {
@@ -326,7 +302,7 @@ export default function ChampionsTimeline() {
         }
       `}</style>
 
-      <div className="max-w-7xl mx-auto">
+      <div className="relative max-w-7xl mx-auto">
         {/* ── PART A: HEADER ── */}
         <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-12">
           <div>
@@ -350,7 +326,6 @@ export default function ChampionsTimeline() {
             </p>
           </div>
 
-          {/* Win-count pills */}
           <div className="flex flex-wrap gap-2">
             {WIN_COUNT_PILLS.map((p) => (
               <span
@@ -371,11 +346,10 @@ export default function ChampionsTimeline() {
 
         {/* ── PART B: YEAR RAIL ── */}
         <div className="relative">
-          {/* Left arrow */}
           {canScrollLeft && (
             <button
               onClick={() => scrollRail('left')}
-              className="absolute left-0 top-1/2 -translate-y-1/2 z-10 rounded-full p-2 transition-opacity duration-300"
+              className="absolute left-0 top-1/2 -translate-y-1/2 z-10 rounded-full p-2 transition-opacity duration-400"
               style={{
                 background: 'rgba(0,0,0,0.80)',
                 backdropFilter: 'blur(8px)',
@@ -389,11 +363,10 @@ export default function ChampionsTimeline() {
             </button>
           )}
 
-          {/* Right arrow */}
           {canScrollRight && (
             <button
               onClick={() => scrollRail('right')}
-              className="absolute right-0 top-1/2 -translate-y-1/2 z-10 rounded-full p-2 transition-opacity duration-300"
+              className="absolute right-0 top-1/2 -translate-y-1/2 z-10 rounded-full p-2 transition-opacity duration-400"
               style={{
                 background: 'rgba(0,0,0,0.80)',
                 backdropFilter: 'blur(8px)',
@@ -407,7 +380,6 @@ export default function ChampionsTimeline() {
             </button>
           )}
 
-          {/* Scrollable rail */}
           <div
             ref={railRef}
             className="champions-rail flex items-center overflow-x-auto"
@@ -424,18 +396,17 @@ export default function ChampionsTimeline() {
 
                 return (
                   <div key={champ.year} className="flex items-center">
-                    {/* Connecting line */}
+                    {/* Neutral connector line */}
                     {i > 0 && (
                       <div
                         className="h-px flex-shrink-0"
                         style={{
                           width: '20px',
-                          background: `linear-gradient(90deg, ${CHAMPIONS[i - 1].flagColors[0]}40, ${champ.flagColors[0]}40)`,
+                          background: 'rgba(255,255,255,0.08)',
                         }}
                       />
                     )}
 
-                    {/* Year item */}
                     <button
                       onClick={() => {
                         if (is2026) {
@@ -444,45 +415,48 @@ export default function ChampionsTimeline() {
                         }
                         handleManualSelect(i);
                       }}
-                      className="flex flex-col items-center flex-shrink-0 py-3 px-2 transition-all duration-300 rounded-lg group"
+                      className="flex flex-col items-center flex-shrink-0 py-3 px-2 rounded-lg group"
                       style={{
                         width: `${ITEM_WIDTH - 20}px`,
                         cursor: 'pointer',
                         background: isSelected ? 'rgba(255,255,255,0.05)' : 'transparent',
+                        transition: 'all 400ms ease',
                         ...(is2026 && !isSelected ? { animation: 'predictPulse 2.5s ease-in-out infinite' } : {}),
                         ...(is2026 ? { border: '1px solid rgba(255,210,63,0.4)', borderRadius: '12px' } : {}),
-                        ...(isSelected && isAutoAdvance && !is2026 ? { animation: 'autoPopIn 300ms ease' } : {}),
+                        ...(isSelected && isAutoAdvance && !is2026 ? { animation: 'autoPopIn 400ms ease' } : {}),
                       }}
                       aria-label={`${champ.year} - ${champ.country}`}
                     >
-                      {/* Year */}
                       <span
-                        className="font-display font-semibold transition-colors duration-300"
+                        className="font-display font-semibold"
                         style={{
                           fontSize: '14px',
+                          transition: 'color 400ms ease',
                           color: is2026
                             ? '#dc2626'
                             : isSelected
-                              ? '#f59e0b'
+                              ? GOLD
                               : 'rgba(255,255,255,0.40)',
                         }}
                       >
                         {champ.year}
                       </span>
 
-                      {/* Flag */}
                       <span
-                        className="transition-all duration-300 my-1"
-                        style={{ fontSize: isSelected ? '24px' : '20px' }}
+                        className="my-1"
+                        style={{
+                          fontSize: isSelected ? '24px' : '20px',
+                          transition: 'font-size 400ms ease',
+                        }}
                       >
                         {is2026 ? '???' : champ.flag}
                       </span>
 
-                      {/* Abbreviation */}
                       <span
-                        className="font-display transition-colors duration-300"
+                        className="font-display"
                         style={{
                           fontSize: '10px',
+                          transition: 'color 400ms ease',
                           color: isSelected ? 'white' : 'rgba(255,255,255,0.35)',
                           letterSpacing: '0.5px',
                         }}
@@ -492,24 +466,22 @@ export default function ChampionsTimeline() {
                         ) : champ.abbr}
                       </span>
 
-                      {/* Win stars */}
                       {!is2026 && champ.wins > 1 && (
                         <span
                           className="mt-0.5"
-                          style={{ fontSize: '8px', color: '#f59e0b', letterSpacing: '1px' }}
+                          style={{ fontSize: '8px', color: GOLD, letterSpacing: '1px' }}
                         >
                           {Array.from({ length: champ.wins }, () => '\u2605').join('')}
                         </span>
                       )}
 
-                      {/* Selected underline */}
                       {isSelected && (
                         <div
                           className="mt-1 rounded-full"
                           style={{
                             width: '24px',
                             height: '2px',
-                            background: is2026 ? '#dc2626' : '#f59e0b',
+                            background: is2026 ? '#dc2626' : GOLD,
                           }}
                         />
                       )}
@@ -529,7 +501,6 @@ export default function ChampionsTimeline() {
             style={{
               background: '#dc2626',
               animation: effectivelyPaused ? 'none' : `progressDrain ${AUTO_INTERVAL}ms linear forwards`,
-              width: effectivelyPaused ? undefined : undefined,
             }}
           />
         </div>
@@ -537,7 +508,7 @@ export default function ChampionsTimeline() {
         {/* ── PART C: DETAIL PANEL ── */}
         <div
           key={animKey}
-          className="mt-6 rounded-xl p-6 md:p-8"
+          className="mt-6 rounded-xl"
           style={{
             background: 'linear-gradient(to right, rgba(0,0,0,0.60), rgba(0,0,0,0.40))',
             backdropFilter: 'blur(12px)',
@@ -545,19 +516,19 @@ export default function ChampionsTimeline() {
             borderLeftWidth: '4px',
             borderLeftColor: selected.flagColors[0],
             animation: 'detailSlideIn 400ms ease forwards',
+            padding: '64px 32px',
           }}
           onTouchStart={onTouchStart}
           onTouchEnd={onTouchEnd}
         >
           {selected.is2026 ? (
-            /* ── 2026 Special Panel ── */
             <div className="text-center py-8">
               <span style={{ fontSize: '72px' }}>{selected.flag}</span>
               <h3
                 className="font-sans font-bold text-white mt-4"
                 style={{ fontSize: 'clamp(24px, 4vw, 36px)' }}
               >
-                The next chapter is unwritten.
+                {selected.legacy}
               </h3>
               <p
                 className="font-display text-white/50 mt-2"
@@ -567,11 +538,12 @@ export default function ChampionsTimeline() {
               </p>
               <button
                 onClick={() => router.push('/predict')}
-                className="mt-8 font-display font-semibold text-white rounded-lg transition-all duration-500 hover:scale-105 inline-block"
+                className="mt-8 font-display font-semibold text-white rounded-lg hover:scale-105 inline-block"
                 style={{
                   background: '#dc2626',
                   padding: '16px 36px',
                   fontSize: '18px',
+                  transition: 'transform 400ms ease',
                   animation: 'predictPulse 2.5s ease-in-out infinite',
                 }}
               >
@@ -579,56 +551,51 @@ export default function ChampionsTimeline() {
               </button>
             </div>
           ) : (
-            /* ── Standard Detail Panel ── */
             <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
               {/* LEFT COLUMN (3/5) */}
               <div className="lg:col-span-3">
-                {/* Top: Flag + Country + Year badge */}
-                <div className="flex items-center gap-4 flex-wrap">
-                  <span style={{ fontSize: '56px', lineHeight: 1 }}>{selected.flag}</span>
-                  <div>
-                    <div className="flex items-center gap-3 flex-wrap">
-                      <h3
-                        className="font-sans font-bold text-white"
-                        style={{ fontSize: 'clamp(24px, 4vw, 36px)', lineHeight: 1.1 }}
-                      >
-                        {selected.country}
-                      </h3>
-                      <span
-                        className="font-display font-semibold text-white rounded px-3 py-1"
-                        style={{ background: '#dc2626', fontSize: '13px' }}
-                      >
-                        {selected.year}
-                      </span>
-                    </div>
-                    {selected.wins > 1 && (
-                      <p
-                        className="font-display mt-1"
-                        style={{ color: '#f59e0b', fontSize: '14px' }}
-                      >
-                        <span style={{ letterSpacing: '1px' }}>
-                          {Array.from({ length: selected.wins }, () => '\u2605').join(' ')}
-                        </span>
-                        {' '}{selected.wins}x World Champions
-                      </p>
-                    )}
-                    {selected.wins === 1 && (
-                      <p
-                        className="font-display mt-1"
-                        style={{ color: '#f59e0b', fontSize: '14px' }}
-                      >
-                        {'\u2605'} World Champions
-                      </p>
-                    )}
-                  </div>
+                {/* Country name — primary */}
+                <h3
+                  className="font-sans font-bold text-white"
+                  style={{ fontSize: 'clamp(28px, 5vw, 44px)', lineHeight: 1.1 }}
+                >
+                  {selected.country}
+                </h3>
+
+                {/* Year badge + wins — secondary */}
+                <div className="flex items-center gap-3 mt-3 flex-wrap">
+                  <span
+                    className="font-display font-semibold text-white rounded px-3 py-1"
+                    style={{ background: '#dc2626', fontSize: '13px' }}
+                  >
+                    {selected.year}
+                  </span>
+                  <span style={{ fontSize: '32px', lineHeight: 1 }}>{selected.flag}</span>
+                  {selected.wins > 1 ? (
+                    <span className="font-display" style={{ color: GOLD, fontSize: '13px' }}>
+                      {Array.from({ length: selected.wins }, () => '\u2605').join(' ')}
+                      {' '}{selected.wins}x World Champions
+                    </span>
+                  ) : (
+                    <span className="font-display" style={{ color: GOLD, fontSize: '13px' }}>
+                      {'\u2605'} World Champions
+                    </span>
+                  )}
                 </div>
+
+                {/* Legacy tagline */}
+                <p
+                  className="font-display italic mt-4"
+                  style={{ color: 'rgba(255,255,255,0.60)', fontSize: '18px', lineHeight: 1.5 }}
+                >
+                  {selected.legacy}
+                </p>
 
                 <p className="font-display text-white/40 mt-2" style={{ fontSize: '13px' }}>
                   Hosted in {selected.host}
                 </p>
 
-                {/* Divider */}
-                <div className="my-5" style={{ height: '1px', background: 'rgba(255,255,255,0.10)' }} />
+                <div className="my-6" style={{ height: '1px', background: 'rgba(255,255,255,0.10)' }} />
 
                 {/* Stats grid */}
                 <div className="grid grid-cols-2 gap-3">
@@ -644,7 +611,7 @@ export default function ChampionsTimeline() {
                     style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)' }}
                   >
                     <div className="font-display uppercase text-red-500" style={{ fontSize: '10px', letterSpacing: '1px' }}>GOLDEN BOOT</div>
-                    <div className="font-display text-amber-400 font-semibold mt-1" style={{ fontSize: '14px' }}>{selected.goldenBoot}</div>
+                    <div className="font-display font-semibold mt-1" style={{ fontSize: '14px', color: GOLD }}>{selected.goldenBoot}</div>
                     <div className="font-display text-white/30 mt-0.5" style={{ fontSize: '11px' }}>{selected.topScorer}</div>
                   </div>
                   <div
@@ -688,12 +655,17 @@ export default function ChampionsTimeline() {
           )}
 
           {/* Navigation row */}
-          <div className="flex items-center justify-between mt-6 pt-4" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+          <div className="flex items-center justify-between mt-8 pt-4" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
             {prevChamp ? (
               <button
                 onClick={() => handleManualSelect(selectedIndex - 1)}
-                className="inline-flex items-center gap-2 rounded-full px-4 py-2 transition-all duration-300 hover:bg-white/10"
-                style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', fontSize: '13px' }}
+                className="inline-flex items-center gap-2 rounded-full px-4 py-2 hover:bg-white/10"
+                style={{
+                  background: 'rgba(255,255,255,0.05)',
+                  border: '1px solid rgba(255,255,255,0.08)',
+                  fontSize: '13px',
+                  transition: 'all 400ms ease',
+                }}
               >
                 <span className="text-white/50">&larr;</span>
                 <span style={{ fontSize: '16px' }}>{prevChamp.flag}</span>
@@ -703,26 +675,16 @@ export default function ChampionsTimeline() {
               <div />
             )}
 
-            {/* Dots */}
-            <div className="hidden sm:flex items-center gap-1">
-              {CHAMPIONS.map((_, i) => (
-                <div
-                  key={i}
-                  className="rounded-full transition-all duration-300"
-                  style={{
-                    width: i === selectedIndex ? '12px' : '3px',
-                    height: '3px',
-                    background: i === selectedIndex ? '#f59e0b' : 'rgba(255,255,255,0.15)',
-                  }}
-                />
-              ))}
-            </div>
-
             {nextChamp ? (
               <button
                 onClick={() => handleManualSelect(selectedIndex + 1)}
-                className="inline-flex items-center gap-2 rounded-full px-4 py-2 transition-all duration-300 hover:bg-white/10"
-                style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', fontSize: '13px' }}
+                className="inline-flex items-center gap-2 rounded-full px-4 py-2 hover:bg-white/10"
+                style={{
+                  background: 'rgba(255,255,255,0.05)',
+                  border: '1px solid rgba(255,255,255,0.08)',
+                  fontSize: '13px',
+                  transition: 'all 400ms ease',
+                }}
               >
                 <span className="font-display text-white/70">{nextChamp.year}</span>
                 <span style={{ fontSize: '16px' }}>{nextChamp.flag}</span>
