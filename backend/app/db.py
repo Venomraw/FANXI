@@ -1,7 +1,13 @@
+import logging
+import time
 from typing import Iterator
-from sqlalchemy import text
+
+from sqlalchemy import event, text
 from sqlmodel import SQLModel, create_engine, Session, select
 from app.config import settings
+
+db_logger = logging.getLogger("fanxi.db")
+SLOW_QUERY_MS = 200
 
 # ---------------------------------------------------------------------------
 # Engine configuration
@@ -10,8 +16,19 @@ from app.config import settings
 def get_engine():
     db_url = settings.database_url
     if db_url and "postgresql" in db_url:
-        # PostgreSQL (Neon) — SSL handled via the connection string params
-        return create_engine(db_url, echo=False)
+        # PostgreSQL (Neon) — connection pool tuned for production.
+        # pool_size:    base number of persistent connections kept open.
+        # max_overflow: extra connections allowed under burst load (then discarded).
+        # pool_pre_ping: test connections before use — avoids stale/dropped connections.
+        # pool_recycle:  recycle connections every 30 min to avoid Neon idle timeouts.
+        return create_engine(
+            db_url,
+            echo=False,
+            pool_size=10,
+            max_overflow=20,
+            pool_pre_ping=True,
+            pool_recycle=1800,
+        )
     else:
         # SQLite fallback for local dev
         sqlite_url = "sqlite:///fanxi.db"
@@ -20,6 +37,22 @@ def get_engine():
         )
 
 engine = get_engine()
+
+
+# ---------------------------------------------------------------------------
+# Slow query logging — logs any SQL statement that takes > SLOW_QUERY_MS
+# ---------------------------------------------------------------------------
+
+@event.listens_for(engine, "before_cursor_execute")
+def _before_cursor_execute(conn, cursor, statement, parameters, context, executemany):
+    conn.info.setdefault("query_start_time", []).append(time.perf_counter())
+
+
+@event.listens_for(engine, "after_cursor_execute")
+def _after_cursor_execute(conn, cursor, statement, parameters, context, executemany):
+    total_ms = (time.perf_counter() - conn.info["query_start_time"].pop()) * 1000
+    if total_ms > SLOW_QUERY_MS:
+        db_logger.warning("SLOW_QUERY duration_ms=%.1f statement=%s", total_ms, statement[:200])
 
 
 # ---------------------------------------------------------------------------

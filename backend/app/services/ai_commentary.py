@@ -29,9 +29,9 @@ SYSTEM_PROMPT = (
 
 def _build_event_summary(match_id: int) -> str:
     """Summarise last 10 minutes of events as a short text for the AI prompt."""
-    events = fd.get_match_events(match_id)
-    stats = fd.get_match_stats(match_id)
-    momentum = fd.compute_momentum(match_id)
+    events = fd.get_match_events_sync(match_id)
+    stats = fd.get_match_stats_sync(match_id)
+    momentum = fd.compute_momentum_sync(match_id)
 
     minute = stats.get("minute") or "?"
     score = stats.get("score", {})
@@ -67,7 +67,7 @@ def generate_commentary(match_id: int) -> Optional[str]:
 
     try:
         event_summary = _build_event_summary(match_id)
-        stats = fd.get_match_stats(match_id)
+        stats = fd.get_match_stats_sync(match_id)
         minute = stats.get("minute") or 0
 
         client = Groq(api_key=settings.groq_api_key)

@@ -41,6 +41,12 @@ class Settings(BaseSettings):
     # NewsAPI — for WC 2026 news feed
     news_api_key: str = ""
 
+    # Sentry
+    sentry_dsn: str = ""
+
+    # Environment
+    fanxi_env: str = "development"
+
     # Tell Pydantic where to read env vars from
     model_config = SettingsConfigDict(
         env_file=".env",

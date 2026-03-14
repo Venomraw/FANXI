@@ -1,5 +1,6 @@
 'use client';
 import { useCallback, useEffect, useState } from 'react';
+import { fanxiLog } from '@/src/lib/logger';
 
 export type BackendStatus = 'checking' | 'waking' | 'ready' | 'timeout';
 
@@ -23,12 +24,12 @@ export function useBackendReady(): UseBackendReadyReturn {
   useEffect(() => {
     const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000';
     let cancelled = false;
-    let pingId:    ReturnType<typeof setInterval>  | undefined = undefined;
+    let pingId:    ReturnType<typeof setTimeout>   | undefined = undefined;
     let elapsedId: ReturnType<typeof setInterval>  | undefined = undefined;
     let wakingId:  ReturnType<typeof setTimeout>   | undefined = undefined;
 
     function cleanup() {
-      if (pingId    !== undefined) clearInterval(pingId);
+      if (pingId    !== undefined) clearTimeout(pingId);
       if (elapsedId !== undefined) clearInterval(elapsedId);
       if (wakingId  !== undefined) clearTimeout(wakingId);
     }
@@ -39,15 +40,27 @@ export function useBackendReady(): UseBackendReadyReturn {
       cleanup();
     }
 
+    // Exponential backoff: 1s, 2s, 4s, 8s, capped at 8s
+    let delay = 1000;
+    let attempt = 0;
+
     async function ping() {
+      attempt++;
       try {
         const res = await fetch(`${API}/health`, {
           cache: 'no-store',
           signal: AbortSignal.timeout(4000),
         });
-        if (res.ok) onReady();
+        if (res.ok) {
+          onReady();
+          return;
+        }
       } catch {
-        // backend still waking — next ping will retry
+        fanxiLog.pollRetry(attempt, delay);
+      }
+      if (!cancelled) {
+        delay = Math.min(delay * 2, 8000);
+        pingId = setTimeout(ping, delay);
       }
     }
 
@@ -58,9 +71,6 @@ export function useBackendReady(): UseBackendReadyReturn {
     wakingId = setTimeout(() => {
       if (!cancelled) setStatus(s => s === 'checking' ? 'waking' : s);
     }, 1000);
-
-    // Keep pinging every 2 seconds
-    pingId = setInterval(ping, 2000);
 
     // Tick elapsed; timeout after 60 seconds
     elapsedId = setInterval(() => {

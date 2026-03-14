@@ -351,33 +351,33 @@ def _country_flag(name: str) -> str:
 # ---------------------------------------------------------------------------
 
 @router.get("/live")
-def live_matches():
+async def live_matches():
     """All WC 2026 matches currently IN_PLAY or PAUSED."""
-    return fd.get_live_matches()
+    return await fd.get_live_matches()
 
 
 @router.get("/{match_id}/events")
-def match_events(match_id: int):
+async def match_events(match_id: int):
     """Goals, cards and substitutions as a sorted timeline."""
-    events = fd.get_match_events(match_id)
+    events = await fd.get_match_events(match_id)
     if events is None:
         raise HTTPException(status_code=404, detail="Match not found")
     return events
 
 
 @router.get("/{match_id}/lineups")
-def match_lineups(match_id: int):
+async def match_lineups(match_id: int):
     """Confirmed starting XI and substitutes for both teams."""
-    return fd.get_match_lineups(match_id)
+    return await fd.get_match_lineups(match_id)
 
 
 @router.get("/{match_id}/stats")
-def match_stats(match_id: int):
+async def match_stats(match_id: int):
     """Possession, shots, score and momentum data."""
-    stats = fd.get_match_stats(match_id)
+    stats = await fd.get_match_stats(match_id)
     if not stats:
         raise HTTPException(status_code=404, detail="Match not found or not live")
-    momentum = fd.compute_momentum(match_id)
+    momentum = await fd.compute_momentum(match_id)
     stats["momentum"] = momentum
     return stats
 

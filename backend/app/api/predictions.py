@@ -480,9 +480,9 @@ def score_reveal(
     if not pred:
         raise HTTPException(status_code=404, detail="No prediction found for this match")
 
-    stats    = _fd.get_match_stats(match_id)
-    lineups  = _fd.get_match_lineups(match_id)
-    events   = _fd.get_match_events(match_id)
+    stats    = _fd.get_match_stats_sync(match_id)
+    lineups  = _fd.get_match_lineups_sync(match_id)
+    events   = _fd.get_match_events_sync(match_id)
 
     score_data   = stats.get("score", {})
     home_goals   = score_data.get("home") or 0
@@ -650,9 +650,9 @@ def live_my_score(
         raise HTTPException(status_code=404, detail="No prediction found for this match")
 
     # Fetch live match data
-    stats = _fd.get_match_stats(match_id)
-    events = _fd.get_match_events(match_id)
-    lineups = _fd.get_match_lineups(match_id)
+    stats = _fd.get_match_stats_sync(match_id)
+    events = _fd.get_match_events_sync(match_id)
+    lineups = _fd.get_match_lineups_sync(match_id)
 
     score = stats.get("score", {})
     home_goals = score.get("home") or 0

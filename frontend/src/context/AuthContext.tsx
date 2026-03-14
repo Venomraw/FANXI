@@ -1,5 +1,6 @@
 'use client';
 import React, { createContext, useContext, useEffect, useState } from 'react';
+import { fanxiLog } from '@/src/lib/logger';
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
@@ -118,12 +119,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const res = await makeRequest(_accessToken);
 
     // ── 429 received — rate limited ──────────────────────────────────────
-    // Do not retry. Throw a structured error so callers can show the user
-    // exactly how long to wait instead of a generic failure message.
     if (res.status === 429) {
       const body = await res.json().catch(() => ({}));
       const retryAfter = Number(body.retry_after ?? res.headers.get('Retry-After') ?? 60);
+      fanxiLog.warn('Rate limited', { url: String(input), retryAfter });
       throw { code: 'RATE_LIMITED', retryAfter };
+    }
+
+    // Log non-OK responses (except 401 which triggers refresh)
+    if (!res.ok && res.status !== 401) {
+      fanxiLog.apiError(String(input), res.status);
     }
 
     if (res.status !== 401) return res;
