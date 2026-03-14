@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 interface Champion {
   year: number;
@@ -45,6 +46,32 @@ const CHAMPIONS: Champion[] = [
   { year: 2026, country: '???', flag: '\u{1F3C6}', abbr: '???', final: 'TBD', host: 'USA / Canada / Mexico', topScorer: '???', goldenBoot: '???', manager: '???', funFact: 'First 48-team World Cup. Who writes history?', wins: 0, flagColors: ['#FFD23F', '#dc2626'], is2026: true },
 ];
 
+const CHAMPION_IMAGES: Record<number, string | null> = {
+  1930: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/94/1930_FIFA_World_Cup.jpg/400px-1930_FIFA_World_Cup.jpg',
+  1934: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/1934_FIFA_World_Cup.jpg/400px-1934_FIFA_World_Cup.jpg',
+  1938: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/1938_FIFA_World_Cup.jpg/400px-1938_FIFA_World_Cup.jpg',
+  1950: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/1950_FIFA_World_Cup.jpg/400px-1950_FIFA_World_Cup.jpg',
+  1954: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/1954_FIFA_World_Cup.jpg/400px-1954_FIFA_World_Cup.jpg',
+  1958: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Pele_1958_wb.jpg/400px-Pele_1958_wb.jpg',
+  1962: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/sixty/Garrincha_1962.jpg/400px-Garrincha.jpg',
+  1966: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/1966_FIFA_World_Cup.jpg/400px-1966_FIFA_World_Cup.jpg',
+  1970: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Pele_Brazil_1970.jpg/400px-Pele_Brazil_1970.jpg',
+  1974: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/forty/1974_FIFA_World_Cup.jpg/400px-1974.jpg',
+  1978: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/1978_FIFA_World_Cup.jpg/400px-1978_FIFA_World_Cup.jpg',
+  1982: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Paolo_Rossi_1982.jpg/400px-Paolo_Rossi.jpg',
+  1986: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Maradona_Mundial_1986.jpg/400px-Maradona.jpg',
+  1990: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/1990_FIFA_World_Cup.jpg/400px-1990.jpg',
+  1994: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Baggio_1994.jpg/400px-Baggio.jpg',
+  1998: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Zidane_1998.jpg/400px-Zidane.jpg',
+  2002: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Ronaldo_2002.jpg/400px-Ronaldo.jpg',
+  2006: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Zidane_headbutt.jpg/400px-Zidane_headbutt.jpg',
+  2010: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Iniesta_2010.jpg/400px-Iniesta.jpg',
+  2014: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Germany_7_1_Brazil.jpg/400px-Germany.jpg',
+  2018: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Mbappe_2018.jpg/400px-Mbappe.jpg',
+  2022: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Messi_WC2022.jpg/400px-Messi.jpg',
+  2026: null,
+};
+
 const WIN_COUNT_PILLS: { flag: string; abbr: string; wins: number }[] = [
   { flag: '\u{1F1E7}\u{1F1F7}', abbr: 'BRA', wins: 5 },
   { flag: '\u{1F1E9}\u{1F1EA}', abbr: 'GER', wins: 4 },
@@ -55,15 +82,94 @@ const WIN_COUNT_PILLS: { flag: string; abbr: string; wins: number }[] = [
 ];
 
 const ITEM_WIDTH = 100;
+const AUTO_INTERVAL = 5000;
+const RESUME_DELAY = 15000;
+// Last real champion index (2022) — auto-slide loops back from here
+const LAST_CHAMPION_INDEX = CHAMPIONS.length - 2;
+
+function ChampionImage({ champion }: { champion: Champion }) {
+  const [imgFailed, setImgFailed] = useState(false);
+  const src = CHAMPION_IMAGES[champion.year];
+
+  return (
+    <div
+      className="relative w-full rounded-xl overflow-hidden"
+      style={{ height: '300px', border: '1px solid rgba(255,255,255,0.10)' }}
+    >
+      {src && !imgFailed ? (
+        <Image
+          src={src}
+          alt={`${champion.year} World Cup - ${champion.country}`}
+          fill
+          className="object-cover"
+          sizes="(max-width: 1024px) 100vw, 40vw"
+          onError={() => setImgFailed(true)}
+        />
+      ) : (
+        <div
+          className="w-full h-full"
+          style={{
+            background: `linear-gradient(135deg, ${champion.flagColors[0]}, ${champion.flagColors[1]})`,
+            opacity: 0.30,
+          }}
+        />
+      )}
+      {/* Dark gradient overlay */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background: 'linear-gradient(to top, rgba(0,0,0,0.80) 0%, rgba(0,0,0,0.20) 40%, transparent 100%)',
+        }}
+      />
+      {/* Flag overlay */}
+      <span
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+        style={{ fontSize: '64px', opacity: 0.6 }}
+      >
+        {champion.flag}
+      </span>
+      {/* Color circles */}
+      <div
+        className="absolute rounded-full pointer-events-none"
+        style={{
+          width: '180px',
+          height: '180px',
+          background: champion.flagColors[0],
+          opacity: 0.15,
+          filter: 'blur(50px)',
+          bottom: '-40px',
+          left: '-20px',
+        }}
+      />
+      <div
+        className="absolute rounded-full pointer-events-none"
+        style={{
+          width: '140px',
+          height: '140px',
+          background: champion.flagColors[1],
+          opacity: 0.12,
+          filter: 'blur(40px)',
+          top: '-20px',
+          right: '-10px',
+        }}
+      />
+    </div>
+  );
+}
 
 export default function ChampionsTimeline() {
   const router = useRouter();
   const railRef = useRef<HTMLDivElement>(null);
+  const resumeTimer = useRef<NodeJS.Timeout | null>(null);
+
   const [selectedIndex, setSelectedIndex] = useState(() => {
     const idx = CHAMPIONS.findIndex((c) => c.year === 2022);
-    return idx >= 0 ? idx : CHAMPIONS.length - 2;
+    return idx >= 0 ? idx : LAST_CHAMPION_INDEX;
   });
+  const [isPaused, setIsPaused] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
   const [animKey, setAnimKey] = useState(0);
+  const [isAutoAdvance, setIsAutoAdvance] = useState(false);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
 
@@ -88,12 +194,46 @@ export default function ChampionsTimeline() {
     setCanScrollRight(rail.scrollLeft < rail.scrollWidth - rail.clientWidth - 10);
   }, []);
 
-  const selectYear = useCallback((idx: number) => {
+  // Manual select — pauses auto-advance, resumes after 15s
+  const handleManualSelect = useCallback((idx: number) => {
     if (idx < 0 || idx >= CHAMPIONS.length) return;
+    setIsAutoAdvance(false);
     setSelectedIndex(idx);
     setAnimKey((k) => k + 1);
     scrollToIndex(idx);
+    setIsPaused(true);
+    if (resumeTimer.current) clearTimeout(resumeTimer.current);
+    resumeTimer.current = setTimeout(() => {
+      setIsPaused(false);
+    }, RESUME_DELAY);
   }, [scrollToIndex]);
+
+  // Auto-advance timer
+  useEffect(() => {
+    if (isPaused || isHovered) return;
+
+    const timer = setInterval(() => {
+      setSelectedIndex((prev) => {
+        const next = prev + 1 > LAST_CHAMPION_INDEX ? 0 : prev + 1;
+        setAnimKey((k) => k + 1);
+        setIsAutoAdvance(true);
+        setTimeout(() => {
+          scrollToIndex(next);
+          setIsAutoAdvance(false);
+        }, 0);
+        return next;
+      });
+    }, AUTO_INTERVAL);
+
+    return () => clearInterval(timer);
+  }, [isPaused, isHovered, scrollToIndex]);
+
+  // Clean up resume timer on unmount
+  useEffect(() => {
+    return () => {
+      if (resumeTimer.current) clearTimeout(resumeTimer.current);
+    };
+  }, []);
 
   // Initial scroll + button state
   useEffect(() => {
@@ -102,9 +242,10 @@ export default function ChampionsTimeline() {
       updateScrollButtons();
     }, 100);
     return () => clearTimeout(timer);
-  }, [selectedIndex, scrollToIndex, updateScrollButtons]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  // Listen for scroll to update arrow visibility
+  // Update scroll buttons on scroll
   useEffect(() => {
     const rail = railRef.current;
     if (!rail) return;
@@ -120,23 +261,21 @@ export default function ChampionsTimeline() {
         e.preventDefault();
         setSelectedIndex((prev) => {
           const next = Math.max(0, prev - 1);
-          setAnimKey((k) => k + 1);
-          setTimeout(() => scrollToIndex(next), 0);
+          handleManualSelect(next);
           return next;
         });
       } else if (e.key === 'ArrowRight') {
         e.preventDefault();
         setSelectedIndex((prev) => {
           const next = Math.min(CHAMPIONS.length - 1, prev + 1);
-          setAnimKey((k) => k + 1);
-          setTimeout(() => scrollToIndex(next), 0);
+          handleManualSelect(next);
           return next;
         });
       }
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
-  }, [scrollToIndex]);
+  }, [handleManualSelect]);
 
   const scrollRail = (dir: 'left' | 'right') => {
     const rail = railRef.current;
@@ -153,19 +292,40 @@ export default function ChampionsTimeline() {
     const dx = e.changedTouches[0].clientX - touchStartX.current;
     const dy = e.changedTouches[0].clientY - touchStartY.current;
     if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) {
-      if (dx < 0 && selectedIndex < CHAMPIONS.length - 1) selectYear(selectedIndex + 1);
-      if (dx > 0 && selectedIndex > 0) selectYear(selectedIndex - 1);
+      if (dx < 0 && selectedIndex < CHAMPIONS.length - 1) handleManualSelect(selectedIndex + 1);
+      if (dx > 0 && selectedIndex > 0) handleManualSelect(selectedIndex - 1);
     }
   };
 
   const prevChamp = selectedIndex > 0 ? CHAMPIONS[selectedIndex - 1] : null;
   const nextChamp = selectedIndex < CHAMPIONS.length - 1 ? CHAMPIONS[selectedIndex + 1] : null;
 
+  const effectivelyPaused = isPaused || isHovered;
+
   return (
     <section
       className="py-16 px-4"
       style={{ background: 'rgba(0,0,0,0.90)' }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
+      <style>{`
+        .champions-rail::-webkit-scrollbar { display: none; }
+        @keyframes detailSlideIn {
+          from { opacity: 0; transform: translateX(24px); }
+          to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes autoPopIn {
+          0% { transform: scale(1); }
+          40% { transform: scale(1.12); }
+          100% { transform: scale(1); }
+        }
+        @keyframes progressDrain {
+          from { width: 100%; }
+          to { width: 0%; }
+        }
+      `}</style>
+
       <div className="max-w-7xl mx-auto">
         {/* ── PART A: HEADER ── */}
         <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-12">
@@ -250,27 +410,21 @@ export default function ChampionsTimeline() {
           {/* Scrollable rail */}
           <div
             ref={railRef}
-            className="flex items-center overflow-x-auto"
+            className="champions-rail flex items-center overflow-x-auto"
             style={{
               scrollbarWidth: 'none',
               msOverflowStyle: 'none',
               WebkitOverflowScrolling: 'touch',
             }}
           >
-            <style>{`
-              .champions-rail::-webkit-scrollbar { display: none; }
-            `}</style>
-            <div className="champions-rail flex items-center" style={{ minWidth: 'max-content' }} ref={(el) => {
-              // Apply the class to parent for scrollbar hiding
-              if (el && railRef.current) railRef.current.classList.add('champions-rail');
-            }}>
+            <div className="flex items-center" style={{ minWidth: 'max-content' }}>
               {CHAMPIONS.map((champ, i) => {
                 const isSelected = i === selectedIndex;
                 const is2026 = !!champ.is2026;
 
                 return (
                   <div key={champ.year} className="flex items-center">
-                    {/* Connecting line (not before first) */}
+                    {/* Connecting line */}
                     {i > 0 && (
                       <div
                         className="h-px flex-shrink-0"
@@ -285,10 +439,10 @@ export default function ChampionsTimeline() {
                     <button
                       onClick={() => {
                         if (is2026) {
-                          selectYear(i);
-                        } else {
-                          selectYear(i);
+                          router.push('/predict');
+                          return;
                         }
+                        handleManualSelect(i);
                       }}
                       className="flex flex-col items-center flex-shrink-0 py-3 px-2 transition-all duration-300 rounded-lg group"
                       style={{
@@ -297,6 +451,7 @@ export default function ChampionsTimeline() {
                         background: isSelected ? 'rgba(255,255,255,0.05)' : 'transparent',
                         ...(is2026 && !isSelected ? { animation: 'predictPulse 2.5s ease-in-out infinite' } : {}),
                         ...(is2026 ? { border: '1px solid rgba(255,210,63,0.4)', borderRadius: '12px' } : {}),
+                        ...(isSelected && isAutoAdvance && !is2026 ? { animation: 'autoPopIn 300ms ease' } : {}),
                       }}
                       aria-label={`${champ.year} - ${champ.country}`}
                     >
@@ -318,9 +473,7 @@ export default function ChampionsTimeline() {
                       {/* Flag */}
                       <span
                         className="transition-all duration-300 my-1"
-                        style={{
-                          fontSize: isSelected ? '24px' : '20px',
-                        }}
+                        style={{ fontSize: isSelected ? '24px' : '20px' }}
                       >
                         {is2026 ? '???' : champ.flag}
                       </span>
@@ -343,11 +496,7 @@ export default function ChampionsTimeline() {
                       {!is2026 && champ.wins > 1 && (
                         <span
                           className="mt-0.5"
-                          style={{
-                            fontSize: '8px',
-                            color: '#f59e0b',
-                            letterSpacing: '1px',
-                          }}
+                          style={{ fontSize: '8px', color: '#f59e0b', letterSpacing: '1px' }}
                         >
                           {Array.from({ length: champ.wins }, () => '\u2605').join('')}
                         </span>
@@ -372,29 +521,34 @@ export default function ChampionsTimeline() {
           </div>
         </div>
 
+        {/* ── PROGRESS BAR ── */}
+        <div className="mt-2 w-full rounded-full overflow-hidden" style={{ height: '2px', background: 'rgba(255,255,255,0.06)' }}>
+          <div
+            key={`progress-${animKey}`}
+            className="h-full rounded-full"
+            style={{
+              background: '#dc2626',
+              animation: effectivelyPaused ? 'none' : `progressDrain ${AUTO_INTERVAL}ms linear forwards`,
+              width: effectivelyPaused ? undefined : undefined,
+            }}
+          />
+        </div>
+
         {/* ── PART C: DETAIL PANEL ── */}
         <div
           key={animKey}
-          className="mt-8 rounded-xl p-6 md:p-8"
+          className="mt-6 rounded-xl p-6 md:p-8"
           style={{
             background: 'linear-gradient(to right, rgba(0,0,0,0.60), rgba(0,0,0,0.40))',
             backdropFilter: 'blur(12px)',
-            borderLeft: `4px solid ${selected.flagColors[0]}`,
-            border: `1px solid rgba(255,255,255,0.08)`,
+            border: '1px solid rgba(255,255,255,0.08)',
             borderLeftWidth: '4px',
             borderLeftColor: selected.flagColors[0],
-            animation: 'detailSlideUp 300ms ease forwards',
+            animation: 'detailSlideIn 400ms ease forwards',
           }}
           onTouchStart={onTouchStart}
           onTouchEnd={onTouchEnd}
         >
-          <style>{`
-            @keyframes detailSlideUp {
-              from { opacity: 0; transform: translateY(20px); }
-              to { opacity: 1; transform: translateY(0); }
-            }
-          `}</style>
-
           {selected.is2026 ? (
             /* ── 2026 Special Panel ── */
             <div className="text-center py-8">
@@ -463,7 +617,7 @@ export default function ChampionsTimeline() {
                         className="font-display mt-1"
                         style={{ color: '#f59e0b', fontSize: '14px' }}
                       >
-                        \u2605 World Champions
+                        {'\u2605'} World Champions
                       </p>
                     )}
                   </div>
@@ -526,47 +680,9 @@ export default function ChampionsTimeline() {
                 </div>
               </div>
 
-              {/* RIGHT COLUMN (2/5) — Decorative */}
-              <div className="lg:col-span-2 hidden lg:flex flex-col items-center justify-center relative overflow-hidden">
-                {/* Large flag */}
-                <span
-                  style={{
-                    fontSize: '120px',
-                    opacity: 0.15,
-                    filter: 'blur(1px)',
-                    position: 'absolute',
-                    top: '50%',
-                    left: '50%',
-                    transform: 'translate(-50%, -50%)',
-                  }}
-                >
-                  {selected.flag}
-                </span>
-                {/* Color circles */}
-                <div
-                  className="absolute rounded-full"
-                  style={{
-                    width: '200px',
-                    height: '200px',
-                    background: selected.flagColors[0],
-                    opacity: 0.12,
-                    filter: 'blur(60px)',
-                    top: '20%',
-                    left: '30%',
-                  }}
-                />
-                <div
-                  className="absolute rounded-full"
-                  style={{
-                    width: '160px',
-                    height: '160px',
-                    background: selected.flagColors[1],
-                    opacity: 0.10,
-                    filter: 'blur(50px)',
-                    bottom: '20%',
-                    right: '25%',
-                  }}
-                />
+              {/* RIGHT COLUMN (2/5) — Champion Image */}
+              <div className="lg:col-span-2 flex flex-col items-center justify-center">
+                <ChampionImage champion={selected} />
               </div>
             </div>
           )}
@@ -575,7 +691,7 @@ export default function ChampionsTimeline() {
           <div className="flex items-center justify-between mt-6 pt-4" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
             {prevChamp ? (
               <button
-                onClick={() => selectYear(selectedIndex - 1)}
+                onClick={() => handleManualSelect(selectedIndex - 1)}
                 className="inline-flex items-center gap-2 rounded-full px-4 py-2 transition-all duration-300 hover:bg-white/10"
                 style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', fontSize: '13px' }}
               >
@@ -604,7 +720,7 @@ export default function ChampionsTimeline() {
 
             {nextChamp ? (
               <button
-                onClick={() => selectYear(selectedIndex + 1)}
+                onClick={() => handleManualSelect(selectedIndex + 1)}
                 className="inline-flex items-center gap-2 rounded-full px-4 py-2 transition-all duration-300 hover:bg-white/10"
                 style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', fontSize: '13px' }}
               >

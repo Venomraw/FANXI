@@ -6,7 +6,8 @@ const nextConfig: NextConfig = {
       { protocol: 'https', hostname: 'images.si.com' },
       { protocol: 'https', hostname: 'images.psg.fr' },
       { protocol: 'https', hostname: 'img.a.transfermarkt.technology' },
-      { protocol: 'https', hostname: 'fcb-abj-pre.s3.amazonaws.com' }, // Adding a high-availability source
+      { protocol: 'https', hostname: 'fcb-abj-pre.s3.amazonaws.com' },
+      { protocol: 'https', hostname: 'upload.wikimedia.org', pathname: '/wikipedia/commons/**' },
     ],
   },
 };
