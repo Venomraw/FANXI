@@ -16,3 +16,5 @@ psycopg2-binary==2.9.10
 apscheduler==3.10.4
 websockets
 sentry-sdk[fastapi]
+pytest
+httpx
