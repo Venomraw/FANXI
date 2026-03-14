@@ -26,6 +26,10 @@
   --blue:    #00D1FF;        /* Electric Blue — interactive     */
   --success: #00FF85;        /* Locked state                    */
 
+  /* ── Landing-only neutral whites (warmer than team-tinted --text) ── */
+  --landing-text:    #E6E7EB;
+  --landing-muted:   #9FA6B2;
+
   /* ── Layout ── */
   --container: 1400px;
 
@@ -201,13 +205,52 @@ body::before {
   to   { width: 100%; }
 }
 
-/* Reveal on scroll */
+/* Reveal on scroll — original */
 .reveal {
   opacity: 0;
   transform: translateY(36px);
   transition: opacity 0.65s ease, transform 0.65s ease;
 }
 .reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* Reveal on scroll — cinematic variant (used by RevealSection) */
+.reveal-section {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 450ms cubic-bezier(.2,.8,.2,1),
+              transform 450ms cubic-bezier(.2,.8,.2,1);
+}
+.reveal-section.visible { opacity: 1; transform: translateY(0); }
+
+/* ═══════════════════════════════════════════
+   STADIUM LIGHT SWEEP — ultra-subtle atmosphere
+═══════════════════════════════════════════ */
+@keyframes stadiumSweep {
+  0%   { background-position: 20% -10%, 80% -10%; }
+  33%  { background-position: 40% -5%, 60% -15%; }
+  66%  { background-position: 25% -15%, 75% -5%; }
+  100% { background-position: 20% -10%, 80% -10%; }
+}
+.stadium-atmosphere {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(circle at 20% -10%, rgba(255,255,255,0.04), transparent 50%),
+    radial-gradient(circle at 80% -10%, rgba(255,255,255,0.025), transparent 60%);
+  background-size: 100% 100%;
+  animation: stadiumSweep 35s ease-in-out infinite;
+}
+
+/* Card hover lift */
+.card-lift {
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+.card-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+}
 
 /* Staggered fade-up helpers */
 .fade-up-1 { animation: fadeUp 0.8s ease 0.1s both; }
@@ -447,6 +490,47 @@ body::before {
   backdrop-filter: blur(32px);
   -webkit-backdrop-filter: blur(32px);
   border: 1px solid rgba(0, 232, 124, 0.2);
+}
+
+/* ═══════════════════════════════════════════
+   GLASS TIER SYSTEM — consistent surfaces
+═══════════════════════════════════════════ */
+/* Tier 1 — Hero panels, big callouts, champions detail */
+.glass-tier-1 {
+  background: rgba(15, 18, 24, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+}
+/* Tier 2 — News cards, prediction cards, timeline items */
+.glass-tier-2 {
+  background: rgba(15, 18, 24, 0.55);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+}
+/* Tier 3 — Nav dropdowns, tooltips, smaller panels */
+.glass-tier-3 {
+  background: rgba(15, 18, 24, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+}
+
+/* ═══════════════════════════════════════════
+   PREDICT CTA GLOW
+═══════════════════════════════════════════ */
+.predict-cta-glow {
+  box-shadow:
+    0 0 0 1px rgba(255, 0, 70, 0.3),
+    0 6px 20px rgba(255, 0, 70, 0.2);
+  transition: box-shadow 0.4s ease, transform 0.4s ease;
+}
+.predict-cta-glow:hover {
+  box-shadow:
+    0 0 0 1px rgba(255, 0, 70, 0.5),
+    0 8px 32px rgba(255, 0, 70, 0.35);
 }
 
 /* ═══════════════════════════════════════════

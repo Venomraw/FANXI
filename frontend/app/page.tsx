@@ -5,11 +5,15 @@ import ChampionsTimeline from '@/src/components/landing/ChampionsTimeline';
 import TodayInHistory from '@/src/components/landing/TodayInHistory';
 import NewsStrip from '@/src/components/landing/NewsStrip';
 import UrgencyCountdown from '@/src/components/landing/UrgencyCountdown';
+import RevealSection from '@/src/components/landing/RevealSection';
 import Link from 'next/link';
 
 export default function HomePage() {
   return (
     <main>
+      {/* Stadium atmosphere — ultra-subtle light sweep (Pass 3) */}
+      <div className="stadium-atmosphere" />
+
       {/* Countdown bar — fixed top, pushes content down */}
       <CountdownBar />
 
@@ -50,10 +54,10 @@ export default function HomePage() {
           </span>
 
           {/* Main headline */}
-          <h1 className="font-sans font-bold mt-4 leading-none">
+          <h1 className="font-sans font-bold mt-3 leading-none">
             <span
-              className="block text-white"
-              style={{ fontSize: 'clamp(52px, 9vw, 96px)' }}
+              className="block"
+              style={{ fontSize: 'clamp(52px, 9vw, 96px)', color: 'var(--landing-text)' }}
             >
               THE WORLD CUP
             </span>
@@ -62,15 +66,15 @@ export default function HomePage() {
               style={{ fontSize: 'clamp(52px, 9vw, 96px)' }}
             >
               <span style={{ color: 'rgba(255,255,255,0.35)' }}>1930</span>
-              <span className="text-white"> &rarr; </span>
+              <span style={{ color: 'var(--landing-text)' }}> &rarr; </span>
               <span className="text-red-600">2026</span>
             </span>
           </h1>
 
           {/* Subtext */}
           <p
-            className="font-display text-white/60 mt-6 max-w-lg"
-            style={{ fontSize: '18px', lineHeight: 1.7 }}
+            className="font-display mt-5 max-w-lg"
+            style={{ fontSize: '18px', lineHeight: 1.7, color: 'var(--landing-muted)' }}
           >
             The greatest tournament in football history.
             <br />
@@ -83,7 +87,7 @@ export default function HomePage() {
           <div className="mt-8 flex gap-4 flex-wrap">
             <Link
               href="/predict"
-              className="font-display font-semibold text-white rounded-lg transition-all duration-200 hover:scale-105"
+              className="predict-cta-glow font-display font-semibold text-white rounded-lg transition-all duration-200 hover:scale-105"
               style={{
                 background: '#dc2626',
                 padding: '16px 32px',
@@ -95,12 +99,13 @@ export default function HomePage() {
             </Link>
             <Link
               href="/matches"
-              className="font-display text-white rounded-lg transition-all duration-200 hover:border-white"
+              className="font-display rounded-lg transition-all duration-200 hover:border-white"
               style={{
                 border: '1px solid rgba(255,255,255,0.3)',
                 padding: '16px 32px',
                 fontSize: '18px',
                 display: 'inline-block',
+                color: 'var(--landing-text)',
               }}
             >
               Explore Fixtures &rarr;
@@ -109,13 +114,8 @@ export default function HomePage() {
 
           {/* Stat strip */}
           <div
-            className="mt-16 inline-flex flex-wrap gap-0 rounded-full"
-            style={{
-              background: 'rgba(0,0,0,0.4)',
-              backdropFilter: 'blur(8px)',
-              border: '1px solid rgba(255,255,255,0.1)',
-              padding: '16px 32px',
-            }}
+            className="mt-16 inline-flex flex-wrap gap-0 rounded-full glass-tier-2"
+            style={{ padding: '16px 32px' }}
           >
             {[
               { icon: '\u{1F3C6}', label: '21 Tournaments' },
@@ -125,15 +125,15 @@ export default function HomePage() {
             ].map((stat, i, arr) => (
               <div key={stat.label} className="flex items-center">
                 <span
-                  className="font-display text-white/70"
-                  style={{ fontSize: '14px', whiteSpace: 'nowrap' }}
+                  className="font-display"
+                  style={{ fontSize: '14px', whiteSpace: 'nowrap', color: 'var(--landing-muted)' }}
                 >
                   {stat.icon} {stat.label}
                 </span>
                 {i < arr.length - 1 && (
                   <span
-                    className="mx-4 text-white/20"
-                    style={{ fontSize: '16px' }}
+                    className="mx-4"
+                    style={{ fontSize: '16px', color: 'rgba(255,255,255,0.15)' }}
                   >
                     |
                   </span>
@@ -145,59 +145,67 @@ export default function HomePage() {
       </section>
 
       {/* ─── CHAMPIONS TIMELINE ──────────────────────────────────────────────── */}
-      <ChampionsTimeline />
+      <RevealSection>
+        <ChampionsTimeline />
+      </RevealSection>
 
       {/* ─── TODAY IN HISTORY ────────────────────────────────────────────────── */}
-      <section className="py-20" style={{ background: '#09090b' }}>
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="mb-8">
-            <p
-              className="font-mono text-red-500 uppercase"
-              style={{ fontSize: '13px', letterSpacing: '1.5px' }}
-            >
-              // TODAY IN WORLD CUP HISTORY
-            </p>
+      <RevealSection>
+        <section className="py-20" style={{ background: '#09090b' }}>
+          <div className="max-w-7xl mx-auto px-6">
+            <div className="mb-8">
+              <p
+                className="font-display font-semibold text-red-500 uppercase"
+                style={{ fontSize: '13px', letterSpacing: '1.5px' }}
+              >
+                // TODAY IN WORLD CUP HISTORY
+              </p>
+            </div>
+            <TodayInHistory />
           </div>
-          <TodayInHistory />
-        </div>
-      </section>
+        </section>
+      </RevealSection>
 
       {/* ─── NEWS STRIP ──────────────────────────────────────────────────────── */}
-      <section className="py-20" style={{ background: '#0a0a0a' }}>
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="mb-12">
-            <p
-              className="font-mono text-red-500 uppercase"
-              style={{ fontSize: '13px', letterSpacing: '1.5px' }}
-            >
-              // WC2026 INTELLIGENCE FEED
-            </p>
-            <h2
-              className="font-sans text-white mt-2"
-              style={{ fontSize: 'clamp(28px, 4vw, 48px)' }}
-            >
-              World Cup Intel
-            </h2>
+      <RevealSection>
+        <section className="py-20" style={{ background: '#0a0a0a' }}>
+          <div className="max-w-7xl mx-auto px-6">
+            <div className="mb-10">
+              <p
+                className="font-display font-semibold text-red-500 uppercase"
+                style={{ fontSize: '13px', letterSpacing: '1.5px' }}
+              >
+                // WC2026 INTELLIGENCE FEED
+              </p>
+              <h2
+                className="font-sans font-bold mt-2"
+                style={{ fontSize: 'clamp(28px, 4vw, 48px)', color: 'var(--landing-text)' }}
+              >
+                World Cup Intel
+              </h2>
+            </div>
+            <NewsStrip />
           </div>
-          <NewsStrip />
-        </div>
-      </section>
+        </section>
+      </RevealSection>
 
       {/* ─── URGENCY CTA ─────────────────────────────────────────────────────── */}
-      <section
-        className="py-24 text-center"
-        style={{ background: '#09090b' }}
-      >
-        <div className="max-w-3xl mx-auto px-6">
-          <p
-            className="font-mono text-red-500 uppercase mb-4"
-            style={{ fontSize: '13px', letterSpacing: '1.5px' }}
-          >
-            // THE CLOCK IS RUNNING
-          </p>
-          <UrgencyCountdown />
-        </div>
-      </section>
+      <RevealSection>
+        <section
+          className="py-24 text-center"
+          style={{ background: '#09090b' }}
+        >
+          <div className="max-w-3xl mx-auto px-6">
+            <p
+              className="font-display font-semibold text-red-500 uppercase mb-4"
+              style={{ fontSize: '13px', letterSpacing: '1.5px' }}
+            >
+              // THE CLOCK IS RUNNING
+            </p>
+            <UrgencyCountdown />
+          </div>
+        </section>
+      </RevealSection>
     </main>
   );
 }

@@ -70,6 +70,7 @@ export default function LandingNav() {
         backdropFilter: scrolled ? 'blur(32px)' : 'none',
         WebkitBackdropFilter: scrolled ? 'blur(32px)' : 'none',
         borderBottom: scrolled ? '1px solid var(--border)' : '1px solid transparent',
+        boxShadow: scrolled ? '0 10px 40px rgba(0,0,0,0.35)' : 'none',
       }}
     >
       <div
