@@ -24,8 +24,8 @@ export default function HomePage() {
 
       {/* ─── HERO ────────────────────────────────────────────────────────────── */}
       <section
-        className="relative min-h-screen flex flex-col justify-center"
-        style={{ marginTop: '-44px' }}
+        className="relative flex flex-col justify-center"
+        style={{ minHeight: '75vh', marginTop: '-44px' }}
       >
         {/* Background overlay — layered over the global stadium-bg */}
         <div
@@ -62,7 +62,7 @@ export default function HomePage() {
               style={{ fontSize: 'clamp(52px, 9vw, 96px)' }}
             >
               <span style={{ color: 'rgba(255,255,255,0.35)' }}>1930</span>
-              <span className="text-white"> → </span>
+              <span className="text-white"> &rarr; </span>
               <span className="text-red-600">2026</span>
             </span>
           </h1>
@@ -91,7 +91,7 @@ export default function HomePage() {
                 display: 'inline-block',
               }}
             >
-              ⚽ Start Predicting
+              Start Predicting
             </Link>
             <Link
               href="/matches"
@@ -103,7 +103,7 @@ export default function HomePage() {
                 display: 'inline-block',
               }}
             >
-              Explore Fixtures →
+              Explore Fixtures &rarr;
             </Link>
           </div>
 
@@ -118,10 +118,10 @@ export default function HomePage() {
             }}
           >
             {[
-              { icon: '🏆', label: '21 Tournaments' },
-              { icon: '⚽', label: '48 Nations' },
-              { icon: '🏟️', label: '104 Matches' },
-              { icon: '🧠', label: '2,400 Scouts Competing' },
+              { icon: '\u{1F3C6}', label: '21 Tournaments' },
+              { icon: '\u26BD', label: '48 Nations' },
+              { icon: '\u{1F3DF}\uFE0F', label: '104 Matches' },
+              { icon: '\u{1F9E0}', label: '2,400 Scouts Competing' },
             ].map((stat, i, arr) => (
               <div key={stat.label} className="flex items-center">
                 <span
@@ -145,25 +145,7 @@ export default function HomePage() {
       </section>
 
       {/* ─── CHAMPIONS TIMELINE ──────────────────────────────────────────────── */}
-      <section className="py-20" style={{ background: '#0a0a0a' }}>
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="mb-12">
-            <p
-              className="font-mono text-red-500 uppercase"
-              style={{ fontSize: '13px', letterSpacing: '1.5px' }}
-            >
-              // WORLD CUP CHAMPIONS
-            </p>
-            <h2
-              className="font-sans text-white mt-2"
-              style={{ fontSize: 'clamp(36px, 5vw, 56px)' }}
-            >
-              Every champion since 1930
-            </h2>
-          </div>
-          <ChampionsTimeline />
-        </div>
-      </section>
+      <ChampionsTimeline />
 
       {/* ─── TODAY IN HISTORY ────────────────────────────────────────────────── */}
       <section className="py-20" style={{ background: '#09090b' }}>
