@@ -12,7 +12,7 @@ from sqlmodel import Session, select
 from app.limiter import limiter
 
 from app.db import get_session
-from app.models import User, PasswordResetToken
+from app.models import User, PasswordResetToken, AuthEvent
 from app.schemas import UserCreate, UserRead, OnboardingUpdate
 from app.core.security import (
     get_password_hash, verify_password,
@@ -99,11 +99,31 @@ def login(
         select(User).where(User.username == form_data.username)
     ).first()
 
+    client_ip = request.client.host if request.client else "unknown"
+
     if not user or not verify_password(form_data.password, user.hashed_password):
+        # Log failed attempt for NATASHA auth watchdog
+        session.add(AuthEvent(
+            user_id=user.id if user else None,
+            event_type="login_failure",
+            ip_address=client_ip,
+            user_agent=request.headers.get("user-agent", ""),
+            details=f"failed login for username={form_data.username}",
+        ))
+        session.commit()
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username or password",
         )
+
+    # Log successful login for NATASHA auth watchdog
+    session.add(AuthEvent(
+        user_id=user.id,
+        event_type="login_success",
+        ip_address=client_ip,
+        user_agent=request.headers.get("user-agent", ""),
+    ))
+    session.commit()
 
     access_token = create_access_token({"sub": str(user.id)})
     refresh_token = create_refresh_token(user.id)
@@ -169,16 +189,34 @@ def refresh_token(
     fanxi_refresh: str = Cookie(default=None),
     session: Session = Depends(get_session),
 ):
+    client_ip = request.client.host if request.client else "unknown"
+
     if not fanxi_refresh:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="No refresh token")
 
     user_id = decode_refresh_token(fanxi_refresh)
     if not user_id:
+        # Possible token replay — log for NATASHA
+        session.add(AuthEvent(
+            event_type="token_replay",
+            ip_address=client_ip,
+            user_agent=request.headers.get("user-agent", ""),
+            details="Invalid or expired refresh token submitted",
+        ))
+        session.commit()
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid or expired refresh token")
 
     user = session.get(User, user_id)
     if not user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User not found")
+
+    # Log successful refresh
+    session.add(AuthEvent(
+        user_id=user.id,
+        event_type="token_refresh",
+        ip_address=client_ip,
+    ))
+    session.commit()
 
     access_token = create_access_token({"sub": str(user.id)})
     return {"access_token": access_token, "token_type": "bearer"}

@@ -193,3 +193,72 @@ class TeamSquadCache(SQLModel, table=True):
     players_data: Dict[str, Any] = Field(default={}, sa_column=Column(JSON))
     last_updated: datetime = Field(default_factory=datetime.utcnow)
     expires_at: datetime  # Time-based expiration
+
+
+# ---------------------------------------------------------------------------
+# Agent System — Avengers Initiative
+# ---------------------------------------------------------------------------
+
+class AgentRun(SQLModel, table=True):
+    """
+    Stores the output of every agent execution.
+
+    Each agent writes one row per run with its findings, severity score,
+    and summary.  The admin panel and OpenClaw skills read these rows to
+    build briefings and dashboards.
+
+    findings      : list of individual finding dicts (stored as JSON)
+    actions_taken : list of auto-actions the agent executed (e.g. IP ban)
+    """
+    id: Optional[int] = Field(default=None, primary_key=True)
+    agent: str = Field(index=True)                     # e.g. "NATASHA"
+    department: str = Field(default="shield")           # e.g. "shield", "forge"
+    run_type: str                                       # e.g. "secrets_scan", "auth_watchdog"
+    severity: int = Field(default=0)                    # 0–100
+    findings: List[Dict[str, Any]] = Field(default_factory=list, sa_column=Column(JSON))
+    actions_taken: List[str] = Field(default_factory=list, sa_column=Column(JSON))
+    escalated_to_queue: bool = Field(default=False)
+    summary: str = Field(default="")
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+
+class ApprovalQueue(SQLModel, table=True):
+    """
+    High-risk actions that require founder approval before execution.
+
+    Agents write here when severity >= 80.  The founder reviews via the
+    admin panel or OpenClaw Telegram bot and sets status to "approved" or
+    "rejected".  Only then does the system act.
+
+    action_type : what the agent wants to do (e.g. "ban_ip", "rotate_key")
+    action_data : JSON with parameters for the action
+    """
+    id: Optional[int] = Field(default=None, primary_key=True)
+    agent: str = Field(index=True)                     # who requested it
+    department: str = Field(default="shield")
+    action_type: str                                    # e.g. "ban_ip", "rotate_key"
+    action_data: Dict[str, Any] = Field(default_factory=dict, sa_column=Column(JSON))
+    severity: int = Field(default=0)
+    reason: str = Field(default="")
+    status: str = Field(default="pending", index=True)  # pending | approved | rejected
+    reviewed_by: Optional[str] = None                   # admin username
+    reviewed_at: Optional[datetime] = None
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+
+
+class AuthEvent(SQLModel, table=True):
+    """
+    Lightweight auth event log consumed by NATASHA's auth watchdog.
+
+    Every login attempt (success or failure) writes one row.  NATASHA
+    queries this table to detect brute-force, impossible-travel, and
+    token-replay patterns.
+    """
+    id: Optional[int] = Field(default=None, primary_key=True)
+    user_id: Optional[int] = Field(default=None, index=True)
+    event_type: str = Field(index=True)                # "login_success", "login_failure", "token_refresh", "token_replay"
+    ip_address: str = Field(default="")
+    country: Optional[str] = None                      # GeoIP resolved (best-effort)
+    user_agent: Optional[str] = None
+    details: Optional[str] = None                      # extra context
+    created_at: datetime = Field(default_factory=datetime.utcnow)

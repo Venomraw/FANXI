@@ -6,7 +6,7 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import JSONResponse
-from app.api import users, predictions, leagues, teams, intel, squads, matches, ai, cards, news, admin
+from app.api import users, predictions, leagues, teams, intel, squads, matches, ai, cards, news, admin, agents
 from app.websocket import match_ws
 from app import web
 from app.db import init_db, engine
@@ -145,6 +145,7 @@ app.include_router(ai.router)
 app.include_router(cards.router)
 app.include_router(news.router, prefix="/news", tags=["news"])
 app.include_router(admin.router)
+app.include_router(agents.router)
 
 # WebSocket
 app.include_router(match_ws.router)
@@ -211,4 +212,32 @@ def on_startup():
     init_db()
     match_ws.scheduler.start()
     logger.info("APScheduler started for live match polling.")
+
+    # -----------------------------------------------------------------------
+    # Avengers Initiative — scheduled agent jobs
+    # -----------------------------------------------------------------------
+    from app.agents.natasha import Natasha
+    _natasha = Natasha()
+
+    # NATASHA secrets scan — every 24 hours
+    match_ws.scheduler.add_job(
+        _natasha.run_secrets_scan,
+        "interval",
+        hours=24,
+        id="natasha_secrets_scan",
+        replace_existing=True,
+        misfire_grace_time=3600,
+    )
+
+    # NATASHA auth watchdog — every 5 minutes
+    match_ws.scheduler.add_job(
+        _natasha.run_auth_watchdog,
+        "interval",
+        minutes=5,
+        id="natasha_auth_watchdog",
+        replace_existing=True,
+        misfire_grace_time=60,
+    )
+
+    logger.info("NATASHA scheduled: secrets_scan (24h), auth_watchdog (5m)")
     logger.info("Environment: %s", os.environ.get("FANXI_ENV", "development"))
