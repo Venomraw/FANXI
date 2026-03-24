@@ -15,6 +15,7 @@ Endpoints:
   POST /agents/vision/run                   — manually trigger VISION
   GET  /agents/vision/squad-audit           — latest squad audit results
   GET  /agents/vision/proposed-squads       — proposed squad gap report
+  POST /agents/pietro/run                   — manually trigger PIETRO
 """
 import logging
 from datetime import datetime, timezone
@@ -493,4 +494,50 @@ def get_all_formation_profiles(
     return {
         "count": len(profiles),
         "profiles": profiles,
+    }
+
+
+# ---------------------------------------------------------------------------
+# PIETRO — Quicksilver (Game Command)
+# ---------------------------------------------------------------------------
+
+@router.post("/pietro/run")
+@limiter.limit("10/minute")
+def trigger_pietro(
+    request: Request,
+    admin: User = Depends(_require_admin),
+    run_type: Optional[str] = "match_nudge",
+    match_id: Optional[int] = None,
+):
+    """
+    Manually trigger PIETRO.  Accepts run_type: 'match_nudge', 'conversion_check', or 'all'.
+    For match_nudge, optionally pass match_id to nudge for a specific match.
+    OpenClaw skill calls this on demand or as a scheduled cron.
+    """
+    from app.agents.pietro import Pietro
+    pietro = Pietro()
+
+    results = {}
+
+    if run_type in ("match_nudge", "all"):
+        results["match_nudge"] = pietro.run_match_nudge(match_id=match_id)
+    if run_type in ("conversion_check", "all"):
+        results["conversion_check"] = pietro.run_conversion_check()
+
+    if not results:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid run_type: {run_type}. Use 'match_nudge', 'conversion_check', or 'all'.",
+        )
+
+    logger.info(
+        "PIETRO_MANUAL_TRIGGER by=%s run_type=%s match_id=%s",
+        admin.username, run_type, match_id,
+    )
+
+    return {
+        "triggered_by": admin.username,
+        "run_type": run_type,
+        "match_id": match_id,
+        "results": results,
     }

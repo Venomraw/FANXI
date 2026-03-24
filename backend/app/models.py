@@ -310,3 +310,47 @@ class VisionCache(SQLModel, table=True):
     agent: str = Field(default="VISION")
     generated_at: datetime = Field(default_factory=datetime.utcnow)
     expires_at: Optional[datetime] = None              # None = never expires
+
+
+# ---------------------------------------------------------------------------
+# Game Command — PIETRO (Quicksilver)
+# ---------------------------------------------------------------------------
+
+class NudgeLog(SQLModel, table=True):
+    """
+    Deduplication log for PIETRO's prediction nudges.
+
+    One row per (user_id, match_id) pair.  PIETRO checks this table before
+    every nudge and skips if an entry exists.  The converted flag is set
+    by the conversion tracker when the user submits a prediction after
+    receiving the nudge.
+    """
+    id: Optional[int] = Field(default=None, primary_key=True)
+    user_id: int = Field(index=True)
+    match_id: int = Field(index=True)
+    nudge_type: str = Field(default="in_app")          # "in_app" | future: "email", "push"
+    sent_at: datetime = Field(default_factory=datetime.utcnow)
+    converted: bool = Field(default=False)
+    match_kickoff: Optional[datetime] = None
+
+
+class InAppNotification(SQLModel, table=True):
+    """
+    In-app notification delivered to a user.
+
+    Written by PIETRO (nudges), scoring engine (score reveals),
+    leaderboard updates, and agent alerts.  The /notifications API
+    returns these for the authenticated user.
+
+    expires_at : nullable.  PIETRO sets it to match kickoff time.
+                 Other writers may leave it None (never expires).
+    """
+    id: Optional[int] = Field(default=None, primary_key=True)
+    user_id: int = Field(index=True)
+    title: str
+    message: str
+    action_url: str = Field(default="")
+    notification_type: str = Field(index=True)         # "prediction_nudge" | "match_starting" | "score_reveal" | "leaderboard_change" | "agent_alert"
+    is_read: bool = Field(default=False)
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    expires_at: Optional[datetime] = None              # None = never expires
