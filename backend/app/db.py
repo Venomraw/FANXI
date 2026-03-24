@@ -136,7 +136,7 @@ def init_db() -> None:
     from app.models import (  # noqa: F401
         User, Player, MatchPrediction, PredictionDB,
         TeamDB, MatchDB, TeamSquadCache, PasswordResetToken,
-        AgentRun, ApprovalQueue, AuthEvent,
+        AgentRun, ApprovalQueue, AuthEvent, ScoutReport,
     )
 
     SQLModel.metadata.create_all(engine)

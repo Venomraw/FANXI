@@ -255,4 +255,30 @@ def on_startup():
     )
 
     logger.info("RHODEY scheduled: ci_scan (6h)")
+
+    # VISION — squad auditor + scout reports
+    from app.agents.vision import Vision
+    _vision = Vision()
+
+    # VISION squad audit — every 24 hours
+    match_ws.scheduler.add_job(
+        _vision.run_squad_audit,
+        "interval",
+        hours=24,
+        id="vision_squad_audit",
+        replace_existing=True,
+        misfire_grace_time=3600,
+    )
+
+    # VISION scout reports — every 6 hours
+    match_ws.scheduler.add_job(
+        _vision.run_scout_reports,
+        "interval",
+        hours=6,
+        id="vision_scout_reports",
+        replace_existing=True,
+        misfire_grace_time=3600,
+    )
+
+    logger.info("VISION scheduled: squad_audit (24h), scout_reports (6h)")
     logger.info("Environment: %s", os.environ.get("FANXI_ENV", "development"))

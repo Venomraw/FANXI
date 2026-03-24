@@ -12,6 +12,9 @@ Endpoints:
   POST /agents/approval-queue/{id}/reject   — reject an action
   POST /agents/natasha/run                  — manually trigger NATASHA
   POST /agents/rhodey/run                   — manually trigger RHODEY
+  POST /agents/vision/run                   — manually trigger VISION
+  GET  /agents/vision/squad-audit           — latest squad audit results
+  GET  /agents/vision/proposed-squads       — proposed squad gap report
 """
 import logging
 from datetime import datetime, timezone
@@ -325,3 +328,86 @@ def trigger_rhodey(
         "severity": result.get("severity", 0),
         "result": result,
     }
+
+
+@router.post("/vision/run")
+@limiter.limit("5/minute")
+def trigger_vision(
+    request: Request,
+    admin: User = Depends(_require_admin),
+    run_type: Optional[str] = "all",
+):
+    """
+    Manually trigger VISION.  Accepts run_type: 'squad_audit', 'scout_reports', or 'all'.
+    OpenClaw skill calls this on demand or as a scheduled cron.
+
+    Returns the full result payload — flat JSON, ready for Telegram formatting.
+    """
+    from app.agents.vision import Vision
+    vision = Vision()
+
+    results = {}
+
+    if run_type in ("squad_audit", "all"):
+        results["squad_audit"] = vision.run_squad_audit()
+    if run_type in ("scout_reports", "all"):
+        results["scout_reports"] = vision.run_scout_reports()
+
+    if not results:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid run_type: {run_type}. Use 'squad_audit', 'scout_reports', or 'all'.",
+        )
+
+    max_severity = max(r.get("severity", 0) for r in results.values())
+
+    logger.info(
+        "VISION_MANUAL_TRIGGER by=%s run_type=%s max_severity=%d",
+        admin.username, run_type, max_severity,
+    )
+
+    return {
+        "triggered_by": admin.username,
+        "run_type": run_type,
+        "max_severity": max_severity,
+        "results": results,
+    }
+
+
+@router.get("/vision/squad-audit")
+def get_vision_squad_audit(
+    admin: User = Depends(_require_admin),
+):
+    """
+    Return the latest squad audit results.
+    OpenClaw skill calls this to check squad health without triggering a new run.
+    """
+    from app.agents.vision import Vision
+    vision = Vision()
+
+    audit = vision.get_latest_squad_audit()
+    if not audit:
+        raise HTTPException(status_code=404, detail="No squad audit runs found. Trigger one first.")
+
+    return audit
+
+
+@router.get("/vision/proposed-squads")
+def get_vision_proposed_squads(
+    admin: User = Depends(_require_admin),
+):
+    """
+    Return the contents of static_squads.proposed.json.
+    OpenClaw skill calls this so the founder can review gap analysis in Telegram.
+    """
+    from app.agents.vision import Vision
+    vision = Vision()
+
+    proposed = vision.get_proposed_squads()
+    if not proposed:
+        raise HTTPException(
+            status_code=404,
+            detail="No proposed squads file found. Run a squad audit first.",
+        )
+
+    return proposed
