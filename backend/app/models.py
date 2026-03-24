@@ -282,3 +282,31 @@ class ScoutReport(SQLModel, table=True):
     agent: str = Field(default="VISION")
     generated_at: datetime = Field(default_factory=datetime.utcnow)
     expires_at: datetime                               # generated_at + 24h
+
+
+class VisionCache(SQLModel, table=True):
+    """
+    Generic cache for VISION-generated AI content.
+
+    Covers multiple content types via the cache_type discriminator:
+      h2h        — head-to-head history between two teams (7-day TTL)
+      formation  — formation probability profile for a team (30-day TTL)
+      post_match — post-match community review (no expiry)
+
+    lookup_key : canonical key for dedup.  Format varies by type:
+      h2h:        "Argentina::Brazil" (alphabetical)
+      formation:  "Argentina"
+      post_match: "match:1001"
+    report_data : JSON payload — structure depends on cache_type
+    """
+    id: Optional[int] = Field(default=None, primary_key=True)
+    cache_type: str = Field(index=True)                # "h2h" | "formation" | "post_match"
+    lookup_key: str = Field(index=True)                # canonical dedup key
+    match_id: Optional[int] = Field(default=None, index=True)
+    team: Optional[str] = None                         # primary team (formation profiles)
+    home_team: Optional[str] = None
+    away_team: Optional[str] = None
+    report_data: Dict[str, Any] = Field(default_factory=dict, sa_column=Column(JSON))
+    agent: str = Field(default="VISION")
+    generated_at: datetime = Field(default_factory=datetime.utcnow)
+    expires_at: Optional[datetime] = None              # None = never expires

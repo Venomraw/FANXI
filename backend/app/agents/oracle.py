@@ -41,6 +41,27 @@ class Oracle:
             logger.error("ORACLE: VISION scout_reports failed: %s", exc)
             results["vision_scouts"] = {"error": str(exc)}
 
+        # VISION — H2H generation
+        try:
+            results["vision_h2h"] = self.vision.run_h2h_generation()
+        except Exception as exc:
+            logger.error("ORACLE: VISION h2h_generation failed: %s", exc)
+            results["vision_h2h"] = {"error": str(exc)}
+
+        # VISION — formation profiles
+        try:
+            results["vision_formations"] = self.vision.run_formation_profiles()
+        except Exception as exc:
+            logger.error("ORACLE: VISION formation_profiles failed: %s", exc)
+            results["vision_formations"] = {"error": str(exc)}
+
+        # VISION — post-match reviews
+        try:
+            results["vision_post_match"] = self.vision.run_post_match_review()
+        except Exception as exc:
+            logger.error("ORACLE: VISION post_match_review failed: %s", exc)
+            results["vision_post_match"] = {"error": str(exc)}
+
         max_sev = max(
             r.get("severity", 0)
             for r in results.values()

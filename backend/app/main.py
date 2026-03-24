@@ -280,5 +280,35 @@ def on_startup():
         misfire_grace_time=3600,
     )
 
-    logger.info("VISION scheduled: squad_audit (24h), scout_reports (6h)")
+    # VISION H2H pre-generator — every 12 hours
+    match_ws.scheduler.add_job(
+        _vision.run_h2h_generation,
+        "interval",
+        hours=12,
+        id="vision_h2h_pregenerator",
+        replace_existing=True,
+        misfire_grace_time=3600,
+    )
+
+    # VISION formation profiles — weekly (168 hours)
+    match_ws.scheduler.add_job(
+        _vision.run_formation_profiles,
+        "interval",
+        hours=168,
+        id="vision_formation_profiles",
+        replace_existing=True,
+        misfire_grace_time=3600,
+    )
+
+    # VISION post-match reviewer — every 30 minutes
+    match_ws.scheduler.add_job(
+        _vision.run_post_match_review,
+        "interval",
+        minutes=30,
+        id="vision_post_match_checker",
+        replace_existing=True,
+        misfire_grace_time=300,
+    )
+
+    logger.info("VISION scheduled: squad_audit (24h), scout_reports (6h), h2h (12h), formations (168h), post_match (30m)")
     logger.info("Environment: %s", os.environ.get("FANXI_ENV", "development"))

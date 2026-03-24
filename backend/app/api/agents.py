@@ -25,7 +25,7 @@ from sqlmodel import Session, select, func
 
 from app.db import get_session
 from app.limiter import limiter
-from app.models import AgentRun, ApprovalQueue, User
+from app.models import AgentRun, ApprovalQueue, User, VisionCache
 from app.api.users import get_current_user
 
 logger = logging.getLogger("fanxi.agents.api")
@@ -338,13 +338,19 @@ def trigger_vision(
     run_type: Optional[str] = "all",
 ):
     """
-    Manually trigger VISION.  Accepts run_type: 'squad_audit', 'scout_reports', or 'all'.
-    OpenClaw skill calls this on demand or as a scheduled cron.
+    Manually trigger VISION.  Accepts run_type: 'squad_audit', 'scout_reports',
+    'h2h_generation', 'formation_profiles', 'post_match_review', or 'all'.
+    For post_match_review, optionally pass match_id query param.
 
     Returns the full result payload — flat JSON, ready for Telegram formatting.
     """
     from app.agents.vision import Vision
     vision = Vision()
+
+    _valid = {
+        "squad_audit", "scout_reports", "h2h_generation",
+        "formation_profiles", "post_match_review", "all",
+    }
 
     results = {}
 
@@ -352,11 +358,17 @@ def trigger_vision(
         results["squad_audit"] = vision.run_squad_audit()
     if run_type in ("scout_reports", "all"):
         results["scout_reports"] = vision.run_scout_reports()
+    if run_type in ("h2h_generation", "all"):
+        results["h2h_generation"] = vision.run_h2h_generation()
+    if run_type in ("formation_profiles", "all"):
+        results["formation_profiles"] = vision.run_formation_profiles()
+    if run_type in ("post_match_review", "all"):
+        results["post_match_review"] = vision.run_post_match_review()
 
     if not results:
         raise HTTPException(
             status_code=400,
-            detail=f"Invalid run_type: {run_type}. Use 'squad_audit', 'scout_reports', or 'all'.",
+            detail=f"Invalid run_type: {run_type}. Use one of: {sorted(_valid)}",
         )
 
     max_severity = max(r.get("severity", 0) for r in results.values())
@@ -411,3 +423,74 @@ def get_vision_proposed_squads(
         )
 
     return proposed
+
+
+@router.get("/vision/formation-profile/{team}")
+def get_formation_profile(
+    team: str,
+    session: Session = Depends(get_session),
+    admin: User = Depends(_require_admin),
+):
+    """
+    Return the formation profile for a team.
+    Stored only — does NOT trigger Groq generation.
+    """
+    now = datetime.now(timezone.utc)
+    entry = session.exec(
+        select(VisionCache).where(
+            VisionCache.cache_type == "formation",
+            VisionCache.lookup_key == team,
+        )
+        .order_by(VisionCache.generated_at.desc())
+    ).first()
+
+    if entry and entry.expires_at and entry.expires_at < now:
+        entry = None
+
+    if not entry:
+        raise HTTPException(
+            status_code=404,
+            detail=f"No formation profile for '{team}'. Run VISION formation_profiles first.",
+        )
+
+    return {
+        "team": entry.team,
+        "profile": entry.report_data,
+        "generated_at": entry.generated_at.isoformat() if entry.generated_at else None,
+    }
+
+
+@router.get("/vision/formation-profiles")
+def get_all_formation_profiles(
+    session: Session = Depends(get_session),
+    admin: User = Depends(_require_admin),
+):
+    """
+    Return all cached formation profiles.
+    Only returns what exists — does NOT generate missing profiles.
+    """
+    now = datetime.now(timezone.utc)
+    entries = session.exec(
+        select(VisionCache).where(
+            VisionCache.cache_type == "formation",
+        )
+        .order_by(VisionCache.team)
+    ).all()
+
+    profiles = []
+    for e in entries:
+        if e.expires_at and e.expires_at < now:
+            continue
+        profiles.append({
+            "team": e.team,
+            "primary_formation": e.report_data.get("primary_formation"),
+            "primary_probability": e.report_data.get("primary_probability"),
+            "tactical_style": e.report_data.get("tactical_style"),
+            "manager": e.report_data.get("manager"),
+            "generated_at": e.generated_at.isoformat() if e.generated_at else None,
+        })
+
+    return {
+        "count": len(profiles),
+        "profiles": profiles,
+    }
