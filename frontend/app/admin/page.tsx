@@ -262,6 +262,7 @@ const AGENTS = [
 
 function AgentsTab({ authFetch, toast }: { authFetch: AuthFetchFn; toast: ToastObj }) {
   const [runs, setRuns] = useState<Record<string, AgentRunItem | null>>({});
+  const [recentRuns, setRecentRuns] = useState<AgentRunItem[]>([]);
   const [running, setRunning] = useState<string | null>(null);
 
   const loadRuns = useCallback(async () => {
@@ -274,6 +275,11 @@ function AgentsTab({ authFetch, toast }: { authFetch: AuthFetchFn; toast: ToastO
         }
       } catch { /* ignore */ }
     }
+    // Load recent activity feed
+    try {
+      const res = await authFetch(`${API}/agents/runs?limit=20`);
+      if (res.ok) { const data = await res.json(); setRecentRuns(data.runs ?? []); }
+    } catch { /* ignore */ }
   }, [authFetch]);
 
   useEffect(() => { loadRuns(); }, [loadRuns]);
@@ -326,6 +332,25 @@ function AgentsTab({ authFetch, toast }: { authFetch: AuthFetchFn; toast: ToastO
             </Card>
           );
         })}
+      </div>
+
+      {/* Recent Agent Activity */}
+      <div className="mt-8">
+        <h3 className="text-lg font-display text-white mb-4">Recent Activity</h3>
+        <Card className="!p-0 overflow-hidden">
+          {recentRuns.length === 0 ? (
+            <div className="text-white/30 text-sm font-sans text-center py-6">No agent runs yet</div>
+          ) : (
+            recentRuns.map((r) => (
+              <div key={r.id} className="flex items-center gap-3 px-4 py-2.5 border-b border-white/5 last:border-0">
+                <span className={`w-2 h-2 rounded-full flex-shrink-0 ${severityDot(r.severity)}`} />
+                <span className="text-white/30 text-xs font-mono w-16 flex-shrink-0">{timeAgo(r.created_at)}</span>
+                <span className="text-white font-sans text-sm w-20 flex-shrink-0">{r.agent}</span>
+                <span className="text-white/50 text-sm font-sans truncate">{r.summary}</span>
+              </div>
+            ))
+          )}
+        </Card>
       </div>
     </div>
   );
