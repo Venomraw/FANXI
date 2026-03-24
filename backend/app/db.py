@@ -107,18 +107,20 @@ def run_migrations() -> None:
     is_pg = "postgresql" in (settings.database_url or "")
     with engine.connect() as conn:
         for table, col, col_type in new_columns:
+            # Quote table name — "user" is a reserved word in PostgreSQL
+            quoted = f'"{table}"'
             if is_pg:
                 exists = conn.execute(text(
                     "SELECT 1 FROM information_schema.columns "
                     "WHERE table_name = :t AND column_name = :c"
                 ), {"t": table, "c": col}).fetchone()
             else:
-                # SQLite: PRAGMA table_info
+                # SQLite: PRAGMA table_info (unquoted — SQLite ignores quotes in PRAGMA)
                 rows = conn.execute(text(f"PRAGMA table_info({table})")).fetchall()
                 exists = any(row[1] == col for row in rows)
 
             if not exists:
-                conn.execute(text(f"ALTER TABLE {table} ADD COLUMN {col} {col_type}"))
+                conn.execute(text(f"ALTER TABLE {quoted} ADD COLUMN {col} {col_type}"))
                 conn.commit()
 
 
