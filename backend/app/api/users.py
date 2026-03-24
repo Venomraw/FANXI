@@ -158,6 +158,7 @@ def login(
             "favorite_club": user.favorite_club,
             "preferred_formation": user.preferred_formation,
             "tactical_style": user.tactical_style,
+            "is_admin": user.is_admin,
         },
     }
 

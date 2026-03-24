@@ -16,7 +16,7 @@ from sqlmodel import Session, select, func
 
 from app.db import get_session
 from app.limiter import limiter
-from app.models import MatchPrediction, User, AiCommentary, MatchDB
+from app.models import MatchPrediction, User, AiCommentary, MatchDB, AgentRun, ApprovalQueue, NudgeLog
 from app.api.users import get_current_user
 from app.api.predictions import rank_title_for
 
@@ -56,6 +56,71 @@ def admin_dashboard(
         "locked_predictions": locked_predictions,
         "scored_predictions": scored_predictions,
         "timestamp": datetime.now(timezone.utc).isoformat(),
+    }
+
+
+@router.get("/stats")
+def admin_stats(
+    session: Session = Depends(get_session),
+    admin: User = Depends(_require_admin),
+):
+    """
+    Extended platform overview for the admin panel frontend.
+    Includes agent stats, nudge metrics, and approval queue count.
+    """
+    from datetime import timedelta
+    now = datetime.now(timezone.utc)
+    today_start = now.replace(hour=0, minute=0, second=0, microsecond=0)
+    week_start = today_start - timedelta(days=7)
+
+    total_users = session.exec(select(func.count(User.id))).one()
+    total_predictions = session.exec(select(func.count(MatchPrediction.id))).one()
+
+    predictions_today = session.exec(
+        select(func.count(MatchPrediction.id)).where(
+            MatchPrediction.created_at >= today_start,
+        )
+    ).one()
+
+    # Nudge stats (last 24h)
+    nudge_cutoff = now - timedelta(hours=24)
+    nudges_24h = session.exec(
+        select(func.count(NudgeLog.id)).where(NudgeLog.sent_at >= nudge_cutoff)
+    ).one()
+    nudges_converted = session.exec(
+        select(func.count(NudgeLog.id)).where(
+            NudgeLog.sent_at >= nudge_cutoff,
+            NudgeLog.converted == True,  # noqa: E712
+        )
+    ).one()
+    conversion_rate = round(nudges_converted / nudges_24h * 100, 1) if nudges_24h else 0
+
+    # Approval queue
+    open_approvals = session.exec(
+        select(func.count(ApprovalQueue.id)).where(ApprovalQueue.status == "pending")
+    ).one()
+
+    # Agent stats
+    active_agents = session.exec(
+        select(func.count(func.distinct(AgentRun.agent)))
+    ).one()
+    critical_alerts = session.exec(
+        select(func.count(AgentRun.id)).where(
+            AgentRun.severity >= 80,
+            AgentRun.created_at >= nudge_cutoff,
+        )
+    ).one()
+
+    return {
+        "total_users": total_users,
+        "total_predictions": total_predictions,
+        "predictions_today": predictions_today,
+        "nudges_sent_24h": nudges_24h,
+        "conversion_rate_24h": conversion_rate,
+        "open_approval_queue": open_approvals,
+        "active_agents": active_agents,
+        "critical_alerts": critical_alerts,
+        "timestamp": now.isoformat(),
     }
 
 
@@ -270,9 +335,12 @@ def admin_list_users(
                 "id": u.id,
                 "username": u.username,
                 "email": u.email,
+                "country_allegiance": u.country_allegiance,
                 "football_iq_points": u.football_iq_points,
                 "rank_title": u.rank_title,
                 "is_admin": u.is_admin,
+                "is_banned": u.is_banned,
+                "favorite_nation": u.favorite_nation,
                 "onboarding_complete": u.onboarding_complete,
             }
             for u in users
@@ -297,3 +365,39 @@ def admin_toggle_admin(
     session.commit()
     logger.info("ADMIN_TOGGLE user_id=%d is_admin=%s by=%s", user_id, user.is_admin, admin.username)
     return {"user_id": user_id, "is_admin": user.is_admin}
+
+
+@router.post("/users/{user_id}/ban")
+def admin_ban_user(
+    user_id: int,
+    session: Session = Depends(get_session),
+    admin: User = Depends(_require_admin),
+):
+    """Ban a user.  Prevents login."""
+    if user_id == admin.id:
+        raise HTTPException(status_code=400, detail="Cannot ban yourself")
+    user = session.get(User, user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    user.is_banned = True
+    session.add(user)
+    session.commit()
+    logger.info("ADMIN_BAN user_id=%d username=%s by=%s", user_id, user.username, admin.username)
+    return {"user_id": user_id, "username": user.username, "is_banned": True}
+
+
+@router.post("/users/{user_id}/unban")
+def admin_unban_user(
+    user_id: int,
+    session: Session = Depends(get_session),
+    admin: User = Depends(_require_admin),
+):
+    """Unban a user."""
+    user = session.get(User, user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    user.is_banned = False
+    session.add(user)
+    session.commit()
+    logger.info("ADMIN_UNBAN user_id=%d username=%s by=%s", user_id, user.username, admin.username)
+    return {"user_id": user_id, "username": user.username, "is_banned": False}

@@ -41,6 +41,7 @@ class UserRead(UserBase):
     football_iq_points: int
     rank_title: str
     onboarding_complete: bool = False
+    is_admin: bool = False
     display_name: Optional[str] = None
     avatar_id: Optional[str] = None
     favorite_nation: Optional[str] = None

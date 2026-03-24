@@ -76,6 +76,7 @@ class User(SQLModel, table=True):
     biggest_upset_pick: Optional[str] = None
     onboarding_complete: bool = Field(default=False)
     is_admin: bool = Field(default=False)
+    is_banned: bool = Field(default=False)
 
 
 # ---------------------------------------------------------------------------

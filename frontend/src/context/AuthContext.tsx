@@ -29,6 +29,7 @@ export interface AuthUser {
   football_iq_points: number;
   rank_title: string;
   onboarding_complete: boolean;
+  is_admin?: boolean;
   display_name?: string;
   avatar_id?: string;
   favorite_nation?: string;
