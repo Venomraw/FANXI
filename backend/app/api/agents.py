@@ -16,6 +16,8 @@ Endpoints:
   GET  /agents/vision/squad-audit           — latest squad audit results
   GET  /agents/vision/proposed-squads       — proposed squad gap report
   POST /agents/pietro/run                   — manually trigger PIETRO
+  POST /agents/wanda/run                    — manually trigger WANDA
+  GET  /agents/wanda/violations             — latest WANDA scan results
 """
 import logging
 from datetime import datetime, timezone
@@ -541,3 +543,82 @@ def trigger_pietro(
         "match_id": match_id,
         "results": results,
     }
+
+
+# ---------------------------------------------------------------------------
+# WANDA — Scarlet Witch (Stark Design Labs)
+# ---------------------------------------------------------------------------
+
+@router.post("/wanda/run")
+@limiter.limit("5/minute")
+def trigger_wanda(
+    request: Request,
+    admin: User = Depends(_require_admin),
+    run_type: Optional[str] = "all",
+):
+    """
+    Manually trigger WANDA.  Accepts run_type: 'typography', 'accessibility',
+    'design_system', 'competitor_research', or 'all'.
+    """
+    from app.agents.wanda import Wanda
+    wanda = Wanda()
+
+    _valid = {
+        "typography", "accessibility", "design_system",
+        "competitor_research", "all",
+    }
+
+    results = {}
+
+    if run_type in ("typography", "all"):
+        results["typography"] = wanda.run_typography_scan()
+    if run_type in ("accessibility", "all"):
+        results["accessibility"] = wanda.run_accessibility_scan()
+    if run_type in ("design_system", "all"):
+        results["design_system"] = wanda.run_design_system_scan()
+    if run_type in ("competitor_research",):
+        results["competitor_research"] = wanda.run_competitor_research()
+
+    # "all" does full scan with Groq suggestions instead of individual scans
+    if run_type == "all":
+        results = {"full_scan": wanda.run_full_scan()}
+
+    if not results:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid run_type: {run_type}. Use one of: {sorted(_valid)}",
+        )
+
+    max_severity = max(r.get("severity", 0) for r in results.values())
+
+    logger.info(
+        "WANDA_MANUAL_TRIGGER by=%s run_type=%s max_severity=%d",
+        admin.username, run_type, max_severity,
+    )
+
+    return {
+        "triggered_by": admin.username,
+        "run_type": run_type,
+        "max_severity": max_severity,
+        "results": results,
+    }
+
+
+@router.get("/wanda/violations")
+def get_wanda_violations(
+    admin: User = Depends(_require_admin),
+):
+    """
+    Return latest WANDA scan results grouped by violation type + severity.
+    """
+    from app.agents.wanda import Wanda
+    wanda = Wanda()
+
+    violations = wanda.get_latest_violations()
+    if "message" in violations and violations["message"] == "No WANDA runs found":
+        raise HTTPException(
+            status_code=404,
+            detail="No WANDA runs found. Trigger one first.",
+        )
+
+    return violations

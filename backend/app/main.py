@@ -338,4 +338,30 @@ def on_startup():
     )
 
     logger.info("PIETRO scheduled: match_monitor (15m), conversion_tracker (90m)")
+
+    # WANDA — typography + accessibility guardian
+    from app.agents.wanda import Wanda
+    _wanda = Wanda()
+
+    # WANDA full scan — every 24 hours
+    match_ws.scheduler.add_job(
+        _wanda.run_full_scan,
+        "interval",
+        hours=24,
+        id="wanda_full_scan",
+        replace_existing=True,
+        misfire_grace_time=3600,
+    )
+
+    # WANDA competitor research — weekly (168 hours)
+    match_ws.scheduler.add_job(
+        _wanda.run_competitor_research,
+        "interval",
+        hours=168,
+        id="wanda_competitor_research",
+        replace_existing=True,
+        misfire_grace_time=3600,
+    )
+
+    logger.info("WANDA scheduled: full_scan (24h), competitor_research (168h)")
     logger.info("Environment: %s", os.environ.get("FANXI_ENV", "development"))

@@ -258,6 +258,7 @@ const AGENTS = [
   { name: 'RHODEY', dept: 'Engineering Corps', schedule: 'ci_scan 6h' },
   { name: 'VISION', dept: 'Intelligence Bureau', schedule: 'audit 24h / scouts 6h / h2h 12h' },
   { name: 'PIETRO', dept: 'Game Command', schedule: 'nudge 15m / conversion 90m' },
+  { name: 'WANDA', dept: 'Stark Design Labs', schedule: 'full_scan 24h / research 168h' },
 ];
 
 function AgentsTab({ authFetch, toast }: { authFetch: AuthFetchFn; toast: ToastObj }) {
