@@ -11,6 +11,7 @@ Endpoints:
   POST /agents/approval-queue/{id}/approve  — approve an action
   POST /agents/approval-queue/{id}/reject   — reject an action
   POST /agents/natasha/run                  — manually trigger NATASHA
+  POST /agents/rhodey/run                   — manually trigger RHODEY
 """
 import logging
 from datetime import datetime, timezone
@@ -292,4 +293,35 @@ def trigger_natasha(
         "run_type": run_type,
         "max_severity": max_severity,
         "results": results,
+    }
+
+
+@router.post("/rhodey/run")
+@limiter.limit("5/minute")
+def trigger_rhodey(
+    request: Request,
+    admin: User = Depends(_require_admin),
+    scan_only: bool = False,
+):
+    """
+    Manually trigger RHODEY.  Query param scan_only=true for audit-only (no YAML gen).
+    OpenClaw skill calls this on demand or as a scheduled cron.
+
+    Returns the full result payload — flat JSON, ready for Telegram formatting.
+    """
+    from app.agents.rhodey import Rhodey
+    rhodey = Rhodey()
+
+    result = rhodey.run_ci_scan(scan_only=scan_only)
+
+    logger.info(
+        "RHODEY_MANUAL_TRIGGER by=%s scan_only=%s severity=%d",
+        admin.username, scan_only, result.get("severity", 0),
+    )
+
+    return {
+        "triggered_by": admin.username,
+        "scan_only": scan_only,
+        "severity": result.get("severity", 0),
+        "result": result,
     }

@@ -240,4 +240,19 @@ def on_startup():
     )
 
     logger.info("NATASHA scheduled: secrets_scan (24h), auth_watchdog (5m)")
+
+    # RHODEY — CI guardian, every 6 hours
+    from app.agents.rhodey import Rhodey
+    _rhodey = Rhodey()
+
+    match_ws.scheduler.add_job(
+        _rhodey.run_ci_scan,
+        "interval",
+        hours=6,
+        id="rhodey_ci_scan",
+        replace_existing=True,
+        misfire_grace_time=3600,
+    )
+
+    logger.info("RHODEY scheduled: ci_scan (6h)")
     logger.info("Environment: %s", os.environ.get("FANXI_ENV", "development"))
