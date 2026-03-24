@@ -46,9 +46,14 @@ _URL_EXCLUDE_FILES = {"config.py", "conftest.py", ".env.example", ".env.local"}
 _URL_EXCLUDE_DIRS = {"tests", "__pycache__", "node_modules", ".next"}
 
 # Pattern that matches env-var fallback pattern — these are acceptable
+# Covers both || (logical OR) and ?? (nullish coalescing)
 _ENV_FALLBACK_RE = re.compile(
-    r"process\.env\.\w+\s*\|\|?\s*['\"]http://localhost",
+    r"process\.env\.\w+\s*(?:\?\?|\|\|?)\s*['\"](?:http|ws)s?://localhost",
 )
+
+# Test file name patterns to exclude from frontend scans
+_TEST_FILE_SUFFIXES = {".test.ts", ".test.tsx", ".spec.ts", ".spec.tsx"}
+_TEST_DIRS = {"tests", "__tests__", "test", "__test__"}
 
 
 class Rhodey:
@@ -416,6 +421,11 @@ class Rhodey:
             return
         if filepath.name in _URL_EXCLUDE_FILES:
             return
+        # Skip test files
+        if any(filepath.name.endswith(s) for s in _TEST_FILE_SUFFIXES):
+            return
+        if any(part in _TEST_DIRS for part in filepath.parts):
+            return
 
         try:
             lines = filepath.read_text().splitlines()
@@ -424,13 +434,13 @@ class Rhodey:
 
         for i, line in enumerate(lines, 1):
             stripped = line.strip()
-            # Skip comments
-            if stripped.startswith("//") or stripped.startswith("*"):
+            # Skip comments (JS/TS // and # and block comment continuations)
+            if stripped.startswith("//") or stripped.startswith("*") or stripped.startswith("#"):
                 continue
             # Must contain localhost or 127.0.0.1
             if "localhost" not in line and "127.0.0.1" not in line:
                 continue
-            # Skip if it's an env-var fallback pattern (process.env.X || 'http://localhost')
+            # Skip env-var fallback patterns (|| and ??)
             if _ENV_FALLBACK_RE.search(line):
                 continue
             # This is a bare hardcoded URL

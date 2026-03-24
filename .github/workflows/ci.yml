@@ -1,3 +1,18 @@
+# PROPOSED BY RHODEY (War Machine) — CI Guardian
+# Generated: 2026-03-24 02:23 UTC
+# Severity score: 70
+# Gaps found: 7
+#
+# TO ACTIVATE:
+# 1. Review this file carefully
+# 2. Rename to ci.yml: mv ci.proposed.yml ci.yml
+# 3. git add .github/workflows/ci.yml
+# 4. git commit -m "ci: upgrade GitHub Actions pipeline (RHODEY)"
+# 5. git push
+#
+# RHODEY will detect activation on next run
+# and mark this proposal as implemented.
+
 name: CI
 
 on:
@@ -19,15 +34,16 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+          cache: "pip"
+          cache-dependency-path: backend/requirements.txt
 
       - name: Install dependencies
         run: pip install -r requirements.txt
 
       - name: Syntax check
         run: python -c "
-          import ast, sys, pathlib;
-          errors = [];
-          [errors.append(f'{f}: {e}') for f in pathlib.Path('app').rglob('*.py') for e in [None] if not (lambda: (ast.parse(f.read_text()), True))()[1]] if False else None;
+          import ast, pathlib;
+          [ast.parse(f.read_text()) for f in pathlib.Path('app').rglob('*.py')];
           print('Syntax OK')
           "
 
@@ -37,6 +53,13 @@ jobs:
           DATABASE_URL: ""
           SECRET_KEY: "test-secret"
         run: python -c "from app.main import app; print('Imports OK')"
+
+      - name: Run tests
+        env:
+          FOOTBALL_API_KEY: "test"
+          DATABASE_URL: ""
+          SECRET_KEY: "test-secret"
+        run: pytest tests/ -v --tb=short
 
   frontend:
     runs-on: ubuntu-latest
@@ -50,12 +73,17 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
+          cache: "npm"
+          cache-dependency-path: frontend/package-lock.json
 
       - name: Install dependencies
         run: npm ci
 
       - name: Type check
         run: npx tsc --noEmit
+
+      - name: Lint
+        run: npm run lint
 
       - name: Build
         run: npm run build
