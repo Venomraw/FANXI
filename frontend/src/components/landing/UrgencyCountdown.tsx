@@ -41,7 +41,7 @@ export default function UrgencyCountdown() {
         href="/predict"
         className="inline-flex items-center gap-3 font-display font-semibold text-white rounded-xl transition-all duration-200 hover:scale-105"
         style={{
-          background: '#dc2626',
+          background: 'var(--red)',
           padding: '20px 40px',
           fontSize: '20px',
           boxShadow: '0 8px 32px rgba(220,38,38,0.3)',

@@ -33,7 +33,7 @@ export default function UserStats() {
 
   return (
     <div className="w-full border theme-transition flex flex-col relative overflow-hidden"
-      style={{ background: '#0a0a0a', borderColor: 'rgba(255,255,255,0.08)' }}>
+      style={{ background: 'var(--dark)', borderColor: 'rgba(255,255,255,0.08)' }}>
 
       {/* Top accent */}
       <div className="absolute top-0 left-0 right-0 h-px theme-transition"
@@ -60,7 +60,7 @@ export default function UserStats() {
 
         {/* Name / country */}
         <div className="flex-1 min-w-0">
-          <p className="text-white font-bold text-xl leading-tight truncate">{user.username}</p>
+          <p className="text-white font-bold text-xl leading-snug truncate">{user.username}</p>
           <p className="font-mono text-xs tracking-widest uppercase mt-0.5"
             style={{ color: 'rgba(255,255,255,0.35)' }}>
             {user.country_allegiance}

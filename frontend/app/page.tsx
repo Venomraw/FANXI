@@ -33,17 +33,15 @@ export default function HomePage() {
       >
         {/* Background overlay — layered over the global stadium-bg */}
         <div
-          className="absolute inset-0 pointer-events-none"
+          className="absolute inset-0 pointer-events-none z-0"
           style={{
             background:
               'linear-gradient(to bottom, rgba(0,0,0,0.80) 0%, rgba(0,0,0,0.50) 50%, rgba(0,0,0,0.20) 100%)',
-            zIndex: 0,
           }}
         />
 
         <div
-          className="relative max-w-7xl mx-auto px-7 pt-28 pb-20 w-full"
-          style={{ zIndex: 1 }}
+          className="relative max-w-7xl mx-auto px-7 pt-28 pb-20 w-full z-[1]"
         >
           {/* Top label */}
           <span
@@ -89,7 +87,7 @@ export default function HomePage() {
               href="/predict"
               className="predict-cta-glow font-display font-semibold text-white rounded-lg transition-all duration-200 hover:scale-105"
               style={{
-                background: '#dc2626',
+                background: 'var(--red)',
                 padding: '16px 32px',
                 fontSize: '18px',
                 display: 'inline-block',
@@ -151,7 +149,7 @@ export default function HomePage() {
 
       {/* ─── TODAY IN HISTORY ────────────────────────────────────────────────── */}
       <RevealSection>
-        <section className="py-20" style={{ background: '#09090b' }}>
+        <section className="py-20 bg-[var(--dark)]">
           <div className="max-w-7xl mx-auto px-6">
             <div className="mb-8">
               <p
@@ -168,7 +166,7 @@ export default function HomePage() {
 
       {/* ─── NEWS STRIP ──────────────────────────────────────────────────────── */}
       <RevealSection>
-        <section className="py-20" style={{ background: '#0a0a0a' }}>
+        <section className="py-20 bg-[var(--dark)]">
           <div className="max-w-7xl mx-auto px-6">
             <div className="mb-10">
               <p
@@ -192,8 +190,7 @@ export default function HomePage() {
       {/* ─── URGENCY CTA ─────────────────────────────────────────────────────── */}
       <RevealSection>
         <section
-          className="py-24 text-center"
-          style={{ background: '#09090b' }}
+          className="py-24 text-center bg-[var(--dark)]"
         >
           <div className="max-w-3xl mx-auto px-6">
             <p

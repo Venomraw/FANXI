@@ -545,7 +545,7 @@ export default function PitchBoard({ onLockSuccess }: PitchBoardProps = {}) {
                     : { color: 'var(--muted)', background: 'transparent' }
                   }
                 >
-                  <span className="text-sm leading-none">{tab.icon}</span>
+                  <span className="text-sm leading-snug">{tab.icon}</span>
                   <span className="font-mono text-xs uppercase tracking-widest font-bold">{tab.label}</span>
                 </button>
               ))}
@@ -584,8 +584,8 @@ export default function PitchBoard({ onLockSuccess }: PitchBoardProps = {}) {
                               boxShadow: active ? `inset 0 -3px 0 ${primary}` : 'none',
                             }}
                           >
-                            <span className="text-2xl leading-none">{opt.icon}</span>
-                            <span className="font-sans font-semibold text-[13px] leading-none theme-transition" style={{ color: active ? primary : 'var(--text)' }}>
+                            <span className="text-2xl leading-snug">{opt.icon}</span>
+                            <span className="font-sans font-semibold text-[13px] leading-snug theme-transition" style={{ color: active ? primary : 'var(--text)' }}>
                               {opt.label}
                             </span>
                             <span className="font-mono text-xs text-center leading-tight" style={{ color: 'var(--muted)' }}>
@@ -624,8 +624,8 @@ export default function PitchBoard({ onLockSuccess }: PitchBoardProps = {}) {
                               boxShadow: active ? `inset 0 -3px 0 ${primary}` : 'none',
                             }}
                           >
-                            <span className="text-2xl leading-none">{opt.icon}</span>
-                            <span className="font-sans font-semibold text-[13px] leading-none theme-transition" style={{ color: active ? primary : 'var(--text)' }}>
+                            <span className="text-2xl leading-snug">{opt.icon}</span>
+                            <span className="font-sans font-semibold text-[13px] leading-snug theme-transition" style={{ color: active ? primary : 'var(--text)' }}>
                               {opt.label}
                             </span>
                             <span className="font-mono text-xs" style={{ color: 'var(--muted)' }}>
@@ -660,8 +660,8 @@ export default function PitchBoard({ onLockSuccess }: PitchBoardProps = {}) {
                               boxShadow: active ? `inset 0 -3px 0 ${primary}` : 'none',
                             }}
                           >
-                            <span className="text-2xl leading-none">{opt.icon}</span>
-                            <span className="font-sans font-semibold text-[13px] leading-none theme-transition" style={{ color: active ? primary : 'var(--text)' }}>
+                            <span className="text-2xl leading-snug">{opt.icon}</span>
+                            <span className="font-sans font-semibold text-[13px] leading-snug theme-transition" style={{ color: active ? primary : 'var(--text)' }}>
                               {opt.label}
                             </span>
                             <span className="font-mono text-xs" style={{ color: 'var(--muted)' }}>
@@ -727,10 +727,10 @@ export default function PitchBoard({ onLockSuccess }: PitchBoardProps = {}) {
                             <div className="flex gap-2">
                               {/* OUT */}
                               <div className="flex-1 flex items-center gap-1.5">
-                                <span className="font-mono text-xs font-bold flex-shrink-0" style={{ color: '#FF2D55' }}>OUT</span>
+                                <span className="font-mono text-xs font-bold flex-shrink-0" style={{ color: 'var(--red)' }}>OUT</span>
                                 <select value={halfTime.subs[i].out ?? ''} onChange={e => setSub(i, { out: e.target.value || null })}
                                   className="flex-1 px-2 py-1.5 border font-sans font-semibold text-xs focus:outline-none focus:ring-2 focus:ring-red-500/50"
-                                  style={{ background: 'var(--dark3)', borderColor: halfTime.subs[i].out ? '#FF2D5540' : 'rgba(255,255,255,0.08)', color: halfTime.subs[i].out ? 'var(--text)' : 'rgba(255,255,255,0.3)' }}>
+                                  style={{ background: 'var(--dark3)', borderColor: halfTime.subs[i].out ? 'color-mix(in srgb, var(--red) 25%, transparent)' : 'rgba(255,255,255,0.08)', color: halfTime.subs[i].out ? 'var(--text)' : 'rgba(255,255,255,0.3)' }}>
                                   <option value="">— XI —</option>
                                   {lineupPlayers.map(p => <option key={p.name} value={p.name}>{p.name}</option>)}
                                 </select>
@@ -813,8 +813,8 @@ export default function PitchBoard({ onLockSuccess }: PitchBoardProps = {}) {
                                 borderColor: active ? primary : `color-mix(in srgb, ${primary} 15%, transparent)`,
                                 boxShadow: active ? `inset 0 -3px 0 ${primary}` : 'none',
                               }}>
-                              <span className="text-2xl leading-none">{opt.icon}</span>
-                              <span className="font-sans font-semibold text-[13px] leading-none theme-transition" style={{ color: active ? primary : 'var(--text)' }}>{opt.label}</span>
+                              <span className="text-2xl leading-snug">{opt.icon}</span>
+                              <span className="font-sans font-semibold text-[13px] leading-snug theme-transition" style={{ color: active ? primary : 'var(--text)' }}>{opt.label}</span>
                               <span className="font-mono text-xs text-center" style={{ color: 'var(--muted)' }}>{opt.desc}</span>
                             </button>
                           );

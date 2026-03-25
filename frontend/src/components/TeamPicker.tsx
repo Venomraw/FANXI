@@ -21,7 +21,7 @@ export default function TeamPicker() {
   });
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4"
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4"
       style={{ background: 'rgba(0,0,0,0.95)', backdropFilter: 'blur(24px)' }}>
       <div className="w-full max-w-2xl border shadow-2xl overflow-hidden"
         style={{
@@ -53,6 +53,7 @@ export default function TeamPicker() {
 
           {/* Search */}
           <input
+            aria-label="Search team"
             type="text"
             placeholder="Search team..."
             value={search}

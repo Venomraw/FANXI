@@ -30,10 +30,10 @@ export default function DraggablePlayer({ id, name, number, variant = 'bench' }:
     return (
       <div
         ref={setNodeRef}
-        style={{ ...style, opacity: isDragging ? 0.7 : 1, zIndex: isDragging ? 50 : 'auto' }}
+        style={{ ...style, opacity: isDragging ? 0.7 : 1 }}
         {...listeners}
         {...attributes}
-        className="flex flex-col items-center gap-1 cursor-grab active:cursor-grabbing select-none"
+        className={`flex flex-col items-center gap-1 cursor-grab active:cursor-grabbing select-none ${isDragging ? 'z-50' : 'z-auto'}`}
       >
         {/* Jersey SVG */}
         <div
@@ -109,11 +109,10 @@ export default function DraggablePlayer({ id, name, number, variant = 'bench' }:
         background: isDragging ? `color-mix(in srgb, ${primary} 15%, var(--dark3))` : 'var(--dark3)',
         borderColor: isDragging ? primary : 'var(--border)',
         opacity: isDragging ? 0.85 : 1,
-        zIndex: isDragging ? 50 : 'auto',
       }}
       {...listeners}
       {...attributes}
-      className="px-2.5 py-3 border transition-colors w-full flex items-center justify-between theme-transition"
+      className={`px-2.5 py-3 border transition-colors w-full flex items-center justify-between theme-transition ${isDragging ? 'z-50' : 'z-auto'}`}
       onMouseEnter={e => (e.currentTarget.style.borderColor = primary)}
       onMouseLeave={e => { if (!isDragging) e.currentTarget.style.borderColor = 'var(--border)'; }}
     >

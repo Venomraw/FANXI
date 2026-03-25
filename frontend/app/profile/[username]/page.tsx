@@ -194,7 +194,7 @@ function BadgeCard({
         filter: earned ? 'none' : 'grayscale(1)',
       }}
     >
-      <span className="text-3xl leading-none flex-shrink-0">{icon}</span>
+      <span className="text-3xl leading-snug flex-shrink-0">{icon}</span>
       <div className="flex-1 min-w-0">
         <p className="font-sans font-semibold text-[15px]" style={{ color: earned ? 'var(--text)' : 'var(--muted)' }}>
           {label}
@@ -519,7 +519,7 @@ export default function ProfilePage() {
               {[
                 { label: 'Total IQ Points', value: profile.football_iq_points.toLocaleString(), color: rankColor },
                 { label: 'Matches Predicted', value: profile.prediction_count, color: primary },
-                { label: 'Completion Rate', value: `${accuracy}%`, color: '#00D1FF' },
+                { label: 'Completion Rate', value: `${accuracy}%`, color: 'var(--blue)' },
               ].map(({ label, value, color }) => (
                 <div
                   key={label}
@@ -665,7 +665,7 @@ export default function ProfilePage() {
                     )}
                     {pred.correct_score && (
                       <span className="font-mono text-xs uppercase px-2 py-1 border theme-transition"
-                        style={{ color: '#00D1FF', borderColor: 'rgba(0,209,255,0.25)', background: 'rgba(0,209,255,0.08)' }}>
+                        style={{ color: 'var(--blue)', borderColor: 'rgba(0,209,255,0.25)', background: 'rgba(0,209,255,0.08)' }}>
                         {pred.correct_score.home}–{pred.correct_score.away}
                       </span>
                     )}
@@ -687,7 +687,7 @@ export default function ProfilePage() {
                   <span
                     className="font-mono text-xs uppercase px-3 py-1.5 flex-shrink-0"
                     style={{
-                      color: pred.status === 'SCORED' ? '#00FF85' : 'var(--muted)',
+                      color: pred.status === 'SCORED' ? 'var(--success)' : 'var(--muted)',
                       background: pred.status === 'SCORED' ? 'rgba(0,255,133,0.1)' : 'var(--border)',
                     }}
                   >

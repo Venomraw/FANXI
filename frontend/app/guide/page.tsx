@@ -183,7 +183,7 @@ export default function GuidePage() {
               <button
                 key={id}
                 onClick={() => scrollTo(id)}
-                className="relative flex items-center gap-3 py-5 font-sans font-semibold tracking-wider whitespace-nowrap transition-colors duration-200 flex-shrink-0"
+                className="relative flex items-center gap-3 py-5 font-sans font-semibold tracking-wide whitespace-nowrap transition-colors duration-200 flex-shrink-0"
                 style={{
                   fontSize: '12px',
                   color: active ? primary : 'var(--muted)',

@@ -43,7 +43,7 @@ export default function WakingScreen({ status, elapsed, onRetry }: Props) {
 
       {/* Full-screen overlay — dark tint, stadium shows behind */}
       <div
-        className="fixed inset-0 z-[9999] flex items-center justify-center"
+        className="fixed inset-0 z-50 flex items-center justify-center"
         style={{
           background: 'rgba(6,10,6,0.82)',
           backdropFilter: 'blur(3px)',
@@ -66,14 +66,14 @@ export default function WakingScreen({ status, elapsed, onRetry }: Props) {
           {/* Logo */}
           <div className="flex items-center gap-2 mb-2">
             <span
-              className="font-display font-semibold tracking-widest"
-              style={{ fontSize: '22px', color: '#FFD23F', letterSpacing: '2px' }}
+              className="font-display font-semibold tracking-normal"
+              style={{ fontSize: '22px', color: 'var(--gold)', letterSpacing: '2px' }}
             >
               FAN
             </span>
             <span
-              className="font-display font-semibold tracking-widest"
-              style={{ fontSize: '22px', color: '#00FF85', letterSpacing: '2px' }}
+              className="font-display font-semibold tracking-normal"
+              style={{ fontSize: '22px', color: 'var(--success)', letterSpacing: '2px' }}
             >
               XI
             </span>
@@ -106,8 +106,8 @@ export default function WakingScreen({ status, elapsed, onRetry }: Props) {
                 className="font-display font-semibold px-8 py-3 uppercase tracking-widest transition-all hover:-translate-y-0.5"
                 style={{
                   fontSize: '13px',
-                  background: '#FFD23F',
-                  color: '#060A06',
+                  background: 'var(--gold)',
+                  color: 'var(--dark)',
                   boxShadow: '0 0 20px rgba(255,210,63,0.35)',
                 }}
               >

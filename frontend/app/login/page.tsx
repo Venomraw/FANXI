@@ -146,8 +146,8 @@ export default function LoginPage() {
 
         {/* TICKER STRIP — reference exact */}
         <div className="overflow-hidden py-2.5 theme-transition fade-up-2"
-          style={{ background: primary, color: '#000', flexShrink: 0 }}>
-          <div className="ticker-inner" style={{ color: '#000' }}>
+          style={{ background: primary, color: 'var(--dark)', flexShrink: 0 }}>
+          <div className="ticker-inner" style={{ color: 'var(--dark)' }}>
             {TICKER_TEXT}{TICKER_TEXT}
           </div>
         </div>
@@ -249,7 +249,7 @@ export default function LoginPage() {
 
           {/* Mobile ticker */}
           <div className="overflow-hidden py-2 mb-6 theme-transition" style={{ background: primary }}>
-            <div className="ticker-inner" style={{ color: '#000', fontSize: '9px', letterSpacing: '2px' }}>
+            <div className="ticker-inner" style={{ color: 'var(--dark)', fontSize: '9px', letterSpacing: '2px' }}>
               {TICKER_TEXT}{TICKER_TEXT}
             </div>
           </div>
@@ -303,7 +303,7 @@ export default function LoginPage() {
                 style={{
                   fontSize: '13px', letterSpacing: '0.5px',
                   ...(mode === m
-                    ? { background: primary, color: '#000', fontWeight: 700 }
+                    ? { background: primary, color: 'var(--dark)', fontWeight: 700 }
                     : { color: 'var(--muted)', background: 'transparent' }),
                 }}>
                 {m === 'login' ? 'Sign In' : 'Register'}
@@ -425,7 +425,7 @@ export default function LoginPage() {
               className="w-full py-4 font-display transition-all active:scale-95 disabled:opacity-40 btn-cut-lg btn-shimmer theme-transition mt-2"
               style={{
                 fontSize: '22px', letterSpacing: '1.5px', textTransform: 'uppercase',
-                background: primary, color: '#000',
+                background: primary, color: 'var(--dark)',
                 boxShadow: `0 0 28px color-mix(in srgb, ${primary} 50%, transparent)`,
               }}>
               {loading ? '...' : mode === 'login' ? 'Enter the Hub' : 'Join the Hunt'}

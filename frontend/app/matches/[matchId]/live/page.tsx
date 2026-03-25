@@ -141,9 +141,9 @@ function scoreIcon(correct: boolean | null | undefined): string {
 }
 
 function getGrade(accuracyPct: number, totalPts: number): { grade: string; label: string; color: string } {
-  if (accuracyPct >= 90 || totalPts >= 70) return { grade: 'S', label: 'LEGENDARY SCOUT',   color: '#FFD23F' };
-  if (accuracyPct >= 75 || totalPts >= 50) return { grade: 'A', label: 'ELITE TACTICIAN',   color: '#00FF85' };
-  if (accuracyPct >= 60 || totalPts >= 30) return { grade: 'B', label: 'SHARP ANALYST',     color: '#00D1FF' };
+  if (accuracyPct >= 90 || totalPts >= 70) return { grade: 'S', label: 'LEGENDARY SCOUT',   color: 'var(--gold)' };
+  if (accuracyPct >= 75 || totalPts >= 50) return { grade: 'A', label: 'ELITE TACTICIAN',   color: 'var(--success)' };
+  if (accuracyPct >= 60 || totalPts >= 30) return { grade: 'B', label: 'SHARP ANALYST',     color: 'var(--blue)' };
   if (accuracyPct >= 45 || totalPts >= 15) return { grade: 'C', label: 'DECENT READ',       color: '#C084FC' };
   return                                          { grade: 'D', label: 'BACK TO TRAINING',  color: '#FF6B6B' };
 }
@@ -165,8 +165,8 @@ function Skeleton({ h = 'h-4', w = 'w-full' }: { h?: string; w?: string }) {
 function LiveDot() {
   return (
     <span className="inline-flex items-center gap-1.5">
-      <span className="w-2 h-2 rounded-full" style={{ background: '#FF2D55', boxShadow: '0 0 6px #FF2D55', animation: 'livepulse 1.4s ease-in-out infinite' }} />
-      <span className="font-mono text-xs font-bold uppercase tracking-[2px]" style={{ color: '#FF2D55' }}>LIVE</span>
+      <span className="w-2 h-2 rounded-full" style={{ background: 'var(--red)', boxShadow: '0 0 6px var(--red)', animation: 'livepulse 1.4s ease-in-out infinite' }} />
+      <span className="font-mono text-xs font-bold uppercase tracking-[2px]" style={{ color: 'var(--red)' }}>LIVE</span>
     </span>
   );
 }
@@ -193,10 +193,10 @@ function MiniPitch({ lineup }: { lineup: Lineup | null | undefined }) {
           <div key={ri} className="flex justify-around">
             {row.map((p, pi) => (
               <div key={pi} className="flex flex-col items-center gap-0.5">
-                <div className="w-6 h-6 rounded-full flex items-center justify-center font-mono text-xs font-bold" style={{ background: 'rgba(0,255,133,0.18)', border: '1px solid rgba(0,255,133,0.4)', color: '#00FF85' }}>
+                <div className="w-6 h-6 rounded-full flex items-center justify-center font-mono text-xs font-bold" style={{ background: 'rgba(0,255,133,0.18)', border: '1px solid rgba(0,255,133,0.4)', color: 'var(--success)' }}>
                   {p.number ?? (pi + 1)}
                 </div>
-                <span className="font-sans text-xs text-center leading-tight" style={{ color: 'rgba(255,255,255,0.7)', maxWidth: 36, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
+                <span className="font-sans text-xs text-center leading-snug" style={{ color: 'rgba(255,255,255,0.7)', maxWidth: 36, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
                   {(p.name || '').split(' ').pop()}
                 </span>
               </div>
@@ -299,8 +299,9 @@ function ScoreReveal({
 
   return (
     <div
+      className="z-50"
       style={{
-        position: 'fixed', inset: 0, zIndex: 9000,
+        position: 'fixed', inset: 0,
         background: 'radial-gradient(ellipse at 50% 30%, rgba(6,10,6,0.98) 0%, rgba(0,0,0,0.99) 100%)',
         backdropFilter: 'blur(40px)',
         overflowY: 'auto',
@@ -392,7 +393,7 @@ function ScoreReveal({
                 <div className="font-mono text-xs tracking-widest uppercase mb-0.5" style={{ color: 'var(--muted)' }}>
                   {p.position || p.slot}
                 </div>
-                <div className="font-sans font-semibold text-xs leading-tight" style={{ color: 'var(--text)' }}>
+                <div className="font-sans font-semibold text-xs leading-snug" style={{ color: 'var(--text)' }}>
                   {(p.name || '').split(' ').pop()}
                 </div>
               </div>
@@ -436,7 +437,7 @@ function ScoreReveal({
               <span
                 className="font-mono text-xs tracking-widest uppercase px-3 py-1"
                 style={{
-                  color: cm.formation_match ? '#00FF85' : '#FF6B6B',
+                  color: cm.formation_match ? 'var(--success)' : '#FF6B6B',
                   border: `1px solid ${cm.formation_match ? 'rgba(0,255,133,0.3)' : 'rgba(255,107,107,0.3)'}`,
                   background: cm.formation_match ? 'rgba(0,255,133,0.06)' : 'rgba(255,107,107,0.06)',
                 }}
@@ -472,7 +473,7 @@ function ScoreReveal({
               </div>
               <div
                 className="font-display font-semibold"
-                style={{ fontSize: '20px', color: item.pts > 0 ? '#00FF85' : 'rgba(255,255,255,0.2)' }}
+                style={{ fontSize: '20px', color: item.pts > 0 ? 'var(--success)' : 'rgba(255,255,255,0.2)' }}
               >
                 {item.pts > 0 ? `+${item.pts}` : '—'}
               </div>
@@ -541,7 +542,7 @@ function ScoreReveal({
           <button
             onClick={handleShare}
             className="font-sans font-semibold text-[13px] px-7 py-3.5 transition-all hover:-translate-y-0.5"
-            style={{ background: gradeColor, color: '#060A06', borderRadius: '6px', boxShadow: `0 0 20px color-mix(in srgb, ${gradeColor} 40%, transparent)` }}
+            style={{ background: gradeColor, color: 'var(--dark)', borderRadius: '6px', boxShadow: `0 0 20px color-mix(in srgb, ${gradeColor} 40%, transparent)` }}
           >
             {copied ? '✓ Copied!' : 'Share Result'}
           </button>
@@ -747,7 +748,7 @@ export default function LiveMatchPage() {
                   </span>
                 )}
                 {matchState?.minute && isLive && (
-                  <span className="font-mono text-xs font-bold" style={{ color: '#FF2D55' }}>{matchState.minute}&apos;</span>
+                  <span className="font-mono text-xs font-bold" style={{ color: 'var(--red)' }}>{matchState.minute}&apos;</span>
                 )}
                 {!connected && <span className="font-mono text-xs uppercase tracking-[1px]" style={{ color: 'var(--muted)' }}>reconnecting…</span>}
               </div>
@@ -758,7 +759,7 @@ export default function LiveMatchPage() {
 
             <div className="flex items-center gap-4 sm:gap-6">
               <div className="flex items-center gap-2 sm:gap-3">
-                <span className="text-2xl sm:text-3xl leading-none">{matchState?.home_flag ?? '🏳️'}</span>
+                <span className="text-2xl sm:text-3xl leading-snug">{matchState?.home_flag ?? '🏳️'}</span>
                 <span className="font-sans font-semibold text-[14px] sm:text-[16px]">{homeTeam}</span>
               </div>
               <div
@@ -773,7 +774,7 @@ export default function LiveMatchPage() {
               </div>
               <div className="flex items-center gap-2 sm:gap-3">
                 <span className="font-sans font-semibold text-[14px] sm:text-[16px]">{awayTeam}</span>
-                <span className="text-2xl sm:text-3xl leading-none">{matchState?.away_flag ?? '🏳️'}</span>
+                <span className="text-2xl sm:text-3xl leading-snug">{matchState?.away_flag ?? '🏳️'}</span>
               </div>
             </div>
 
@@ -806,7 +807,7 @@ export default function LiveMatchPage() {
               className="flex-shrink-0 font-sans font-semibold text-[14px] px-8 py-3.5 transition-all hover:-translate-y-0.5 disabled:opacity-60"
               style={{
                 background: 'var(--gold)',
-                color: '#060A06',
+                color: 'var(--dark)',
                 borderRadius: '6px',
                 boxShadow: '0 0 24px rgba(255,210,63,0.45)',
                 animation: 'ftPulse 2s ease-in-out infinite',
@@ -830,9 +831,9 @@ export default function LiveMatchPage() {
                 {[...events].reverse().map((evt, i) => (
                   <div key={i} className="flex items-start gap-2.5">
                     <span className="font-mono text-xs font-bold flex-shrink-0 mt-0.5" style={{ color: 'var(--muted)', minWidth: 28 }}>{evt.minute ?? '—'}&apos;</span>
-                    <span className="text-base leading-none flex-shrink-0">{eventIcon(evt)}</span>
+                    <span className="text-base leading-snug flex-shrink-0">{eventIcon(evt)}</span>
                     <div className="flex-1 min-w-0">
-                      <p className="font-sans font-semibold text-[13px] leading-tight">{eventLabel(evt)}</p>
+                      <p className="font-sans font-semibold text-[13px] leading-snug">{eventLabel(evt)}</p>
                       <p className="font-mono text-xs" style={{ color: 'var(--muted)' }}>{evt.team}</p>
                     </div>
                   </div>
@@ -888,7 +889,7 @@ export default function LiveMatchPage() {
                   ].map(row => (
                     <div key={row.label} className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <span className="text-base leading-none">{row.icon}</span>
+                        <span className="text-base leading-snug">{row.icon}</span>
                         <span className="font-sans text-[14px]">{row.label}</span>
                       </div>
                       <span className="font-mono text-xs font-bold px-2 py-0.5" style={{ color: row.pts > 0 ? 'var(--success)' : 'var(--muted)', background: row.pts > 0 ? 'rgba(0,255,133,0.08)' : 'transparent' }}>

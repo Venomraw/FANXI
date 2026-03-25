@@ -236,7 +236,7 @@ function ResetPasswordForm() {
                   className="w-full py-4 font-display transition-all active:scale-95 disabled:opacity-40 btn-cut-lg btn-shimmer theme-transition mt-2"
                   style={{
                     fontSize: '20px', letterSpacing: '3px', textTransform: 'uppercase',
-                    background: primary, color: '#000',
+                    background: primary, color: 'var(--dark)',
                     boxShadow: `0 0 28px color-mix(in srgb, ${primary} 50%, transparent)`,
                   }}>
                   {loading ? '...' : 'Set New Password'}
@@ -263,7 +263,7 @@ function ResetPasswordForm() {
 
 export default function ResetPasswordPage() {
   return (
-    <Suspense fallback={<div style={{ background: '#060A06', minHeight: '100vh' }} />}>
+    <Suspense fallback={<div style={{ background: 'var(--dark)', minHeight: '100vh' }} />}>
       <ResetPasswordForm />
     </Suspense>
   );

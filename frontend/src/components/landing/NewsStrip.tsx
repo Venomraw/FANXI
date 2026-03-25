@@ -160,7 +160,7 @@ export default function NewsStrip() {
             style={{
               fontSize: '13px',
               lineHeight: 1.5,
-              color: '#dc2626',
+              color: 'var(--red)',
               fontStyle: 'italic',
             }}
           >
@@ -169,7 +169,7 @@ export default function NewsStrip() {
 
           {/* Read more */}
           <div
-            className="font-mono text-white/40 group-hover:text-white/70 transition-colors"
+            className="font-mono text-white/60 group-hover:text-white/70 transition-colors"
             style={{ fontSize: '11px', letterSpacing: '0.5px' }}
           >
             Read More →

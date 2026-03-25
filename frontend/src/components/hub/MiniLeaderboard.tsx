@@ -37,7 +37,7 @@ export default function MiniLeaderboard() {
 
   return (
     <div className="w-full border theme-transition flex flex-col relative overflow-hidden"
-      style={{ background: '#0a0a0a', borderColor: 'rgba(255,255,255,0.08)' }}>
+      style={{ background: 'var(--dark)', borderColor: 'rgba(255,255,255,0.08)' }}>
 
       {/* Top accent */}
       <div className="absolute top-0 left-0 right-0 h-px theme-transition"

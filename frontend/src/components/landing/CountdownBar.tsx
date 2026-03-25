@@ -43,7 +43,7 @@ export default function CountdownBar() {
     // SSR placeholder — same height, no content flash
     return (
       <div
-        style={{ height: '40px', background: '#0a0a0a', borderBottom: '1px solid rgba(220,38,38,0.3)' }}
+        style={{ height: '40px', background: 'var(--dark)', borderBottom: '1px solid rgba(220,38,38,0.3)' }}
         className="fixed top-0 left-0 right-0 z-50"
       />
     );
@@ -77,14 +77,14 @@ export default function CountdownBar() {
             {timeLeft.days}
           </span>
           <span
-            className="font-mono text-white/40 uppercase"
+            className="font-mono text-white/60 uppercase"
             style={{ fontSize: '9px', letterSpacing: '1px' }}
           >
             d
           </span>
         </div>
 
-        <span className="text-white/20 font-mono mx-1" style={{ fontSize: '12px' }}>:</span>
+        <span className="text-white/30 font-mono mx-1" style={{ fontSize: '12px' }}>:</span>
 
         {/* Hours */}
         <div className="flex items-baseline gap-1">
@@ -95,14 +95,14 @@ export default function CountdownBar() {
             {pad(timeLeft.hours)}
           </span>
           <span
-            className="font-mono text-white/40 uppercase"
+            className="font-mono text-white/60 uppercase"
             style={{ fontSize: '9px', letterSpacing: '1px' }}
           >
             h
           </span>
         </div>
 
-        <span className="text-white/20 font-mono mx-1" style={{ fontSize: '12px' }}>:</span>
+        <span className="text-white/30 font-mono mx-1" style={{ fontSize: '12px' }}>:</span>
 
         {/* Minutes */}
         <div className="flex items-baseline gap-1">
@@ -113,14 +113,14 @@ export default function CountdownBar() {
             {pad(timeLeft.minutes)}
           </span>
           <span
-            className="font-mono text-white/40 uppercase"
+            className="font-mono text-white/60 uppercase"
             style={{ fontSize: '9px', letterSpacing: '1px' }}
           >
             m
           </span>
         </div>
 
-        <span className="text-white/20 font-mono mx-1" style={{ fontSize: '12px' }}>:</span>
+        <span className="text-white/30 font-mono mx-1" style={{ fontSize: '12px' }}>:</span>
 
         {/* Seconds */}
         <div className="flex items-baseline gap-1">
@@ -131,7 +131,7 @@ export default function CountdownBar() {
             {pad(timeLeft.seconds)}
           </span>
           <span
-            className="font-mono text-white/40 uppercase"
+            className="font-mono text-white/60 uppercase"
             style={{ fontSize: '9px', letterSpacing: '1px' }}
           >
             s

@@ -89,7 +89,7 @@ function MatchCard({
           {isFinalDay && (
             <span
               className="font-mono text-xs uppercase tracking-[1.5px] px-2 py-0.5"
-              style={{ color: '#FFD23F', background: 'rgba(255,210,63,0.1)', border: '1px solid rgba(255,210,63,0.25)' }}
+              style={{ color: 'var(--gold)', background: 'rgba(255,210,63,0.1)', border: '1px solid rgba(255,210,63,0.25)' }}
             >
               Final Group Day
             </span>
@@ -97,7 +97,7 @@ function MatchCard({
           {isSoon && (
             <span
               className="font-mono text-xs uppercase tracking-[1.5px] px-2 py-0.5 animate-pulse"
-              style={{ color: '#00FF85', background: 'rgba(0,255,133,0.1)', border: '1px solid rgba(0,255,133,0.3)' }}
+              style={{ color: 'var(--success)', background: 'rgba(0,255,133,0.1)', border: '1px solid rgba(0,255,133,0.3)' }}
             >
               Soon · {Math.floor(hours)}h
             </span>
@@ -108,9 +108,9 @@ function MatchCard({
         <div className="flex items-center gap-4 mb-4">
           {/* Home */}
           <div className="flex-1 flex items-center gap-3">
-            <span className="text-3xl leading-none flex-shrink-0">{match.home_flag}</span>
+            <span className="text-3xl leading-snug flex-shrink-0">{match.home_flag}</span>
             <span
-              className="font-display leading-none theme-transition"
+              className="font-display leading-snug theme-transition"
               style={{ fontSize: 'clamp(18px, 2.5vw, 26px)', color: 'var(--text)' }}
             >
               {match.home_team}
@@ -130,12 +130,12 @@ function MatchCard({
           {/* Away */}
           <div className="flex-1 flex items-center justify-end gap-3">
             <span
-              className="font-display leading-none text-right theme-transition"
+              className="font-display leading-snug text-right theme-transition"
               style={{ fontSize: 'clamp(18px, 2.5vw, 26px)', color: 'var(--text)' }}
             >
               {match.away_team}
             </span>
-            <span className="text-3xl leading-none flex-shrink-0">{match.away_flag}</span>
+            <span className="text-3xl leading-snug flex-shrink-0">{match.away_flag}</span>
           </div>
         </div>
 
@@ -168,16 +168,16 @@ function MatchCard({
               <>
                 <span
                   className="font-mono text-xs uppercase px-4 py-2 flex items-center gap-2 theme-transition"
-                  style={{ color: '#00FF85', background: 'rgba(0,255,133,0.08)', border: '1px solid rgba(0,255,133,0.25)' }}
+                  style={{ color: 'var(--success)', background: 'rgba(0,255,133,0.08)', border: '1px solid rgba(0,255,133,0.25)' }}
                 >
                   <span>✓</span> Predicted
                 </span>
                 <a
                   href={`/matches/${match.id}/live`}
                   className="font-mono text-xs uppercase px-4 py-2 flex items-center gap-1.5 transition-all"
-                  style={{ color: '#FF2D55', background: 'rgba(255,45,85,0.08)', border: '1px solid rgba(255,45,85,0.3)' }}
+                  style={{ color: 'var(--red)', background: 'rgba(255,45,85,0.08)', border: '1px solid rgba(255,45,85,0.3)' }}
                 >
-                  <span className="w-1.5 h-1.5 rounded-full inline-block" style={{ background: '#FF2D55' }} />
+                  <span className="w-1.5 h-1.5 rounded-full inline-block" style={{ background: 'var(--red)' }} />
                   Watch Live
                 </a>
               </>
@@ -451,13 +451,13 @@ export default function MatchesPage() {
                     <div className="flex items-center gap-4 mb-4">
                       <span
                         className="font-mono text-xs uppercase tracking-[1.5px]"
-                        style={{ color: md === 3 ? '#FFD23F' : 'var(--muted)' }}
+                        style={{ color: md === 3 ? 'var(--gold)' : 'var(--muted)' }}
                       >
                         {matchdayLabels[md]}
                       </span>
                       <div className="flex-1 h-px" style={{ background: md === 3 ? 'rgba(255,210,63,0.2)' : 'var(--border)' }} />
                       {md === 3 && (
-                        <span className="font-mono text-xs" style={{ color: '#FFD23F', opacity: 0.7 }}>
+                        <span className="font-mono text-xs" style={{ color: 'var(--gold)', opacity: 0.7 }}>
                           Simultaneous kick-offs
                         </span>
                       )}

@@ -45,7 +45,7 @@ const MODES: ModeConfig[] = [
     id: 'chat',
     icon: '💬',
     label: 'Tactical Chat',
-    color: '#00FF85',
+    color: 'var(--success)',
     hint: 'Ask anything about WC 2026 tactics, teams, players, or football theory. The AI knows the tournament inside out.',
     starters: [
       "Who wins WC 2026 and why?",
@@ -71,7 +71,7 @@ const MODES: ModeConfig[] = [
     id: 'formation',
     icon: '🗺️',
     label: 'Formation Advisor',
-    color: '#00D1FF',
+    color: 'var(--blue)',
     hint: "Describe a matchup — teams, styles, personnel. Get the optimal formation and a full tactical plan.",
     starters: [
       'Spain vs Germany — what shape should Spain use?',
@@ -84,7 +84,7 @@ const MODES: ModeConfig[] = [
     id: 'commentary',
     icon: '🎙️',
     label: 'Match Debrief',
-    color: '#FFD23F',
+    color: 'var(--gold)',
     hint: "Share your pre-match prediction and what actually happened — get a dramatic post-match debrief with your Tactical IQ score.",
     starters: [
       "I predicted Spain 4-3-3, they played 4-2-3-1 and won 2-0. Yamal and Olmo both started.",
@@ -477,7 +477,7 @@ export default function AIPage() {
                     onClick={clearChat}
                     className="font-mono text-xs tracking-widest uppercase px-3 py-1.5 transition-all"
                     style={{ color: 'rgba(255,255,255,0.3)', border: '1px solid var(--border)' }}
-                    onMouseEnter={e => { e.currentTarget.style.color = '#FF2D55'; e.currentTarget.style.borderColor = 'rgba(255,45,85,0.3)'; }}
+                    onMouseEnter={e => { e.currentTarget.style.color = 'var(--red)'; e.currentTarget.style.borderColor = 'rgba(255,45,85,0.3)'; }}
                     onMouseLeave={e => { e.currentTarget.style.color = 'rgba(255,255,255,0.3)'; e.currentTarget.style.borderColor = 'var(--border)'; }}
                   >
                     Clear
@@ -666,7 +666,7 @@ export default function AIPage() {
                 className="font-sans font-semibold flex-shrink-0 transition-all"
                 style={{
                   background: input.trim() && !loading ? accentColor : 'rgba(255,255,255,0.06)',
-                  color: input.trim() && !loading ? '#060A06' : 'var(--muted)',
+                  color: input.trim() && !loading ? 'var(--dark)' : 'var(--muted)',
                   border: 'none',
                   padding: '10px 22px',
                   fontSize: '13px',

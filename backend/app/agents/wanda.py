@@ -52,8 +52,7 @@ _APPROVED_FONTS = {"Space Grotesk", "Syne", "JetBrains Mono"}
 
 # Low-contrast text patterns (likely fail WCAG AA 4.5:1)
 _LOW_CONTRAST_PATTERNS = [
-    re.compile(r"text-white/20"),
-    re.compile(r"text-white/30"),
+    re.compile(r"text-white/[12]0"),
     re.compile(r"text-white/40"),
     re.compile(r"text-gray-600"),
 ]
@@ -442,8 +441,16 @@ class Wanda:
                     })
 
             # 2. Line height too tight on paragraphs
-            if ("leading-none" in line or "leading-tight" in line) and "<p" in content:
-                if "<h" not in line:
+            if ("leading-none" in line or "leading-tight" in line):
+                # Skip headings, hero text, large display text, stat numbers
+                is_heading = "<h" in line
+                is_large = any(s in line for s in [
+                    "text-6xl", "text-7xl", "text-8xl", "text-9xl",
+                    "text-[4", "text-[5", "text-[6", "text-[7", "text-[8", "text-[9",
+                    "clamp(", "font-display",
+                ])
+                is_stat = any(s in line for s in ["font-mono", "tabular-nums"])
+                if not is_heading and not is_large and not is_stat and "<p" in content:
                     tag = "leading-none" if "leading-none" in line else "leading-tight"
                     findings.append({
                         "check": "line_height_too_tight",
@@ -471,7 +478,14 @@ class Wanda:
 
             # 4. Letter spacing on body text
             if ("tracking-widest" in line or "tracking-wider" in line):
-                if "<h" not in line and "label" not in line.lower():
+                # Skip uppercase text, nav links, buttons, badges, headings, labels
+                is_uppercase = "uppercase" in line
+                is_heading = "<h" in line
+                is_label = "label" in line.lower()
+                is_button = any(s in line for s in ["<button", "btn", "<a ", "<Link", "<nav"])
+                is_badge = any(s in line for s in ["badge", "pill", "chip", "tag"])
+                is_mono = "font-mono" in line
+                if not any([is_uppercase, is_heading, is_label, is_button, is_badge, is_mono]):
                     tag = "tracking-widest" if "tracking-widest" in line else "tracking-wider"
                     findings.append({
                         "check": "letter_spacing_body",
@@ -594,9 +608,10 @@ class Wanda:
                             "message": "Button without aria-label (icon-only or empty)",
                         })
 
-            # 3. Missing form labels
+            # 3. Missing form labels (look ahead up to 5 lines for aria-label)
             if "<input" in line:
-                if "aria-label" not in line and "id=" not in line:
+                nearby = "".join(lines[max(0, lineno - 1):lineno + 5])
+                if "aria-label" not in nearby and "id=" not in line:
                     findings.append({
                         "check": "missing_form_label",
                         "severity": 45,

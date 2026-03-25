@@ -4,10 +4,10 @@ import type { Toast, ToastType } from '@/src/context/ToastContext';
 
 // Per-type config
 const TOAST_CONFIG: Record<ToastType, { border: string; icon: string; label: string }> = {
-  success: { border: '#00FF85', icon: '✓', label: 'Success' },
-  error:   { border: '#FF2D55', icon: '✕', label: 'Error' },
-  warning: { border: '#FFD23F', icon: '!', label: 'Warning' },
-  info:    { border: '#00D1FF', icon: 'i', label: 'Info' },
+  success: { border: 'var(--success)', icon: '✓', label: 'Success' },
+  error:   { border: 'var(--red)', icon: '✕', label: 'Error' },
+  warning: { border: 'var(--gold)', icon: '!', label: 'Warning' },
+  info:    { border: 'var(--blue)', icon: 'i', label: 'Info' },
 };
 
 interface ToastItemProps {
@@ -127,7 +127,7 @@ export default function ToastContainer({ toasts, onDismiss }: ToastContainerProp
 
       {/* Desktop: bottom-right */}
       <div
-        className="fixed z-[9998] flex flex-col gap-2 pointer-events-none hidden sm:flex"
+        className="fixed z-50 flex flex-col gap-2 pointer-events-none hidden sm:flex"
         style={{ bottom: '24px', right: '24px' }}
       >
         {toasts.map(t => (
@@ -139,7 +139,7 @@ export default function ToastContainer({ toasts, onDismiss }: ToastContainerProp
 
       {/* Mobile: bottom-center, full width minus padding */}
       <div
-        className="fixed z-[9998] flex flex-col gap-2 pointer-events-none sm:hidden"
+        className="fixed z-50 flex flex-col gap-2 pointer-events-none sm:hidden"
         style={{ bottom: '80px', left: '16px', right: '16px' }}
       >
         {toasts.map(t => (

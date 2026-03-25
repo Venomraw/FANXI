@@ -126,7 +126,7 @@ export default function AdminPage() {
   if (authLoading || !user?.is_admin) {
     return (
       <div className="min-h-screen bg-[var(--dark)] flex items-center justify-center">
-        <div className="text-white/40 font-sans">Loading...</div>
+        <div className="text-white/60 font-sans">Loading...</div>
       </div>
     );
   }
@@ -146,7 +146,7 @@ export default function AdminPage() {
       `}>
         <div className="p-5 border-b border-white/10">
           <div className="font-display text-lg text-white tracking-wide">FanXI</div>
-          <div className="text-red-500 text-xs font-sans font-semibold tracking-widest mt-0.5">ADMIN PANEL</div>
+          <div className="text-red-500 text-xs font-sans font-semibold tracking-normal mt-0.5">ADMIN PANEL</div>
         </div>
         <nav className="flex-1 py-3">
           {TABS.map((tab) => (
@@ -164,7 +164,7 @@ export default function AdminPage() {
           ))}
         </nav>
         <div className="p-5 border-t border-white/10">
-          <button onClick={() => router.push('/hub')} className="text-white/40 hover:text-white text-sm font-sans transition-colors">
+          <button onClick={() => router.push('/hub')} className="text-white/60 hover:text-white text-sm font-sans transition-colors">
             &larr; Back to App
           </button>
         </div>
@@ -176,7 +176,7 @@ export default function AdminPage() {
           <button onClick={() => setSidebarOpen(true)} className="text-white/60 hover:text-white">
             <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>
           </button>
-          <span className="text-red-500 text-xs font-sans font-semibold tracking-widest">ADMIN</span>
+          <span className="text-red-500 text-xs font-sans font-semibold tracking-normal">ADMIN</span>
           <div className="w-6" />
         </div>
         <div className="p-4 lg:p-8">
@@ -208,7 +208,7 @@ function OverviewTab({ authFetch }: { authFetch: AuthFetchFn }) {
 
   useEffect(() => { load(); const i = setInterval(load, 30000); return () => clearInterval(i); }, [load]);
 
-  if (!stats) return <div className="text-white/40 font-sans">Loading overview...</div>;
+  if (!stats) return <div className="text-white/60 font-sans">Loading overview...</div>;
 
   const cards = [
     { label: 'Users', value: stats.total_users, sub: `${stats.predictions_today} preds today` },
@@ -384,7 +384,7 @@ function QueueTab({ authFetch, toast }: { authFetch: AuthFetchFn; toast: ToastOb
     } catch { toast.error(`Failed to ${action}`); }
   }
 
-  if (loading) return <div className="text-white/40 font-sans">Loading queue...</div>;
+  if (loading) return <div className="text-white/60 font-sans">Loading queue...</div>;
 
   return (
     <div>
@@ -452,7 +452,7 @@ function MatchesTab({ authFetch }: { authFetch: AuthFetchFn }) {
 
   useEffect(() => { load(); }, [load]);
 
-  if (loading) return <div className="text-white/40 font-sans">Loading matches...</div>;
+  if (loading) return <div className="text-white/60 font-sans">Loading matches...</div>;
 
   return (
     <div>
@@ -520,7 +520,7 @@ function UsersTab({ authFetch, toast }: { authFetch: AuthFetchFn; toast: ToastOb
     else { const err = await res?.json().catch(() => ({})); toast.error(err?.detail || 'Failed'); }
   }
 
-  if (loading) return <div className="text-white/40 font-sans">Loading users...</div>;
+  if (loading) return <div className="text-white/60 font-sans">Loading users...</div>;
 
   return (
     <div>
@@ -528,7 +528,7 @@ function UsersTab({ authFetch, toast }: { authFetch: AuthFetchFn; toast: ToastOb
       <Card className="overflow-x-auto !p-0">
         <table className="w-full text-sm font-sans">
           <thead>
-            <tr className="text-white/40 text-xs uppercase tracking-wider border-b border-white/10">
+            <tr className="text-white/60 text-xs uppercase tracking-wider border-b border-white/10">
               <th className="text-left p-3">#</th>
               <th className="text-left p-3">Username</th>
               <th className="text-left p-3 hidden md:table-cell">Nation</th>
@@ -599,7 +599,7 @@ function LogsTab({ authFetch }: { authFetch: AuthFetchFn }) {
 
   useEffect(() => { setLoading(true); load(); }, [load]);
 
-  if (loading) return <div className="text-white/40 font-sans">Loading logs...</div>;
+  if (loading) return <div className="text-white/60 font-sans">Loading logs...</div>;
 
   return (
     <div>
@@ -609,7 +609,7 @@ function LogsTab({ authFetch }: { authFetch: AuthFetchFn }) {
           {['', 'NATASHA', 'RHODEY', 'VISION', 'PIETRO'].map((f) => (
             <button key={f} onClick={() => setFilter(f)}
               className={`px-3 py-1 text-xs font-sans rounded-lg transition-colors ${
-                filter === f ? 'bg-red-500/20 text-red-400' : 'bg-white/5 text-white/40 hover:text-white hover:bg-white/10'
+                filter === f ? 'bg-red-500/20 text-red-400' : 'bg-white/5 text-white/60 hover:text-white hover:bg-white/10'
               }`}>
               {f || 'All'}
             </button>

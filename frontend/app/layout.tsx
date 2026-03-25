@@ -73,18 +73,12 @@ export default function RootLayout({
         suppressHydrationWarning={true}
       >
         {/* Fixed stadium background — content scrolls over it */}
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          width: '100vw',
-          height: '100vh',
-          zIndex: -1,
-          backgroundImage: "url('/stadium-bg.jpg')",
-          backgroundSize: 'cover',
-          backgroundPosition: 'center center',
-          backgroundRepeat: 'no-repeat',
-        }} />
+        <div
+          className="fixed top-0 left-0 w-screen h-screen -z-10 bg-cover bg-center bg-no-repeat"
+          style={{
+            backgroundImage: "url('/stadium-bg.jpg')",
+          }}
+        />
         <BackendProvider>
           <ToastProvider>
             <AuthProvider>

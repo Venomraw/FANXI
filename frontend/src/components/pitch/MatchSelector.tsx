@@ -81,7 +81,7 @@ export default function MatchSelector({ selectedId, onSelect }: Props) {
             {/* Teams row */}
             <div className="flex items-center justify-between gap-1">
               <div className="flex flex-col items-center gap-1 flex-1 min-w-0">
-                <span className="text-2xl leading-none">{m.home_flag}</span>
+                <span className="text-2xl leading-snug">{m.home_flag}</span>
                 <span className="font-mono text-xs uppercase tracking-wider text-center w-full truncate"
                   style={{ color: 'rgba(255,255,255,0.7)' }}>
                   {m.home_team.length > 6 ? m.home_team.slice(0,6) + '.' : m.home_team}
@@ -94,7 +94,7 @@ export default function MatchSelector({ selectedId, onSelect }: Props) {
               </span>
 
               <div className="flex flex-col items-center gap-1 flex-1 min-w-0">
-                <span className="text-2xl leading-none">{m.away_flag}</span>
+                <span className="text-2xl leading-snug">{m.away_flag}</span>
                 <span className="font-mono text-xs uppercase tracking-wider text-center w-full truncate"
                   style={{ color: 'rgba(255,255,255,0.7)' }}>
                   {m.away_team.length > 6 ? m.away_team.slice(0,6) + '.' : m.away_team}

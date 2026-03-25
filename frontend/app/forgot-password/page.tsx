@@ -142,7 +142,7 @@ export default function ForgotPasswordPage() {
                   className="w-full py-4 font-display transition-all active:scale-95 disabled:opacity-40 btn-cut-lg btn-shimmer theme-transition mt-2"
                   style={{
                     fontSize: '20px', letterSpacing: '3px', textTransform: 'uppercase',
-                    background: primary, color: '#000',
+                    background: primary, color: 'var(--dark)',
                     boxShadow: `0 0 28px color-mix(in srgb, ${primary} 50%, transparent)`,
                   }}>
                   {loading ? '...' : 'Send Reset Link'}

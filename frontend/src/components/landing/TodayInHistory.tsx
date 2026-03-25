@@ -207,7 +207,7 @@ export default function TodayInHistory() {
             className="h-full rounded-full transition-all duration-300"
             style={{
               width: `${((currentIndex + 1) / ALL_ENTRIES.length) * 100}%`,
-              background: '#dc2626',
+              background: 'var(--red)',
             }}
           />
         </div>

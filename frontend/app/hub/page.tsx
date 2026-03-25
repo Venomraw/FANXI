@@ -107,8 +107,8 @@ function LiveBanner({ matches, primary, onWatch }: {
     >
       <div className="max-w-[1400px] mx-auto px-7 py-3 flex items-center gap-4 flex-wrap">
         <div className="flex items-center gap-2 flex-shrink-0">
-          <span className="w-2 h-2 rounded-full animate-pulse" style={{ background: '#FF2D55' }} />
-          <span className="font-mono text-xs tracking-widest uppercase" style={{ color: '#FF2D55' }}>
+          <span className="w-2 h-2 rounded-full animate-pulse" style={{ background: 'var(--red)' }} />
+          <span className="font-mono text-xs tracking-widest uppercase" style={{ color: 'var(--red)' }}>
             Live Now
           </span>
         </div>
@@ -129,7 +129,7 @@ function LiveBanner({ matches, primary, onWatch }: {
               <span style={{ color: 'rgba(255,255,255,0.35)' }}>vs</span>
               <span>{m.away_team}</span>
               <span>{m.away_flag}</span>
-              <span className="font-mono text-xs" style={{ color: '#FF2D55' }}>WATCH →</span>
+              <span className="font-mono text-xs" style={{ color: 'var(--red)' }}>WATCH →</span>
             </button>
           ))}
         </div>
@@ -350,8 +350,8 @@ export default function Home() {
                   onClick={() => router.push('/matches')}
                   className="flex items-center justify-center gap-2 py-3.5 font-sans font-semibold text-[13px] transition-all hover:-translate-y-0.5"
                   style={{
-                    background: '#dc2626',
-                    color: '#fff',
+                    background: 'var(--red)',
+                    color: 'var(--text)',
                     clipPath: 'polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px))',
                     boxShadow: '0 0 20px rgba(220,38,38,0.35)',
                   }}
@@ -438,12 +438,11 @@ export default function Home() {
                   onMouseLeave={e => (e.currentTarget.style.borderColor = highlight ? 'rgba(220,38,38,0.5)' : 'var(--border)')}
                 >
                   {highlight && (
-                    <div className="absolute -top-2.5 left-4 font-mono text-xs uppercase tracking-widest px-2 py-0.5"
-                      style={{ background: '#dc2626', color: '#fff' }}>
+                    <div className="absolute -top-2.5 left-4 font-mono text-xs uppercase tracking-widest px-2 py-0.5 bg-red-600 text-[var(--text)]">
                       Start here
                     </div>
                   )}
-                  <span className="text-3xl leading-none">{a.icon}</span>
+                  <span className="text-3xl leading-snug">{a.icon}</span>
                   <div>
                     <div className="font-display font-semibold text-[18px] mb-1" style={{ color: a.color }}>
                       {a.label}
@@ -506,7 +505,7 @@ export default function Home() {
                       </span>
                       {isSoon && (
                         <span className="font-mono text-xs tracking-widest uppercase px-1.5 py-0.5 animate-pulse"
-                          style={{ color: '#00FF85', border: '1px solid rgba(0,255,133,0.3)', background: 'rgba(0,255,133,0.08)' }}>
+                          style={{ color: 'var(--success)', border: '1px solid rgba(0,255,133,0.3)', background: 'rgba(0,255,133,0.08)' }}>
                           {Math.floor(hours)}h
                         </span>
                       )}
@@ -622,7 +621,7 @@ export default function Home() {
                       <span
                         className="font-mono text-xs tracking-widest uppercase px-2 py-1 flex-shrink-0"
                         style={p.locked
-                          ? { color: '#00FF85', border: '1px solid rgba(0,255,133,0.3)', background: 'rgba(0,255,133,0.08)' }
+                          ? { color: 'var(--success)', border: '1px solid rgba(0,255,133,0.3)', background: 'rgba(0,255,133,0.08)' }
                           : { color: 'var(--muted)', border: '1px solid var(--border)' }
                         }
                       >
@@ -847,7 +846,7 @@ export default function Home() {
         <div className="max-w-[1400px] mx-auto px-7">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-14 mb-14">
             <div className="col-span-2 md:col-span-1">
-              <div className="font-display font-semibold text-4xl mb-3 tracking-wider" style={{ color: primary }}>
+              <div className="font-display font-semibold text-4xl mb-3 tracking-wide" style={{ color: primary }}>
                 Fan<span style={{ color: 'var(--gold)' }}>XI</span>
               </div>
               <p className="text-[13px] leading-relaxed" style={{ color: 'var(--muted)' }}>

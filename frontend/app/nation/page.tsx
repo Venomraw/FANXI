@@ -137,9 +137,9 @@ interface Video {
 // ── Position config ─────────────────────────────────────────────────────────
 
 const POS_COLORS: Record<string, string> = {
-  GK: '#FFD23F',
-  RB: '#00D1FF', LB: '#00D1FF', CB: '#00D1FF',
-  CDM: '#00FF85', CM: '#00FF85', CAM: '#00FF85',
+  GK: 'var(--gold)',
+  RB: 'var(--blue)', LB: 'var(--blue)', CB: 'var(--blue)',
+  CDM: 'var(--success)', CM: 'var(--success)', CAM: 'var(--success)',
   RW: '#FF6B6B', LW: '#FF6B6B', ST: '#FF6B6B',
 };
 
@@ -1307,7 +1307,7 @@ export default function NationPage() {
             ) : fixtures.length === 0 ? (
               <div className="text-center py-16" style={{ color: 'var(--muted)' }}>
                 <p className="text-4xl mb-3">🗓️</p>
-                <p className="font-mono text-xs tracking-widest">No fixtures found</p>
+                <p className="font-mono text-xs tracking-normal">No fixtures found</p>
               </div>
             ) : (
               <>

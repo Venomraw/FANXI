@@ -177,7 +177,7 @@ export default function NavBar({ subtitle }: NavBarProps) {
                   className="font-sans font-bold rounded-lg transition-all duration-200"
                   style={{
                     fontSize: '13px',
-                    color: '#fff',
+                    color: 'var(--text)',
                     background: 'var(--red)',
                     border: 'none',
                     padding: '9px 20px',
@@ -205,7 +205,7 @@ export default function NavBar({ subtitle }: NavBarProps) {
                 className="hidden sm:flex items-center gap-2 transition-all duration-200 group"
                 style={{ background: 'none', border: 'none', padding: '6px 10px' }}
               >
-                <span className="text-xl leading-none">{team.flag}</span>
+                <span className="text-xl leading-snug">{team.flag}</span>
                 <span
                   className="font-sans font-semibold hidden md:inline theme-transition"
                   style={{ fontSize: '14px', color: 'var(--muted)' }}
@@ -251,7 +251,7 @@ export default function NavBar({ subtitle }: NavBarProps) {
                   </div>
                   {/* Name + rank */}
                   <div className="hidden sm:flex flex-col text-left">
-                    <span className="font-sans font-semibold leading-tight" style={{ fontSize: '13px', color: 'var(--text)' }}>
+                    <span className="font-sans font-semibold leading-snug" style={{ fontSize: '13px', color: 'var(--text)' }}>
                       {user.display_name || user.username}
                     </span>
                     <span className="font-mono uppercase leading-tight theme-transition" style={{ fontSize: '9px', letterSpacing: '1.2px', color: primary }}>
@@ -271,7 +271,7 @@ export default function NavBar({ subtitle }: NavBarProps) {
                 {/* Dropdown panel */}
                 {dropdownOpen && (
                   <div
-                    className="absolute right-0 mt-2 w-56 py-1 z-[200]"
+                    className="absolute right-0 mt-2 w-56 py-1 z-50"
                     style={{
                       background: 'rgba(6,10,6,0.97)',
                       backdropFilter: 'blur(32px)',
@@ -347,7 +347,7 @@ export default function NavBar({ subtitle }: NavBarProps) {
                         className="w-full flex items-center gap-3 px-4 py-2.5 font-sans font-semibold text-[13px] text-left transition-colors"
                         style={{ color: 'rgba(255,255,255,0.35)', background: 'none', border: 'none' }}
                         onMouseEnter={e => {
-                          e.currentTarget.style.color = '#FF2D55';
+                          e.currentTarget.style.color = 'var(--red)';
                           e.currentTarget.style.background = 'rgba(255,45,85,0.06)';
                         }}
                         onMouseLeave={e => {
@@ -437,7 +437,7 @@ export default function NavBar({ subtitle }: NavBarProps) {
                   <button
                     onClick={() => { router.push('/login'); setMobileOpen(false); }}
                     className="w-full py-3 font-sans font-semibold text-[15px] rounded-lg transition-all"
-                    style={{ background: 'var(--red)', color: '#fff', border: 'none' }}
+                    style={{ background: 'var(--red)', color: 'var(--text)', border: 'none' }}
                   >
                     Join Free →
                   </button>
@@ -467,7 +467,7 @@ export default function NavBar({ subtitle }: NavBarProps) {
                 >
                   <span className="text-xl">{team.flag}</span>
                   <span>{team.name}</span>
-                  <span className="font-mono text-xs opacity-50 ml-auto tracking-wider">Change</span>
+                  <span className="font-mono text-xs opacity-50 ml-auto tracking-wide">Change</span>
                 </button>
               )}
 

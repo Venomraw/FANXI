@@ -103,14 +103,14 @@ export default function LandingNav() {
                     className="flex items-center font-sans font-bold rounded-lg transition-all duration-200"
                     style={{
                       fontSize: '12px',
-                      color: '#fff',
-                      background: '#dc2626',
+                      color: 'var(--text)',
+                      background: 'var(--red)',
                       padding: '7px 16px',
                       letterSpacing: '1.5px',
                       textTransform: 'uppercase',
                     }}
                     onMouseEnter={e => { e.currentTarget.style.background = '#ef4444'; }}
-                    onMouseLeave={e => { e.currentTarget.style.background = '#dc2626'; }}
+                    onMouseLeave={e => { e.currentTarget.style.background = 'var(--red)'; }}
                   >
                     ⚽ {label}
                   </a>
@@ -172,7 +172,7 @@ export default function LandingNav() {
                 className="font-sans font-bold rounded-lg transition-all duration-200"
                 style={{
                   fontSize: '13px',
-                  color: '#fff',
+                  color: 'var(--text)',
                   background: 'var(--red)',
                   border: 'none',
                   padding: '9px 20px',
@@ -199,7 +199,7 @@ export default function LandingNav() {
               className="hidden sm:flex items-center gap-2 transition-all duration-200"
               style={{ background: 'none', border: 'none', padding: '6px 10px' }}
             >
-              <span className="text-xl leading-none">{team.flag}</span>
+              <span className="text-xl leading-snug">{team.flag}</span>
               <span
                 className="font-sans font-semibold hidden md:inline"
                 style={{ fontSize: '13px', color: 'var(--muted)' }}
@@ -236,7 +236,7 @@ export default function LandingNav() {
                   {user.username[0].toUpperCase()}
                 </div>
                 <div className="hidden sm:flex flex-col text-left">
-                  <span className="font-sans font-semibold leading-tight" style={{ fontSize: '13px', color: 'var(--text)' }}>
+                  <span className="font-sans font-semibold leading-snug" style={{ fontSize: '13px', color: 'var(--text)' }}>
                     {user.display_name || user.username}
                   </span>
                   <span className="font-mono uppercase leading-tight" style={{ fontSize: '9px', letterSpacing: '1.2px', color: primary }}>
@@ -254,7 +254,7 @@ export default function LandingNav() {
 
               {dropdownOpen && (
                 <div
-                  className="absolute right-0 mt-2 w-56 py-1 z-[200] rounded-lg"
+                  className="absolute right-0 mt-2 w-56 py-1 z-50 rounded-lg"
                   style={{
                     background: 'rgba(6,10,6,0.97)',
                     backdropFilter: 'blur(32px)',
@@ -325,7 +325,7 @@ export default function LandingNav() {
                       className="w-full flex items-center gap-3 px-4 py-2.5 font-sans font-semibold text-[13px] text-left transition-colors"
                       style={{ color: 'rgba(255,255,255,0.35)', background: 'none', border: 'none' }}
                       onMouseEnter={e => {
-                        e.currentTarget.style.color = '#FF2D55';
+                        e.currentTarget.style.color = 'var(--red)';
                         e.currentTarget.style.background = 'rgba(255,45,85,0.06)';
                       }}
                       onMouseLeave={e => {
@@ -390,7 +390,7 @@ export default function LandingNav() {
                   className="flex items-center px-4 py-3.5 font-sans font-semibold transition-all border-l-[3px]"
                   style={{
                     fontSize: '16px',
-                    color: highlight ? '#dc2626' : active ? 'var(--text)' : 'var(--muted)',
+                    color: highlight ? 'var(--red)' : active ? 'var(--text)' : 'var(--muted)',
                     borderLeftColor: active ? primary : 'transparent',
                     background: active ? `color-mix(in srgb, ${primary} 6%, transparent)` : 'transparent',
                   }}
@@ -405,7 +405,7 @@ export default function LandingNav() {
                 <button
                   onClick={() => { router.push('/login'); setMobileOpen(false); }}
                   className="w-full py-3 font-sans font-semibold text-[15px] rounded-lg transition-all"
-                  style={{ background: 'var(--red)', color: '#fff', border: 'none' }}
+                  style={{ background: 'var(--red)', color: 'var(--text)', border: 'none' }}
                 >
                   Join Free →
                 </button>
@@ -434,7 +434,7 @@ export default function LandingNav() {
               >
                 <span className="text-xl">{team.flag}</span>
                 <span>{team.name}</span>
-                <span className="font-mono text-xs opacity-50 ml-auto tracking-wider">Change</span>
+                <span className="font-mono text-xs opacity-50 ml-auto tracking-wide">Change</span>
               </button>
             )}
 

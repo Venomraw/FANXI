@@ -23,21 +23,21 @@ const TUTORIAL_STEPS = [
     title: 'Drag players to the pitch',
     body: 'Find your players in the squad list below the pitch. Drag them up into the empty slots — or tap a slot then tap a player name.',
     hint: 'Start with your goalkeeper, then build outward.',
-    color: '#00FF85',
+    color: 'var(--success)',
   },
   {
     icon: '📐',
     title: 'Set your formation',
     body: 'Use the formation selector to shape how your team lines up. The pitch will reorganise the slots to match your chosen shape.',
     hint: 'Pick the formation you think the manager will actually use.',
-    color: '#00D1FF',
+    color: 'var(--blue)',
   },
   {
     icon: '🔒',
     title: 'Lock before kickoff',
     body: 'Once you\'re happy with your XI, hit the Predict button to lock it in. You cannot change your prediction after kickoff.',
     hint: 'Predictions lock automatically 1 hour before kickoff.',
-    color: '#FFD23F',
+    color: 'var(--gold)',
   },
 ];
 
@@ -75,14 +75,14 @@ function TutorialOverlay({ primary, onDone }: { primary: string; onDone: () => v
 
       {/* Backdrop */}
       <div
-        className="fixed inset-0 z-[200]"
+        className="fixed inset-0 z-50"
         style={{ background: 'rgba(6,10,6,0.78)', backdropFilter: 'blur(4px)' }}
         onClick={handleSkip}
       />
 
       {/* Modal card */}
       <div
-        className="fixed z-[201] left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full"
+        className="fixed z-[51] left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full"
         style={{ maxWidth: '440px', padding: '0 16px' }}
       >
         <div
@@ -156,7 +156,7 @@ function TutorialOverlay({ primary, onDone }: { primary: string; onDone: () => v
               className="flex-1 py-3 font-display font-semibold text-[14px] uppercase tracking-widest transition-all hover:-translate-y-0.5"
               style={{
                 background: current.color,
-                color: '#060A06',
+                color: 'var(--dark)',
                 boxShadow: `0 0 20px color-mix(in srgb, ${current.color} 30%, transparent)`,
               }}
             >
@@ -285,7 +285,7 @@ export default function PredictPage() {
       {/* ── Lock success overlay ── */}
       {lockSuccess && (
         <div
-          className="fixed inset-0 z-[250] flex items-center justify-center p-4"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
           style={{ background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(8px)' }}
         >
           <div

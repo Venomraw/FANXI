@@ -433,7 +433,7 @@ export default function ChampionsTimeline() {
                           fontSize: '14px',
                           transition: 'color 400ms ease',
                           color: is2026
-                            ? '#dc2626'
+                            ? 'var(--red)'
                             : isSelected
                               ? GOLD
                               : 'rgba(255,255,255,0.40)',
@@ -481,7 +481,7 @@ export default function ChampionsTimeline() {
                           style={{
                             width: '24px',
                             height: '2px',
-                            background: is2026 ? '#dc2626' : GOLD,
+                            background: is2026 ? 'var(--red)' : GOLD,
                           }}
                         />
                       )}
@@ -499,7 +499,7 @@ export default function ChampionsTimeline() {
             key={`progress-${animKey}`}
             className="h-full rounded-full"
             style={{
-              background: '#dc2626',
+              background: 'var(--red)',
               animation: effectivelyPaused ? 'none' : `progressDrain ${AUTO_INTERVAL}ms linear forwards`,
             }}
           />
@@ -540,7 +540,7 @@ export default function ChampionsTimeline() {
                 onClick={() => router.push('/predict')}
                 className="mt-8 font-display font-semibold text-white rounded-lg hover:scale-105 inline-block"
                 style={{
-                  background: '#dc2626',
+                  background: 'var(--red)',
                   padding: '16px 36px',
                   fontSize: '18px',
                   transition: 'transform 400ms ease',
@@ -565,8 +565,8 @@ export default function ChampionsTimeline() {
                 {/* Year badge + wins — secondary */}
                 <div className="flex items-center gap-3 mt-3 flex-wrap">
                   <span
-                    className="font-display font-semibold text-white rounded px-3 py-1"
-                    style={{ background: '#dc2626', fontSize: '13px' }}
+                    className="font-display font-semibold text-white rounded px-3 py-1 bg-red-600"
+                    style={{ fontSize: '13px' }}
                   >
                     {selected.year}
                   </span>
@@ -591,7 +591,7 @@ export default function ChampionsTimeline() {
                   {selected.legacy}
                 </p>
 
-                <p className="font-display text-white/40 mt-2" style={{ fontSize: '13px' }}>
+                <p className="font-display text-white/60 mt-2" style={{ fontSize: '13px' }}>
                   Hosted in {selected.host}
                 </p>
 

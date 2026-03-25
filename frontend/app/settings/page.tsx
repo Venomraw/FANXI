@@ -248,7 +248,7 @@ export default function SettingsPage() {
             style={{
               background: toast.ok ? 'rgba(0,255,133,0.08)' : 'rgba(255,45,85,0.08)',
               borderColor: toast.ok ? 'rgba(0,255,133,0.3)' : 'rgba(255,45,85,0.3)',
-              color: toast.ok ? 'var(--success)' : '#FF2D55',
+              color: toast.ok ? 'var(--success)' : 'var(--red)',
             }}
           >
             {toast.text}
@@ -335,7 +335,7 @@ export default function SettingsPage() {
                   className="absolute right-3 top-1/2 -translate-y-1/2 font-mono text-xs uppercase tracking-wider"
                   style={{
                     color: usernameStatus === 'available' ? 'var(--success)'
-                         : usernameStatus === 'taken'     ? '#FF2D55'
+                         : usernameStatus === 'taken'     ? 'var(--red)'
                          : usernameStatus === 'checking'  ? primary
                          : 'var(--muted)',
                   }}

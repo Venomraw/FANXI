@@ -58,8 +58,7 @@ export default function LeaderboardPage() {
             </h1>
           </div>
           <button onClick={() => router.push('/')}
-            className="font-sans font-semibold text-[13px] px-5 py-3 border transition-all hover:border-white/30 hover:text-white btn-cut"
-            style={{ borderColor: 'rgba(255,255,255,0.12)', color: 'rgba(255,255,255,0.4)', background: '#111' }}>
+            className="font-sans font-semibold text-[13px] px-5 py-3 border border-white/[0.12] text-white/60 bg-[#111] transition-all hover:border-white/30 hover:text-white btn-cut">
             ← Hub
           </button>
         </div>
@@ -78,7 +77,7 @@ export default function LeaderboardPage() {
         </div>
 
         {/* Table */}
-        <div className="border overflow-hidden" style={{ borderColor: 'rgba(255,255,255,0.1)', background: '#0a0a0a' }}>
+        <div className="border border-white/[0.1] bg-[var(--dark)] overflow-hidden">
 
           {/* Column headers */}
           <div className="flex items-center gap-4 px-5 py-3 border-b"

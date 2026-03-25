@@ -58,7 +58,7 @@ function SectionCard({ children, pts, label, icon }: {
         style={{ borderColor: `color-mix(in srgb, ${primary} 10%, transparent)`, background: `color-mix(in srgb, ${primary} 4%, transparent)` }}
       >
         <div className="flex items-center gap-2">
-          <span className="text-base leading-none">{icon}</span>
+          <span className="text-base leading-snug">{icon}</span>
           <span className="font-sans font-semibold text-[13px]" style={{ color: 'var(--text)' }}>{label}</span>
         </div>
         {pts && (

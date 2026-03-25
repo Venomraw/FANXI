@@ -11,12 +11,12 @@ const SLIDES: Slide[] = [
     text: (
       <>
         <span className="text-white/60">🏆 Defending Champions</span>
-        <span className="text-white/20 mx-2">·</span>
+        <span className="text-white/30 mx-2">·</span>
         <span className="text-white">🇦🇷 Argentina</span>
-        <span className="text-white/20 mx-2">·</span>
+        <span className="text-white/30 mx-2">·</span>
         <span className="text-white/60">Lionel Scaloni</span>
-        <span className="text-white/20 mx-2">·</span>
-        <span style={{ color: '#f59e0b' }}>Won 2022 in Qatar</span>
+        <span className="text-white/30 mx-2">·</span>
+        <span className="text-amber-400">Won 2022 in Qatar</span>
       </>
     ),
   },
@@ -24,14 +24,14 @@ const SLIDES: Slide[] = [
     text: (
       <>
         <span className="text-white/60">🏟️ Host Nations</span>
-        <span className="text-white/20 mx-2">·</span>
+        <span className="text-white/30 mx-2">·</span>
         <span className="text-white">🇺🇸 USA</span>
-        <span className="text-white/20 mx-2">·</span>
+        <span className="text-white/30 mx-2">·</span>
         <span className="text-white">🇨🇦 Canada</span>
-        <span className="text-white/20 mx-2">·</span>
+        <span className="text-white/30 mx-2">·</span>
         <span className="text-white">🇲🇽 Mexico</span>
-        <span className="text-white/20 mx-2">·</span>
-        <span style={{ color: '#dc2626' }}>16 venues</span>
+        <span className="text-white/30 mx-2">·</span>
+        <span className="text-red-600">16 venues</span>
       </>
     ),
   },
@@ -39,16 +39,16 @@ const SLIDES: Slide[] = [
     text: (
       <>
         <span className="text-white/60">⭐ Stars to Watch</span>
-        <span className="text-white/20 mx-2">·</span>
-        <span style={{ color: '#f59e0b' }}>Mbappé</span>
-        <span className="text-white/20 mx-2">·</span>
-        <span style={{ color: '#f59e0b' }}>Vinicius Jr</span>
-        <span className="text-white/20 mx-2">·</span>
-        <span style={{ color: '#f59e0b' }}>Pedri</span>
-        <span className="text-white/20 mx-2">·</span>
-        <span style={{ color: '#f59e0b' }}>Bellingham</span>
-        <span className="text-white/20 mx-2">·</span>
-        <span style={{ color: '#f59e0b' }}>Yamal</span>
+        <span className="text-white/30 mx-2">·</span>
+        <span className="text-amber-400">Mbappé</span>
+        <span className="text-white/30 mx-2">·</span>
+        <span className="text-amber-400">Vinicius Jr</span>
+        <span className="text-white/30 mx-2">·</span>
+        <span className="text-amber-400">Pedri</span>
+        <span className="text-white/30 mx-2">·</span>
+        <span className="text-amber-400">Bellingham</span>
+        <span className="text-white/30 mx-2">·</span>
+        <span className="text-amber-400">Yamal</span>
       </>
     ),
   },
@@ -56,11 +56,11 @@ const SLIDES: Slide[] = [
     text: (
       <>
         <span className="text-white/60">📅 Opening Match</span>
-        <span className="text-white/20 mx-2">·</span>
-        <span style={{ color: '#dc2626' }}>Jun 11, 2026</span>
-        <span className="text-white/20 mx-2">·</span>
+        <span className="text-white/30 mx-2">·</span>
+        <span className="text-red-600">Jun 11, 2026</span>
+        <span className="text-white/30 mx-2">·</span>
         <span className="text-white">Mexico vs Ecuador</span>
-        <span className="text-white/20 mx-2">·</span>
+        <span className="text-white/30 mx-2">·</span>
         <span className="text-white/60">Estadio Azteca</span>
       </>
     ),
@@ -69,12 +69,12 @@ const SLIDES: Slide[] = [
     text: (
       <>
         <span className="text-white/60">🌍 First 48-team World Cup</span>
-        <span className="text-white/20 mx-2">·</span>
-        <span style={{ color: '#dc2626' }}>104 matches</span>
-        <span className="text-white/20 mx-2">·</span>
+        <span className="text-white/30 mx-2">·</span>
+        <span className="text-red-600">104 matches</span>
+        <span className="text-white/30 mx-2">·</span>
         <span className="text-white">12 groups</span>
-        <span className="text-white/20 mx-2">·</span>
-        <span style={{ color: '#f59e0b' }}>1 champion</span>
+        <span className="text-white/30 mx-2">·</span>
+        <span className="text-amber-400">1 champion</span>
       </>
     ),
   },
