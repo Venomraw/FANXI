@@ -239,7 +239,7 @@ function SectionHead({ icon, label, sub, primary }: { icon: string; label: strin
       <div>
         <h2 className="font-display font-semibold leading-none uppercase"
           style={{ fontSize: '32px', color: primary }}>{label}</h2>
-        {sub && <p className="font-mono text-[10px] uppercase tracking-widest mt-1" style={{ color: 'var(--muted)' }}>{sub}</p>}
+        {sub && <p className="font-mono text-xs uppercase tracking-widest mt-1" style={{ color: 'var(--muted)' }}>{sub}</p>}
       </div>
     </div>
   );
@@ -296,17 +296,17 @@ function TeamSelector({
             <span className="text-xl">{selected.flag}</span>
             <div className="flex-1 text-left">
               <div className="font-display font-semibold text-[14px]">{selected.name}</div>
-              <div className="font-mono text-[9px] uppercase tracking-widest" style={{ color: 'var(--muted)' }}>
+              <div className="font-mono text-xs uppercase tracking-widest" style={{ color: 'var(--muted)' }}>
                 Group {selected.group} · {selected.confederation}
               </div>
             </div>
           </>
         ) : (
-          <span className="font-mono text-[11px] uppercase tracking-widest" style={{ color: 'var(--muted)' }}>
+          <span className="font-mono text-xs uppercase tracking-widest" style={{ color: 'var(--muted)' }}>
             Select a Nation
           </span>
         )}
-        <span className="font-mono text-[11px] ml-auto" style={{ color: 'var(--muted)' }}>
+        <span className="font-mono text-xs ml-auto" style={{ color: 'var(--muted)' }}>
           {open ? '▲' : '▼'}
         </span>
       </button>
@@ -325,18 +325,19 @@ function TeamSelector({
           {/* Search */}
           <div className="p-2 border-b" style={{ borderColor: 'var(--border)' }}>
             <input
+              aria-label="Search nations"
               autoFocus
               value={query}
               onChange={e => setQuery(e.target.value)}
               placeholder="Search nations..."
-              className="w-full bg-transparent text-[13px] px-3 py-1.5 outline-none font-mono"
+              className="w-full bg-transparent text-[13px] px-3 py-1.5 outline-none focus:ring-2 focus:ring-red-500/50 font-mono"
               style={{ color: 'var(--text)', borderBottom: `1px solid color-mix(in srgb, ${primary} 30%, transparent)` }}
             />
           </div>
           {/* Groups */}
           {Object.entries(grouped).map(([grp, teams]) => (
             <div key={grp}>
-              <div className="px-3 py-1 font-mono text-[9px] uppercase tracking-widest"
+              <div className="px-3 py-1 font-mono text-xs uppercase tracking-widest"
                 style={{ background: 'var(--dark)', color: 'var(--muted)' }}>
                 Group {grp}
               </div>
@@ -351,14 +352,14 @@ function TeamSelector({
                   <span className="text-lg">{t.flag}</span>
                   <div>
                     <div className="font-sans text-[13px]" style={{ color: 'var(--text)' }}>{t.name}</div>
-                    <div className="font-mono text-[9px]" style={{ color: 'var(--muted)' }}>{t.confederation}</div>
+                    <div className="font-mono text-xs" style={{ color: 'var(--muted)' }}>{t.confederation}</div>
                   </div>
                 </button>
               ))}
             </div>
           ))}
           {filtered.length === 0 && (
-            <div className="py-8 text-center font-mono text-[11px]" style={{ color: 'var(--muted)' }}>
+            <div className="py-8 text-center font-mono text-xs" style={{ color: 'var(--muted)' }}>
               No nations found
             </div>
           )}
@@ -439,7 +440,7 @@ function AIAnalysisPanel({
       <div className="flex items-center justify-between px-5 py-3 border-b"
         style={{ borderColor: `color-mix(in srgb, ${primary} 15%, transparent)` }}>
         <div className="flex items-center gap-2">
-          <span className="font-mono text-[10px] uppercase tracking-widest px-2 py-0.5"
+          <span className="font-mono text-xs uppercase tracking-widest px-2 py-0.5"
             style={{
               background: `color-mix(in srgb, ${primary} 15%, transparent)`,
               color: primary,
@@ -455,7 +456,7 @@ function AIAnalysisPanel({
           <button
             onClick={generate}
             disabled={loading}
-            className="font-mono text-[10px] uppercase tracking-widest px-3 py-1.5 border transition-all"
+            className="font-mono text-xs uppercase tracking-widest px-3 py-1.5 border transition-all"
             style={{
               borderColor: `color-mix(in srgb, ${primary} 20%, transparent)`,
               color: 'var(--muted)',
@@ -472,7 +473,7 @@ function AIAnalysisPanel({
         {!aiText && !loading && (
           <div className="flex flex-col items-center justify-center py-10 gap-4">
             <div className="text-4xl">🔍</div>
-            <p className="font-mono text-[11px] uppercase tracking-widest" style={{ color: 'var(--muted)' }}>
+            <p className="font-mono text-xs uppercase tracking-widest" style={{ color: 'var(--muted)' }}>
               AI tactical analysis ready
             </p>
             <button
@@ -497,7 +498,7 @@ function AIAnalysisPanel({
                   style={{ background: primary, animationDelay: `${i * 0.15}s` }} />
               ))}
             </div>
-            <span className="font-mono text-[11px] uppercase tracking-widest" style={{ color: 'var(--muted)' }}>
+            <span className="font-mono text-xs uppercase tracking-widest" style={{ color: 'var(--muted)' }}>
               Analysing {teamName}...
             </span>
           </div>
@@ -545,7 +546,7 @@ function PlayerCard({ player, primary }: { player: Player; primary: string }) {
           {player.name}
         </div>
       </div>
-      <div className="font-mono text-[10px] uppercase tracking-wider px-2 py-0.5 flex-shrink-0"
+      <div className="font-mono text-xs uppercase tracking-wider px-2 py-0.5 flex-shrink-0"
         style={{
           background: `color-mix(in srgb, ${posColor} 12%, transparent)`,
           color: posColor,
@@ -583,7 +584,7 @@ function FixtureRow({
           : `color-mix(in srgb, ${primary} 8%, transparent)`,
       }}>
       {/* MD badge */}
-      <div className="font-mono text-[9px] uppercase tracking-widest w-8 text-center flex-shrink-0"
+      <div className="font-mono text-xs uppercase tracking-widest w-8 text-center flex-shrink-0"
         style={{ color: 'var(--muted)' }}>
         MD{fixture.matchday}
       </div>
@@ -597,7 +598,7 @@ function FixtureRow({
       </div>
 
       {/* VS */}
-      <div className="font-mono text-[11px] w-8 text-center flex-shrink-0" style={{ color: 'var(--muted)' }}>
+      <div className="font-mono text-xs w-8 text-center flex-shrink-0" style={{ color: 'var(--muted)' }}>
         vs
       </div>
 
@@ -611,10 +612,10 @@ function FixtureRow({
 
       {/* Date + venue */}
       <div className="hidden md:block text-right flex-shrink-0" style={{ minWidth: '130px' }}>
-        <div className="font-mono text-[10px]" style={{ color: 'var(--muted)' }}>
+        <div className="font-mono text-xs" style={{ color: 'var(--muted)' }}>
           {formatMatchTime(fixture.kickoff)}
         </div>
-        <div className="font-mono text-[9px] truncate" style={{ color: 'var(--muted)', maxWidth: '130px' }}>
+        <div className="font-mono text-xs truncate" style={{ color: 'var(--muted)', maxWidth: '130px' }}>
           {fixture.venue.split(',')[0]}
         </div>
       </div>
@@ -622,7 +623,7 @@ function FixtureRow({
       {/* Predict CTA */}
       <button
         onClick={() => onPredict(fixture)}
-        className="font-mono text-[10px] uppercase tracking-wider px-3 py-1.5 border flex-shrink-0 transition-all hover:-translate-y-0.5"
+        className="font-mono text-xs uppercase tracking-wider px-3 py-1.5 border flex-shrink-0 transition-all hover:-translate-y-0.5"
         style={{
           borderColor: `color-mix(in srgb, ${primary} 25%, transparent)`,
           color: primary,
@@ -640,7 +641,7 @@ function FixtureRow({
 function StandingsTable({ standings, primary, viewTeam }: { standings: Standing[]; primary: string; viewTeam: string }) {
   return (
     <div className="border overflow-hidden" style={{ borderColor: `color-mix(in srgb, ${primary} 15%, transparent)` }}>
-      <div className="grid font-mono text-[9px] uppercase tracking-widest px-4 py-2"
+      <div className="grid font-mono text-xs uppercase tracking-widest px-4 py-2"
         style={{
           background: `color-mix(in srgb, ${primary} 8%, var(--dark))`,
           gridTemplateColumns: '1fr 40px 40px 40px 40px 40px 40px 40px 50px',
@@ -668,7 +669,7 @@ function StandingsTable({ standings, primary, viewTeam }: { standings: Standing[
               gridTemplateColumns: '1fr 40px 40px 40px 40px 40px 40px 40px 50px',
             }}>
             <div className="flex items-center gap-2">
-              <span className="font-mono text-[10px] w-5 text-center" style={{ color: 'var(--muted)' }}>{i + 1}</span>
+              <span className="font-mono text-xs w-5 text-center" style={{ color: 'var(--muted)' }}>{i + 1}</span>
               <span className="text-base">{s.flag}</span>
               <span className="font-sans text-[13px]" style={{ color: isView ? primary : 'var(--text)', fontWeight: isView ? 700 : 400 }}>
                 {s.team}
@@ -717,13 +718,13 @@ function ArticlePanel({
         <div className="flex items-center justify-between px-6 py-4 border-b flex-shrink-0"
           style={{ borderColor: `color-mix(in srgb, ${primary} 12%, transparent)` }}>
           <div className="flex items-center gap-2">
-            <span className="font-mono text-[10px] uppercase tracking-widest px-2 py-0.5"
+            <span className="font-mono text-xs uppercase tracking-widest px-2 py-0.5"
               style={{ background: `color-mix(in srgb, ${primary} 12%, transparent)`, color: primary, border: `1px solid color-mix(in srgb, ${primary} 25%, transparent)` }}>
               {article.source || 'Guardian'}
             </span>
-            <span className="font-mono text-[10px]" style={{ color: 'var(--muted)' }}>{timeAgo(article.published)}</span>
+            <span className="font-mono text-xs" style={{ color: 'var(--muted)' }}>{timeAgo(article.published)}</span>
           </div>
-          <button onClick={onClose} className="font-mono text-[11px] uppercase tracking-widest px-3 py-1.5 border transition-all"
+          <button onClick={onClose} className="font-mono text-xs uppercase tracking-widest px-3 py-1.5 border transition-all"
             style={{ borderColor: `color-mix(in srgb, ${primary} 20%, transparent)`, color: 'var(--muted)' }}
             onMouseEnter={e => (e.currentTarget.style.color = primary)}
             onMouseLeave={e => (e.currentTarget.style.color = 'var(--muted)')}>
@@ -741,7 +742,7 @@ function ArticlePanel({
               {article.title}
             </h2>
             {article.byline && (
-              <p className="font-mono text-[11px] uppercase tracking-widest" style={{ color: primary }}>By {article.byline}</p>
+              <p className="font-mono text-xs uppercase tracking-widest" style={{ color: primary }}>By {article.byline}</p>
             )}
             <div className="h-px" style={{ background: `color-mix(in srgb, ${primary} 15%, transparent)` }} />
             {article.trail ? (
@@ -754,7 +755,7 @@ function ArticlePanel({
         <div className="px-6 py-4 border-t flex-shrink-0"
           style={{ borderColor: `color-mix(in srgb, ${primary} 12%, transparent)`, background: 'var(--dark3)' }}>
           <a href={article.url} target="_blank" rel="noopener noreferrer"
-            className="flex items-center justify-center gap-2 w-full py-3.5 font-mono text-[11px] tracking-widest uppercase transition-all hover:-translate-y-0.5"
+            className="flex items-center justify-center gap-2 w-full py-3.5 font-mono text-xs tracking-widest uppercase transition-all hover:-translate-y-0.5"
             style={{ background: primary, color: 'var(--dark)', boxShadow: `0 0 20px color-mix(in srgb, ${primary} 30%, transparent)` }}>
             Read Full Article →
           </a>
@@ -786,15 +787,15 @@ function NewsCard({ article, primary, onSelect }: { article: Article; primary: s
       <div className="p-4 flex-1 flex flex-col gap-2">
         <p className="text-[var(--text)] text-[14px] font-semibold leading-snug line-clamp-2">{article.title}</p>
         {article.trail && (
-          <p className="text-[11px] leading-relaxed line-clamp-2" style={{ color: 'var(--muted)' }} dangerouslySetInnerHTML={{ __html: article.trail }} />
+          <p className="text-xs leading-relaxed line-clamp-2" style={{ color: 'var(--muted)' }} dangerouslySetInnerHTML={{ __html: article.trail }} />
         )}
         <div className="mt-auto flex items-center justify-between pt-2 border-t"
           style={{ borderColor: `color-mix(in srgb, ${primary} 8%, transparent)` }}>
-          <span className="font-mono text-[10px] uppercase tracking-wider px-2 py-0.5"
+          <span className="font-mono text-xs uppercase tracking-wider px-2 py-0.5"
             style={{ background: `color-mix(in srgb, ${primary} 10%, transparent)`, color: primary, border: `1px solid color-mix(in srgb, ${primary} 20%, transparent)` }}>
             {article.source || 'Guardian'}
           </span>
-          <span className="font-mono text-[11px]" style={{ color: 'var(--muted)' }}>{timeAgo(article.published)}</span>
+          <span className="font-mono text-xs" style={{ color: 'var(--muted)' }}>{timeAgo(article.published)}</span>
         </div>
       </div>
     </div>
@@ -817,16 +818,16 @@ function RedditCard({ post, primary }: { post: RedditPost; primary: string }) {
       <div className="flex-1 min-w-0">
         <p className="text-[var(--text)] text-sm font-semibold leading-snug line-clamp-2">{post.title}</p>
         <div className="flex items-center gap-3 mt-2">
-          <span className="font-mono text-[11px] font-semibold tracking-widest uppercase px-2 py-0.5"
+          <span className="font-mono text-xs font-semibold tracking-widest uppercase px-2 py-0.5"
             style={{ background: `color-mix(in srgb, ${primary} 15%, transparent)`, color: primary, border: `1px solid color-mix(in srgb, ${primary} 25%, transparent)` }}>
             {post.subreddit}
           </span>
-          <span className="font-mono text-[11px] ml-auto" style={{ color: 'var(--muted)' }}>💬 {formatScore(post.comments)}</span>
+          <span className="font-mono text-xs ml-auto" style={{ color: 'var(--muted)' }}>💬 {formatScore(post.comments)}</span>
         </div>
         <div className="flex items-center gap-2 mt-1.5">
-          <span className="font-mono text-[10px]" style={{ color: 'var(--muted)' }}>u/{post.author}</span>
+          <span className="font-mono text-xs" style={{ color: 'var(--muted)' }}>u/{post.author}</span>
           <span style={{ color: 'var(--muted)' }}>·</span>
-          <span className="font-mono text-[10px]" style={{ color: 'var(--muted)' }}>{timeAgo(post.created)}</span>
+          <span className="font-mono text-xs" style={{ color: 'var(--muted)' }}>{timeAgo(post.created)}</span>
         </div>
       </div>
     </a>
@@ -843,7 +844,7 @@ function VideoCard({ video, primary }: { video: Video; primary: string }) {
       onMouseLeave={e => (e.currentTarget.style.borderColor = `color-mix(in srgb, ${primary} 12%, transparent)`)}>
       <div className="relative h-44 overflow-hidden" style={{ background: 'var(--border)' }}>
         {video.thumbnail && <img src={video.thumbnail} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />}
-        <div className="absolute top-2 left-2 font-mono text-[9px] tracking-wider uppercase px-2 py-0.5" style={{ background: 'rgba(0,0,0,0.75)', color: 'white', border: '1px solid rgba(255,255,255,0.15)' }}>
+        <div className="absolute top-2 left-2 font-mono text-xs tracking-wider uppercase px-2 py-0.5" style={{ background: 'rgba(0,0,0,0.75)', color: 'white', border: '1px solid rgba(255,255,255,0.15)' }}>
           {video.channel.slice(0, 12)}
         </div>
         <div className="absolute inset-0 flex items-center justify-center">
@@ -855,8 +856,8 @@ function VideoCard({ video, primary }: { video: Video; primary: string }) {
       </div>
       <div className="p-3">
         <p className="text-[var(--text)] text-[13px] font-semibold leading-snug line-clamp-2">{video.title}</p>
-        <p className="font-mono text-[11px] mt-1 truncate" style={{ color: primary }}>{video.channel}</p>
-        <p className="font-mono text-[10px] mt-0.5" style={{ color: 'var(--muted)' }}>{timeAgo(video.published)}</p>
+        <p className="font-mono text-xs mt-1 truncate" style={{ color: primary }}>{video.channel}</p>
+        <p className="font-mono text-xs mt-0.5" style={{ color: 'var(--muted)' }}>{timeAgo(video.published)}</p>
       </div>
     </a>
   );
@@ -1016,7 +1017,7 @@ export default function NationPage() {
           {/* Top row: nav + team selector */}
           <div className="flex items-center justify-between mb-8 flex-wrap gap-4">
             <button onClick={() => router.push('/')}
-              className="font-mono text-[11px] tracking-widest uppercase transition-colors"
+              className="font-mono text-xs tracking-widest uppercase transition-colors"
               style={{ color: 'var(--muted)' }}
               onMouseEnter={e => (e.currentTarget.style.color = primary)}
               onMouseLeave={e => (e.currentTarget.style.color = 'var(--muted)')}>
@@ -1026,7 +1027,7 @@ export default function NationPage() {
             <div className="flex items-center gap-3">
               <TeamSelector selected={viewTeam} onSelect={handleTeamSelect} primary={primary} />
               <button onClick={fetchAll}
-                className="font-mono text-[11px] tracking-widest uppercase px-3 py-2 border transition-all"
+                className="font-mono text-xs tracking-widest uppercase px-3 py-2 border transition-all"
                 style={{ borderColor: 'var(--border)', color: 'var(--muted)', background: 'var(--dark3)' }}
                 onMouseEnter={e => (e.currentTarget.style.color = primary)}
                 onMouseLeave={e => (e.currentTarget.style.color = 'var(--muted)')}>
@@ -1046,7 +1047,7 @@ export default function NationPage() {
             </div>
 
             <div>
-              <div className="inline-flex items-center gap-2 px-2.5 py-1 font-mono text-[10px] tracking-widest uppercase mb-2"
+              <div className="inline-flex items-center gap-2 px-2.5 py-1 font-mono text-xs tracking-widest uppercase mb-2"
                 style={{
                   background: `color-mix(in srgb, ${primary} 12%, transparent)`,
                   color: primary,
@@ -1072,7 +1073,7 @@ export default function NationPage() {
               <div className="flex items-center gap-4 mt-3">
                 <button
                   onClick={() => router.push(`/predict?team=${encodeURIComponent(viewTeam.name)}`)}
-                  className="font-mono text-[11px] uppercase tracking-widest px-4 py-2 transition-all hover:-translate-y-0.5"
+                  className="font-mono text-xs uppercase tracking-widest px-4 py-2 transition-all hover:-translate-y-0.5"
                   style={{
                     background: primary,
                     color: 'var(--dark)',
@@ -1082,7 +1083,7 @@ export default function NationPage() {
                   Predict {viewTeam.name} →
                 </button>
                 {groupKey && (
-                  <span className="font-mono text-[10px] uppercase tracking-widest px-2 py-1 border"
+                  <span className="font-mono text-xs uppercase tracking-widest px-2 py-1 border"
                     style={{ borderColor: 'var(--border)', color: 'var(--muted)' }}>
                     Group {groupKey} · {squad.length > 0 ? `${squad.length} players` : 'Loading squad...'}
                   </span>
@@ -1110,7 +1111,7 @@ export default function NationPage() {
               <div key={stat.label} className="flex items-center gap-3 flex-shrink-0">
                 <div>
                   <div className="font-display font-semibold" style={{ fontSize: '18px', color: primary, lineHeight: 1 }}>{stat.value}</div>
-                  <div className="font-mono text-[9px] uppercase tracking-widest mt-0.5" style={{ color: 'var(--muted)' }}>{stat.label}</div>
+                  <div className="font-mono text-xs uppercase tracking-widest mt-0.5" style={{ color: 'var(--muted)' }}>{stat.label}</div>
                 </div>
                 <div className="w-px h-7 ml-2 flex-shrink-0" style={{ background: 'var(--border)' }} />
               </div>
@@ -1130,7 +1131,7 @@ export default function NationPage() {
           <div className="flex gap-px py-2.5 overflow-x-auto">
             {TABS.map(tab => (
               <button key={tab.id} onClick={() => setActiveTab(tab.id)}
-                className="flex items-center gap-2 px-5 py-2 font-mono text-[11px] tracking-widest uppercase transition-all whitespace-nowrap"
+                className="flex items-center gap-2 px-5 py-2 font-mono text-xs tracking-widest uppercase transition-all whitespace-nowrap"
                 style={activeTab === tab.id
                   ? { color: primary, fontWeight: 600, borderBottom: `2px solid ${primary}`, background: `color-mix(in srgb, ${primary} 8%, transparent)` }
                   : { color: 'var(--muted)', borderBottom: '2px solid transparent' }}
@@ -1139,7 +1140,7 @@ export default function NationPage() {
                 <span>{tab.icon}</span>
                 <span>{tab.label}</span>
                 {tab.count !== undefined && tab.count > 0 && (
-                  <span className="font-mono text-[10px] px-1.5 py-0.5"
+                  <span className="font-mono text-xs px-1.5 py-0.5"
                     style={{
                       background: `color-mix(in srgb, ${primary} 12%, transparent)`,
                       color: primary,
@@ -1178,7 +1179,7 @@ export default function NationPage() {
                 </div>
                 <button
                   onClick={() => setActiveTab('fixtures')}
-                  className="mt-3 w-full py-2.5 border font-mono text-[11px] uppercase tracking-widest transition-all hover:-translate-y-0.5"
+                  className="mt-3 w-full py-2.5 border font-mono text-xs uppercase tracking-widest transition-all hover:-translate-y-0.5"
                   style={{ borderColor: `color-mix(in srgb, ${primary} 20%, transparent)`, color: 'var(--muted)' }}
                   onMouseEnter={e => (e.currentTarget.style.color = primary)}
                   onMouseLeave={e => (e.currentTarget.style.color = 'var(--muted)')}>
@@ -1199,7 +1200,7 @@ export default function NationPage() {
                 </div>
                 <button
                   onClick={() => setActiveTab('squad')}
-                  className="mt-3 w-full py-2.5 border font-mono text-[11px] uppercase tracking-widest transition-all hover:-translate-y-0.5"
+                  className="mt-3 w-full py-2.5 border font-mono text-xs uppercase tracking-widest transition-all hover:-translate-y-0.5"
                   style={{ borderColor: `color-mix(in srgb, ${primary} 20%, transparent)`, color: 'var(--muted)' }}
                   onMouseEnter={e => (e.currentTarget.style.color = primary)}
                   onMouseLeave={e => (e.currentTarget.style.color = 'var(--muted)')}>
@@ -1217,7 +1218,7 @@ export default function NationPage() {
                 </div>
                 <button
                   onClick={() => setActiveTab('news')}
-                  className="mt-3 w-full py-2.5 border font-mono text-[11px] uppercase tracking-widest transition-all hover:-translate-y-0.5"
+                  className="mt-3 w-full py-2.5 border font-mono text-xs uppercase tracking-widest transition-all hover:-translate-y-0.5"
                   style={{ borderColor: `color-mix(in srgb, ${primary} 20%, transparent)`, color: 'var(--muted)' }}
                   onMouseEnter={e => (e.currentTarget.style.color = primary)}
                   onMouseLeave={e => (e.currentTarget.style.color = 'var(--muted)')}>
@@ -1238,7 +1239,7 @@ export default function NationPage() {
               <div className="flex gap-1">
                 {['ALL', 'GK', 'DEF', 'MID', 'FWD'].map(f => (
                   <button key={f} onClick={() => setPosFilter(f)}
-                    className="font-mono text-[10px] uppercase tracking-widest px-3 py-1.5 border transition-all"
+                    className="font-mono text-xs uppercase tracking-widest px-3 py-1.5 border transition-all"
                     style={{
                       background: posFilter === f ? primary : `color-mix(in srgb, ${primary} 8%, transparent)`,
                       color: posFilter === f ? 'var(--dark)' : 'var(--muted)',
@@ -1250,10 +1251,11 @@ export default function NationPage() {
                 ))}
               </div>
               <input
+                aria-label="Search player"
                 value={playerSearch}
                 onChange={e => setPlayerSearch(e.target.value)}
                 placeholder="Search player..."
-                className="flex-1 min-w-[160px] max-w-xs bg-transparent border px-3 py-1.5 font-mono text-[12px] outline-none transition-all"
+                className="flex-1 min-w-[160px] max-w-xs bg-transparent border px-3 py-1.5 font-mono text-[12px] outline-none focus:ring-2 focus:ring-red-500/50 transition-all"
                 style={{
                   borderColor: `color-mix(in srgb, ${primary} 20%, transparent)`,
                   color: 'var(--text)',
@@ -1261,7 +1263,7 @@ export default function NationPage() {
                 onFocus={e => (e.currentTarget.style.borderColor = primary)}
                 onBlur={e => (e.currentTarget.style.borderColor = `color-mix(in srgb, ${primary} 20%, transparent)`)}
               />
-              <span className="font-mono text-[10px]" style={{ color: 'var(--muted)' }}>
+              <span className="font-mono text-xs" style={{ color: 'var(--muted)' }}>
                 {filteredSquad.length} players
               </span>
             </div>
@@ -1273,7 +1275,7 @@ export default function NationPage() {
             ) : filteredSquad.length === 0 ? (
               <div className="text-center py-16" style={{ color: 'var(--muted)' }}>
                 <p className="text-4xl mb-3">👤</p>
-                <p className="font-mono text-xs tracking-widest">No players found</p>
+                <p className="font-mono text-xs tracking-normal">No players found</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
@@ -1316,7 +1318,7 @@ export default function NationPage() {
                   return (
                     <div key={md} className="mb-6">
                       <div className="flex items-center gap-3 mb-2">
-                        <span className="font-mono text-[10px] uppercase tracking-widest px-2 py-0.5"
+                        <span className="font-mono text-xs uppercase tracking-widest px-2 py-0.5"
                           style={{ background: `color-mix(in srgb, ${primary} 10%, transparent)`, color: primary, border: `1px solid color-mix(in srgb, ${primary} 20%, transparent)` }}>
                           Matchday {md}
                         </span>
@@ -1336,7 +1338,7 @@ export default function NationPage() {
                   <div className="mt-8">
                     <SectionHead icon="📊" label="Group Standings" sub="Current table · Points / GD" primary={primary} />
                     <StandingsTable standings={standings} primary={primary} viewTeam={viewTeam.name} />
-                    <p className="font-mono text-[9px] uppercase tracking-widest mt-3 text-center" style={{ color: 'var(--muted)' }}>
+                    <p className="font-mono text-xs uppercase tracking-widest mt-3 text-center" style={{ color: 'var(--muted)' }}>
                       Standings update as matches are played · Group stage runs June 11–27, 2026
                     </p>
                   </div>
@@ -1364,7 +1366,7 @@ export default function NationPage() {
             ) : news.length === 0 ? (
               <div className="text-center py-16" style={{ color: 'var(--muted)' }}>
                 <p className="text-4xl mb-3">📭</p>
-                <p className="font-mono text-xs tracking-widest">No dispatches found for {viewTeam.name}</p>
+                <p className="font-mono text-xs tracking-normal">No dispatches found for {viewTeam.name}</p>
               </div>
             ) : (
               <>
@@ -1375,7 +1377,7 @@ export default function NationPage() {
                   <div className="mt-10">
                     <div className="flex items-center gap-3 mb-5">
                       <div className="h-px flex-1" style={{ background: `color-mix(in srgb, ${primary} 15%, transparent)` }} />
-                      <span className="font-mono text-[10px] uppercase tracking-[4px]" style={{ color: 'var(--muted)' }}>More Sources</span>
+                      <span className="font-mono text-xs uppercase tracking-[4px]" style={{ color: 'var(--muted)' }}>More Sources</span>
                       <div className="h-px flex-1" style={{ background: `color-mix(in srgb, ${primary} 15%, transparent)` }} />
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -1404,14 +1406,14 @@ export default function NationPage() {
             ) : reddit.length === 0 ? (
               <div className="text-center py-16" style={{ color: 'var(--muted)' }}>
                 <p className="text-4xl mb-3">🔇</p>
-                <p className="font-mono text-xs tracking-widest">No trending posts found</p>
+                <p className="font-mono text-xs tracking-normal">No trending posts found</p>
               </div>
             ) : (
               <div className="flex flex-col gap-2">
                 {reddit.map(post => <RedditCard key={post.id} post={post} primary={primary} />)}
                 <a href={`https://www.reddit.com/r/soccer/search/?q=${encodeURIComponent(viewTeam.name)}&sort=hot`}
                   target="_blank" rel="noopener noreferrer"
-                  className="text-center py-4 border font-mono text-[11px] tracking-widest uppercase transition-all hover:-translate-y-0.5"
+                  className="text-center py-4 border font-mono text-xs tracking-widest uppercase transition-all hover:-translate-y-0.5"
                   style={{ borderColor: `color-mix(in srgb, ${primary} 15%, transparent)`, color: 'var(--muted)', background: 'var(--dark3)' }}
                   onMouseEnter={e => (e.currentTarget.style.color = primary)}
                   onMouseLeave={e => (e.currentTarget.style.color = 'var(--muted)')}>
@@ -1438,7 +1440,7 @@ export default function NationPage() {
             ) : videos.length === 0 ? (
               <div className="text-center py-16" style={{ color: 'var(--muted)' }}>
                 <p className="text-4xl mb-3">📹</p>
-                <p className="font-mono text-xs tracking-widest">No videos found · Add YouTube API key to enable</p>
+                <p className="font-mono text-xs tracking-normal">No videos found · Add YouTube API key to enable</p>
               </div>
             ) : (
               <div className="flex gap-3 overflow-x-auto pb-4 -mx-7 px-7 snap-x snap-mandatory">
@@ -1473,7 +1475,7 @@ export default function NationPage() {
               <div className="font-display font-semibold text-[14px] truncate" style={{ color: 'var(--text)' }}>
                 {viewTeam.name}
               </div>
-              <div className="font-mono text-[9px] uppercase tracking-widest" style={{ color: 'var(--muted)' }}>
+              <div className="font-mono text-xs uppercase tracking-widest" style={{ color: 'var(--muted)' }}>
                 Group {viewTeam.group} · {viewTeam.confederation}
               </div>
             </div>
@@ -1481,7 +1483,7 @@ export default function NationPage() {
 
           {nextFixtures[0] && (
             <div className="hidden sm:block text-center flex-shrink-0">
-              <div className="font-mono text-[10px] uppercase tracking-widest" style={{ color: 'var(--muted)' }}>Next match</div>
+              <div className="font-mono text-xs uppercase tracking-widest" style={{ color: 'var(--muted)' }}>Next match</div>
               <div className="font-sans text-[12px]" style={{ color: 'var(--text)' }}>
                 {nextFixtures[0].home_flag} {nextFixtures[0].home_team} vs {nextFixtures[0].away_team} {nextFixtures[0].away_flag}
               </div>

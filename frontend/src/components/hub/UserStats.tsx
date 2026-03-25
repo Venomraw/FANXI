@@ -42,9 +42,9 @@ export default function UserStats() {
       {/* Header row */}
       <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b"
         style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
-        <span className="font-mono text-[10px] tracking-[3px] uppercase"
+        <span className="font-mono text-xs tracking-[3px] uppercase"
           style={{ color: 'rgba(255,255,255,0.35)' }}>Your Profile</span>
-        <span className="font-mono text-[10px] tracking-wider uppercase px-3 py-1 font-bold theme-transition"
+        <span className="font-mono text-xs tracking-wider uppercase px-3 py-1 font-bold theme-transition"
           style={{ background: `${rankColor}18`, color: rankColor, border: `1px solid ${rankColor}40` }}>
           {user.rank_title}
         </span>
@@ -61,7 +61,7 @@ export default function UserStats() {
         {/* Name / country */}
         <div className="flex-1 min-w-0">
           <p className="text-white font-bold text-xl leading-tight truncate">{user.username}</p>
-          <p className="font-mono text-[11px] tracking-widest uppercase mt-0.5"
+          <p className="font-mono text-xs tracking-widest uppercase mt-0.5"
             style={{ color: 'rgba(255,255,255,0.35)' }}>
             {user.country_allegiance}
           </p>
@@ -73,14 +73,14 @@ export default function UserStats() {
             style={{ fontSize: '3.5rem', color: primary, textShadow: `0 0 30px ${primary}44` }}>
             {pts.toLocaleString()}
           </p>
-          <p className="font-mono text-[10px] tracking-widest uppercase"
+          <p className="font-mono text-xs tracking-widest uppercase"
             style={{ color: 'rgba(255,255,255,0.35)' }}>IQ Points</p>
         </div>
       </div>
 
       {/* Progress bar */}
       <div className="px-6 pb-6">
-        <div className="flex justify-between font-mono text-[10px] uppercase tracking-wider mb-2">
+        <div className="flex justify-between font-mono text-xs uppercase tracking-wider mb-2">
           <span className="font-bold" style={{ color: rankColor }}>{currentRank.title}</span>
           {nextRank && (
             <span style={{ color: 'rgba(255,255,255,0.3)' }}>

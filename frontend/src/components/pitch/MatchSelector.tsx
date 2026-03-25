@@ -73,7 +73,7 @@ export default function MatchSelector({ selectedId, onSelect }: Props) {
             )}
 
             {/* Round */}
-            <p className="font-mono text-[10px] tracking-[2px] uppercase mb-3 truncate theme-transition"
+            <p className="font-mono text-xs tracking-[2px] uppercase mb-3 truncate theme-transition"
               style={{ color: active ? primary : 'rgba(255,255,255,0.3)' }}>
               {m.round}
             </p>
@@ -82,7 +82,7 @@ export default function MatchSelector({ selectedId, onSelect }: Props) {
             <div className="flex items-center justify-between gap-1">
               <div className="flex flex-col items-center gap-1 flex-1 min-w-0">
                 <span className="text-2xl leading-none">{m.home_flag}</span>
-                <span className="font-mono text-[9px] uppercase tracking-wider text-center w-full truncate"
+                <span className="font-mono text-xs uppercase tracking-wider text-center w-full truncate"
                   style={{ color: 'rgba(255,255,255,0.7)' }}>
                   {m.home_team.length > 6 ? m.home_team.slice(0,6) + '.' : m.home_team}
                 </span>
@@ -95,7 +95,7 @@ export default function MatchSelector({ selectedId, onSelect }: Props) {
 
               <div className="flex flex-col items-center gap-1 flex-1 min-w-0">
                 <span className="text-2xl leading-none">{m.away_flag}</span>
-                <span className="font-mono text-[9px] uppercase tracking-wider text-center w-full truncate"
+                <span className="font-mono text-xs uppercase tracking-wider text-center w-full truncate"
                   style={{ color: 'rgba(255,255,255,0.7)' }}>
                   {m.away_team.length > 6 ? m.away_team.slice(0,6) + '.' : m.away_team}
                 </span>
@@ -103,7 +103,7 @@ export default function MatchSelector({ selectedId, onSelect }: Props) {
             </div>
 
             {/* Date/time */}
-            <p className="font-mono text-[10px] mt-3 text-center theme-transition"
+            <p className="font-mono text-xs mt-3 text-center theme-transition"
               style={{ color: active ? `${primary}aa` : 'rgba(255,255,255,0.25)' }}>
               {formatMatchTime(m.kickoff)}
             </p>

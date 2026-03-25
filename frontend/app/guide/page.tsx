@@ -218,7 +218,7 @@ export default function GuidePage() {
         />
         <div className="relative z-10 max-w-[1400px] mx-auto px-8 grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-16 items-center">
           <div>
-            <div className="font-mono text-[11px] tracking-widest uppercase mb-4 theme-transition" style={{ color: primary }}>
+            <div className="font-mono text-xs tracking-widest uppercase mb-4 theme-transition" style={{ color: primary }}>
               ⚡ FIFA World Cup 2026 · FanXI Platform
             </div>
             <h1
@@ -247,7 +247,7 @@ export default function GuidePage() {
                   style={{ fontSize: 'clamp(32px, 3vw, 48px)', color: primary }}>
                   {s.num}
                 </div>
-                <div className="font-mono text-[10px] tracking-widest uppercase mt-2"
+                <div className="font-mono text-xs tracking-widest uppercase mt-2"
                   style={{ color: 'var(--muted)' }}>
                   {s.label}
                 </div>
@@ -260,7 +260,7 @@ export default function GuidePage() {
       {/* ── HOW TO PLAY ── */}
       <section id="how" className="py-24 md:py-32 border-b" style={{ background: 'var(--dark3)', borderColor: 'var(--border)' }}>
         <div className="max-w-[1400px] mx-auto px-8 lg:px-16">
-          <div className="font-mono text-[11px] tracking-widest uppercase mb-4" style={{ color: primary, paddingTop: '8px' }}>// 01 — Process</div>
+          <div className="font-mono text-xs tracking-widest uppercase mb-4" style={{ color: primary, paddingTop: '8px' }}>// 01 — Process</div>
           <h2
             className="font-display font-semibold leading-none mt-2 mb-20 md:mb-24"
             style={{ fontSize: 'clamp(56px, 7vw, 100px)', letterSpacing: '1px', lineHeight: '0.95' }}
@@ -304,7 +304,7 @@ export default function GuidePage() {
       {/* ── SCORING ── */}
       <section id="scoring" className="py-24 md:py-32 border-b" style={{ background: 'var(--dark)', borderColor: 'var(--border)' }}>
         <div className="max-w-[1400px] mx-auto px-8 lg:px-16">
-          <div className="font-mono text-[11px] tracking-widest uppercase mb-4" style={{ color: primary, paddingTop: '8px' }}>// 02 — Point System</div>
+          <div className="font-mono text-xs tracking-widest uppercase mb-4" style={{ color: primary, paddingTop: '8px' }}>// 02 — Point System</div>
           <h2
             className="font-display font-semibold leading-none mt-2 mb-20 md:mb-24"
             style={{ fontSize: 'clamp(56px, 7vw, 100px)', letterSpacing: '1px', lineHeight: '0.95' }}
@@ -370,12 +370,12 @@ export default function GuidePage() {
           <div className="mt-6 p-6 border flex items-center justify-between flex-wrap gap-4"
             style={{ background: 'var(--dark3)', borderColor: `color-mix(in srgb, ${primary} 25%, transparent)` }}>
             <div>
-              <div className="font-mono text-[10px] tracking-widest uppercase mb-1"
+              <div className="font-mono text-xs tracking-widest uppercase mb-1"
                 style={{ color: 'var(--muted)' }}>Maximum per match</div>
               <div className="font-display font-semibold"
                 style={{ fontSize: '32px', color: primary }}>+42 pts</div>
             </div>
-            <div className="font-mono text-[11px] leading-relaxed max-w-sm"
+            <div className="font-mono text-xs leading-relaxed max-w-sm"
               style={{ color: 'var(--muted)' }}>
               Perfect prediction: correct result + exact score + BTTS + O/U +
               first goalscorer + formation + captain multiplier + all bonuses.
@@ -387,7 +387,7 @@ export default function GuidePage() {
       {/* ── RANKS ── */}
       <section id="ranks" className="py-24 md:py-32 border-b" style={{ background: 'var(--dark3)', borderColor: 'var(--border)' }}>
         <div className="max-w-[1400px] mx-auto px-8 lg:px-16">
-          <div className="font-mono text-[11px] tracking-widest uppercase mb-4" style={{ color: primary, paddingTop: '8px' }}>// 03 — Progression</div>
+          <div className="font-mono text-xs tracking-widest uppercase mb-4" style={{ color: primary, paddingTop: '8px' }}>// 03 — Progression</div>
           <h2
             className="font-display font-semibold leading-none mt-2 mb-20 md:mb-24"
             style={{ fontSize: 'clamp(56px, 7vw, 100px)', letterSpacing: '1px', lineHeight: '0.95' }}
@@ -431,7 +431,7 @@ export default function GuidePage() {
                       {rank.title}
                     </span>
                     <span
-                      className="font-mono text-[11px] tracking-widest uppercase"
+                      className="font-mono text-xs tracking-widest uppercase"
                       style={{ color: rank.color, opacity: 0.7 }}
                     >
                       {rank.range}
@@ -456,7 +456,7 @@ export default function GuidePage() {
                       }}
                     />
                   </div>
-                  <div className="font-mono text-[9px] tracking-widest uppercase mt-2" style={{ color: rank.color, opacity: 0.6 }}>
+                  <div className="font-mono text-xs tracking-widest uppercase mt-2" style={{ color: rank.color, opacity: 0.6 }}>
                     {rank.max === Infinity ? 'Max Tier' : `${rank.max + 1 - rank.min} pt window`}
                   </div>
                 </div>
@@ -469,7 +469,7 @@ export default function GuidePage() {
       {/* ── TIPS ── */}
       <section id="tips" className="py-24 md:py-32 border-b" style={{ background: 'var(--dark)', borderColor: 'var(--border)' }}>
         <div className="max-w-[1400px] mx-auto px-8 lg:px-16">
-          <div className="font-mono text-[11px] tracking-widest uppercase mb-4" style={{ color: primary, paddingTop: '8px' }}>// 04 — Edge</div>
+          <div className="font-mono text-xs tracking-widest uppercase mb-4" style={{ color: primary, paddingTop: '8px' }}>// 04 — Edge</div>
           <h2
             className="font-display font-semibold leading-none mt-2 mb-20 md:mb-24"
             style={{ fontSize: 'clamp(56px, 7vw, 100px)', letterSpacing: '1px', lineHeight: '0.95' }}
@@ -488,7 +488,7 @@ export default function GuidePage() {
               >
                 <div className="flex justify-between items-start mb-4">
                   <div className="text-3xl">{tip.icon}</div>
-                  <span className="font-mono text-[11px] opacity-0 group-hover:opacity-100 transition-opacity"
+                  <span className="font-mono text-xs opacity-0 group-hover:opacity-100 transition-opacity"
                     style={{ color: primary }}>→</span>
                 </div>
                 <h3
@@ -516,7 +516,7 @@ export default function GuidePage() {
           }} />
         </div>
         <div className="relative z-10 max-w-xl mx-auto px-8 lg:px-16">
-          <div className="font-mono text-[11px] tracking-widest uppercase mb-4 theme-transition" style={{ color: primary }}>
+          <div className="font-mono text-xs tracking-widest uppercase mb-4 theme-transition" style={{ color: primary }}>
             Ready to play?
           </div>
           <h2
@@ -531,7 +531,7 @@ export default function GuidePage() {
           </p>
           <button
             onClick={() => router.push('/')}
-            className="inline-flex items-center gap-2 px-10 py-4 font-mono text-[11px] font-bold tracking-widest uppercase transition-all hover:-translate-y-0.5 btn-cut-lg btn-shimmer"
+            className="inline-flex items-center gap-2 px-10 py-4 font-mono text-xs font-bold tracking-widest uppercase transition-all hover:-translate-y-0.5 btn-cut-lg btn-shimmer"
             style={{
               background: primary, color: 'var(--dark)',
               boxShadow: `0 0 28px color-mix(in srgb, ${primary} 40%, transparent)`,
@@ -539,7 +539,7 @@ export default function GuidePage() {
           >
             ⚽ Go to Hub
           </button>
-          <p className="font-mono text-[10px] tracking-widest uppercase mt-6"
+          <p className="font-mono text-xs tracking-widest uppercase mt-6"
             style={{ color: 'var(--muted)' }}>
             Free to play · No credit card · Locks at kickoff
           </p>

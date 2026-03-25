@@ -46,10 +46,10 @@ export default function MiniLeaderboard() {
       {/* Header */}
       <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b"
         style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
-        <span className="font-mono text-[10px] tracking-[3px] uppercase"
+        <span className="font-mono text-xs tracking-[3px] uppercase"
           style={{ color: 'rgba(255,255,255,0.35)' }}>Top Scouts</span>
         <button onClick={() => router.push('/leaderboard')}
-          className="font-mono text-[11px] tracking-wider uppercase font-bold transition-colors theme-transition"
+          className="font-mono text-xs tracking-wider uppercase font-bold transition-colors theme-transition"
           style={{ color: primary }}>
           Full Board →
         </button>
@@ -93,11 +93,11 @@ export default function MiniLeaderboard() {
                 <p className="font-semibold text-sm truncate text-white">
                   {e.username}
                   {isMe && (
-                    <span className="font-mono text-[9px] ml-2 tracking-wider theme-transition"
+                    <span className="font-mono text-xs ml-2 tracking-wider theme-transition"
                       style={{ color: primary }}>YOU</span>
                   )}
                 </p>
-                <p className="font-mono text-[10px] uppercase tracking-wider truncate"
+                <p className="font-mono text-xs uppercase tracking-wider truncate"
                   style={{ color: 'rgba(255,255,255,0.3)' }}>
                   {e.country_allegiance}
                 </p>
@@ -108,7 +108,7 @@ export default function MiniLeaderboard() {
                 <p className="font-display text-2xl leading-none" style={{ color: rankColor }}>
                   {e.football_iq_points.toLocaleString()}
                 </p>
-                <p className="font-mono text-[9px] uppercase tracking-wider" style={{ color: rankColor }}>
+                <p className="font-mono text-xs uppercase tracking-wider" style={{ color: rankColor }}>
                   {e.rank_title}
                 </p>
               </div>

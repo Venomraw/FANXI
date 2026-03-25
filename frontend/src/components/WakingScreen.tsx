@@ -115,7 +115,7 @@ export default function WakingScreen({ status, elapsed, onRetry }: Props) {
               </button>
               <button
                 onClick={() => window.location.reload()}
-                className="font-mono text-[10px] uppercase tracking-widest transition-all"
+                className="font-mono text-xs uppercase tracking-widest transition-all"
                 style={{ color: 'rgba(255,255,255,0.3)' }}
                 onMouseEnter={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.6)')}
                 onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.3)')}
@@ -166,7 +166,7 @@ export default function WakingScreen({ status, elapsed, onRetry }: Props) {
 
               {/* Elapsed */}
               <p
-                className="font-mono text-[10px] uppercase tracking-widest"
+                className="font-mono text-xs uppercase tracking-widest"
                 style={{ color: 'rgba(255,255,255,0.2)' }}
               >
                 {elapsed}s — Render free tier wakes in ~30s

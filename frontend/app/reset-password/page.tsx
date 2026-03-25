@@ -167,12 +167,13 @@ function ResetPasswordForm() {
                     New Password
                   </label>
                   <input
+                    aria-label="New password"
                     value={newPassword}
                     onChange={e => setNewPassword(e.target.value)}
                     required
                     type="password"
                     placeholder="••••••••"
-                    className="w-full px-4 py-3 font-mono text-sm outline-none transition-colors theme-transition"
+                    className="w-full px-4 py-3 font-mono text-sm outline-none focus:ring-2 focus:ring-red-500/50 transition-colors theme-transition"
                     style={{
                       background: 'var(--dark3)', color: 'var(--text)',
                       border: `1px solid ${borderPrimary}`,
@@ -195,12 +196,13 @@ function ResetPasswordForm() {
                     Confirm Password
                   </label>
                   <input
+                    aria-label="Confirm password"
                     value={confirmPassword}
                     onChange={e => setConfirmPassword(e.target.value)}
                     required
                     type="password"
                     placeholder="••••••••"
-                    className="w-full px-4 py-3 font-mono text-sm outline-none transition-colors theme-transition"
+                    className="w-full px-4 py-3 font-mono text-sm outline-none focus:ring-2 focus:ring-red-500/50 transition-colors theme-transition"
                     style={{
                       background: 'var(--dark3)', color: 'var(--text)',
                       border: `1px solid ${borderPrimary}`,

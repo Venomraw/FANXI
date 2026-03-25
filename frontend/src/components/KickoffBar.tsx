@@ -88,7 +88,7 @@ export default function KickoffBar() {
             ))}
           </div>
         ) : (
-          <span className="font-mono text-[10px] tracking-widest" style={{ color: 'var(--muted)' }}>
+          <span className="font-mono text-xs tracking-widest" style={{ color: 'var(--muted)' }}>
             SYNCING...
           </span>
         )}

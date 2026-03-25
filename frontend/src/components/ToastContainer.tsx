@@ -65,7 +65,7 @@ function ToastItem({ toast, onDismiss }: ToastItemProps) {
       >
         {/* Icon badge */}
         <div
-          className="flex-shrink-0 w-5 h-5 flex items-center justify-center font-mono text-[11px] font-bold mt-0.5"
+          className="flex-shrink-0 w-5 h-5 flex items-center justify-center font-mono text-xs font-bold mt-0.5"
           style={{
             background: `color-mix(in srgb, ${cfg.border} 15%, transparent)`,
             border: `1px solid color-mix(in srgb, ${cfg.border} 30%, transparent)`,
@@ -84,7 +84,7 @@ function ToastItem({ toast, onDismiss }: ToastItemProps) {
         {/* Close */}
         <button
           onClick={e => { e.stopPropagation(); handleDismiss(); }}
-          className="flex-shrink-0 font-mono text-[10px] transition-colors mt-0.5"
+          className="flex-shrink-0 font-mono text-xs transition-colors mt-0.5"
           style={{ color: 'rgba(255,255,255,0.25)' }}
           onMouseEnter={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.6)')}
           onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.25)')}
@@ -159,7 +159,7 @@ export default function ToastContainer({ toasts, onDismiss }: ToastContainerProp
                 }}
               >
                 <div
-                  className="flex-shrink-0 w-5 h-5 flex items-center justify-center font-mono text-[11px] font-bold"
+                  className="flex-shrink-0 w-5 h-5 flex items-center justify-center font-mono text-xs font-bold"
                   style={{
                     background: `color-mix(in srgb, ${TOAST_CONFIG[t.type].border} 15%, transparent)`,
                     color: TOAST_CONFIG[t.type].border,
@@ -171,7 +171,7 @@ export default function ToastContainer({ toasts, onDismiss }: ToastContainerProp
                 <p className="flex-1 font-sans text-[13px] leading-snug" style={{ color: 'rgba(255,255,255,0.88)' }}>
                   {t.message}
                 </p>
-                <button onClick={() => onDismiss(t.id)} className="font-mono text-[10px]" style={{ color: 'rgba(255,255,255,0.3)' }}>✕</button>
+                <button onClick={() => onDismiss(t.id)} className="font-mono text-xs" style={{ color: 'rgba(255,255,255,0.3)' }}>✕</button>
               </div>
             </div>
           </div>

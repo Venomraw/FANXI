@@ -132,7 +132,7 @@ export default function DraggablePlayer({ id, name, number, variant = 'bench' }:
         </div>
         <span className="text-[var(--text)] text-[13px] font-medium leading-relaxed truncate max-w-[120px]">{name}</span>
       </div>
-      <span className="text-[10px] ml-1 flex-shrink-0" style={{ color: 'var(--muted)' }}>⠿</span>
+      <span className="text-xs ml-1 flex-shrink-0" style={{ color: 'var(--muted)' }}>⠿</span>
     </div>
   );
 }

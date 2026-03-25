@@ -77,7 +77,7 @@ function MatchCard({
         {/* Badge row */}
         <div className="flex items-center gap-2 mb-4">
           <span
-            className="font-mono text-[10px] uppercase tracking-[1.5px] px-2 py-0.5 theme-transition"
+            className="font-mono text-xs uppercase tracking-[1.5px] px-2 py-0.5 theme-transition"
             style={{
               color: primary,
               background: `color-mix(in srgb, ${primary} 10%, transparent)`,
@@ -88,7 +88,7 @@ function MatchCard({
           </span>
           {isFinalDay && (
             <span
-              className="font-mono text-[10px] uppercase tracking-[1.5px] px-2 py-0.5"
+              className="font-mono text-xs uppercase tracking-[1.5px] px-2 py-0.5"
               style={{ color: '#FFD23F', background: 'rgba(255,210,63,0.1)', border: '1px solid rgba(255,210,63,0.25)' }}
             >
               Final Group Day
@@ -96,7 +96,7 @@ function MatchCard({
           )}
           {isSoon && (
             <span
-              className="font-mono text-[10px] uppercase tracking-[1.5px] px-2 py-0.5 animate-pulse"
+              className="font-mono text-xs uppercase tracking-[1.5px] px-2 py-0.5 animate-pulse"
               style={{ color: '#00FF85', background: 'rgba(0,255,133,0.1)', border: '1px solid rgba(0,255,133,0.3)' }}
             >
               Soon · {Math.floor(hours)}h
@@ -120,7 +120,7 @@ function MatchCard({
           {/* VS divider */}
           <div className="flex-shrink-0 flex flex-col items-center gap-1">
             <span
-              className="font-mono text-[11px] uppercase tracking-[2px]"
+              className="font-mono text-xs uppercase tracking-[2px]"
               style={{ color: 'rgba(255,255,255,0.2)' }}
             >
               vs
@@ -145,7 +145,7 @@ function MatchCard({
             <span className="font-sans text-[13px]" style={{ color: 'var(--muted)' }}>
               {formatMatchTime(match.kickoff)}
             </span>
-            <span className="font-mono text-[11px] tracking-[0.5px]" style={{ color: 'rgba(255,255,255,0.3)' }}>
+            <span className="font-mono text-xs tracking-[0.5px]" style={{ color: 'rgba(255,255,255,0.3)' }}>
               {match.venue}
             </span>
           </div>
@@ -153,12 +153,12 @@ function MatchCard({
           <div className="flex items-center gap-2 flex-wrap">
             {isPast ? (
               <>
-                <span className="font-mono text-[11px] uppercase px-4 py-2" style={{ color: 'rgba(255,255,255,0.2)', border: '1px solid var(--border)' }}>
+                <span className="font-mono text-xs uppercase px-4 py-2" style={{ color: 'rgba(255,255,255,0.2)', border: '1px solid var(--border)' }}>
                   Finished
                 </span>
                 <a
                   href={`/matches/${match.id}/live`}
-                  className="font-mono text-[11px] uppercase px-4 py-2 flex items-center gap-1.5 transition-all"
+                  className="font-mono text-xs uppercase px-4 py-2 flex items-center gap-1.5 transition-all"
                   style={{ color: 'var(--muted)', border: '1px solid var(--border)' }}
                 >
                   Review
@@ -167,14 +167,14 @@ function MatchCard({
             ) : isPredicted ? (
               <>
                 <span
-                  className="font-mono text-[11px] uppercase px-4 py-2 flex items-center gap-2 theme-transition"
+                  className="font-mono text-xs uppercase px-4 py-2 flex items-center gap-2 theme-transition"
                   style={{ color: '#00FF85', background: 'rgba(0,255,133,0.08)', border: '1px solid rgba(0,255,133,0.25)' }}
                 >
                   <span>✓</span> Predicted
                 </span>
                 <a
                   href={`/matches/${match.id}/live`}
-                  className="font-mono text-[11px] uppercase px-4 py-2 flex items-center gap-1.5 transition-all"
+                  className="font-mono text-xs uppercase px-4 py-2 flex items-center gap-1.5 transition-all"
                   style={{ color: '#FF2D55', background: 'rgba(255,45,85,0.08)', border: '1px solid rgba(255,45,85,0.3)' }}
                 >
                   <span className="w-1.5 h-1.5 rounded-full inline-block" style={{ background: '#FF2D55' }} />
@@ -282,7 +282,7 @@ export default function MatchesPage() {
         {/* ── HEADER ── */}
         <div className="mb-10">
           <p
-            className="font-mono text-[11px] uppercase tracking-[1.5px] mb-3 theme-transition"
+            className="font-mono text-xs uppercase tracking-[1.5px] mb-3 theme-transition"
             style={{ color: primary }}
           >
             World Cup 2026 · Group Stage
@@ -295,7 +295,7 @@ export default function MatchesPage() {
           </h1>
           <p className="font-sans text-[15px]" style={{ color: 'var(--muted)' }}>
             72 group stage matches · 12 groups · June 11 – 27, 2026
-            <span className="font-mono text-[11px] ml-3" style={{ color: 'rgba(255,255,255,0.25)' }}>
+            <span className="font-mono text-xs ml-3" style={{ color: 'rgba(255,255,255,0.25)' }}>
               · {getTimezoneLabel()}
             </span>
           </p>
@@ -316,7 +316,7 @@ export default function MatchesPage() {
             </button>
           ))}
           <div className="ml-auto flex items-center">
-            <span className="font-mono text-[11px] uppercase tracking-[1.5px]" style={{ color: 'rgba(255,255,255,0.2)' }}>
+            <span className="font-mono text-xs uppercase tracking-[1.5px]" style={{ color: 'rgba(255,255,255,0.2)' }}>
               {upcomingMatches.length} matches remaining
             </span>
           </div>
@@ -353,7 +353,7 @@ export default function MatchesPage() {
                       {dateLabel}
                     </span>
                     <div className="flex-1 h-px" style={{ background: 'var(--border)' }} />
-                    <span className="font-mono text-[10px] uppercase tracking-[1.5px]" style={{ color: 'rgba(255,255,255,0.2)' }}>
+                    <span className="font-mono text-xs uppercase tracking-[1.5px]" style={{ color: 'rgba(255,255,255,0.2)' }}>
                       {dayMatches.length} {dayMatches.length === 1 ? 'match' : 'matches'}
                     </span>
                   </div>
@@ -396,10 +396,10 @@ export default function MatchesPage() {
                   >
                     <span className="font-display text-[20px] leading-none font-semibold">{g}</span>
                     {gPredicted > 0 && activeGroup !== g && (
-                      <span className="font-mono text-[9px]" style={{ opacity: 0.6 }}>{gPredicted}/6 ✓</span>
+                      <span className="font-mono text-xs" style={{ opacity: 0.6 }}>{gPredicted}/6 ✓</span>
                     )}
                     {activeGroup === g && (
-                      <span className="font-mono text-[9px]" style={{ opacity: 0.7 }}>6 matches</span>
+                      <span className="font-mono text-xs" style={{ opacity: 0.7 }}>6 matches</span>
                     )}
                   </button>
                 );
@@ -450,14 +450,14 @@ export default function MatchesPage() {
                     {/* Matchday divider */}
                     <div className="flex items-center gap-4 mb-4">
                       <span
-                        className="font-mono text-[11px] uppercase tracking-[1.5px]"
+                        className="font-mono text-xs uppercase tracking-[1.5px]"
                         style={{ color: md === 3 ? '#FFD23F' : 'var(--muted)' }}
                       >
                         {matchdayLabels[md]}
                       </span>
                       <div className="flex-1 h-px" style={{ background: md === 3 ? 'rgba(255,210,63,0.2)' : 'var(--border)' }} />
                       {md === 3 && (
-                        <span className="font-mono text-[10px]" style={{ color: '#FFD23F', opacity: 0.7 }}>
+                        <span className="font-mono text-xs" style={{ color: '#FFD23F', opacity: 0.7 }}>
                           Simultaneous kick-offs
                         </span>
                       )}

@@ -612,7 +612,7 @@ export default function ChampionsTimeline() {
                   >
                     <div className="font-display uppercase text-red-500" style={{ fontSize: '10px', letterSpacing: '1px' }}>GOLDEN BOOT</div>
                     <div className="font-display font-semibold mt-1" style={{ fontSize: '14px', color: GOLD }}>{selected.goldenBoot}</div>
-                    <div className="font-display text-white/30 mt-0.5" style={{ fontSize: '11px' }}>{selected.topScorer}</div>
+                    <div className="font-display text-white/60 mt-0.5" style={{ fontSize: '11px' }}>{selected.topScorer}</div>
                   </div>
                   <div
                     className="rounded-lg px-4 py-3"

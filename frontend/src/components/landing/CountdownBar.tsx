@@ -140,7 +140,7 @@ export default function CountdownBar() {
       </div>
 
       <span
-        className="font-mono text-white/30 uppercase tracking-widest hidden sm:block"
+        className="font-mono text-white/60 uppercase tracking-widest hidden sm:block"
         style={{ fontSize: '10px' }}
       >
         until kickoff

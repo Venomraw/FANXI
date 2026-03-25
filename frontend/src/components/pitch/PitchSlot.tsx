@@ -42,7 +42,7 @@ export default function PitchSlot({ id, player }: PitchSlotProps) {
               : 'var(--slot-empty)',
           }}>
           <span
-            className="font-mono text-[9px] uppercase theme-transition"
+            className="font-mono text-xs uppercase theme-transition"
             style={{
               letterSpacing: '0.2em',
               color: isOver ? primary : `color-mix(in srgb, ${primary} 55%, transparent)`,

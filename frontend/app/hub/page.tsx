@@ -108,7 +108,7 @@ function LiveBanner({ matches, primary, onWatch }: {
       <div className="max-w-[1400px] mx-auto px-7 py-3 flex items-center gap-4 flex-wrap">
         <div className="flex items-center gap-2 flex-shrink-0">
           <span className="w-2 h-2 rounded-full animate-pulse" style={{ background: '#FF2D55' }} />
-          <span className="font-mono text-[10px] tracking-widest uppercase" style={{ color: '#FF2D55' }}>
+          <span className="font-mono text-xs tracking-widest uppercase" style={{ color: '#FF2D55' }}>
             Live Now
           </span>
         </div>
@@ -129,7 +129,7 @@ function LiveBanner({ matches, primary, onWatch }: {
               <span style={{ color: 'rgba(255,255,255,0.35)' }}>vs</span>
               <span>{m.away_team}</span>
               <span>{m.away_flag}</span>
-              <span className="font-mono text-[10px]" style={{ color: '#FF2D55' }}>WATCH →</span>
+              <span className="font-mono text-xs" style={{ color: '#FF2D55' }}>WATCH →</span>
             </button>
           ))}
         </div>
@@ -258,7 +258,7 @@ export default function Home() {
 
             {/* Left: greeting */}
             <div>
-              <div className="font-mono text-[11px] tracking-widest uppercase mb-4 theme-transition" style={{ color: primary }}>
+              <div className="font-mono text-xs tracking-widest uppercase mb-4 theme-transition" style={{ color: primary }}>
                 {greeting}, Scout
               </div>
               <h1
@@ -269,7 +269,7 @@ export default function Home() {
               </h1>
               <div className="flex items-center gap-3 mb-8 flex-wrap">
                 <span
-                  className="font-mono text-[11px] tracking-widest uppercase px-3 py-1.5"
+                  className="font-mono text-xs tracking-widest uppercase px-3 py-1.5"
                   style={{
                     background: `color-mix(in srgb, ${primary} 12%, transparent)`,
                     color: primary,
@@ -282,10 +282,10 @@ export default function Home() {
                   className="font-display font-semibold"
                   style={{ fontSize: '22px', color: 'var(--gold)' }}
                 >
-                  {user.football_iq_points} <span className="font-mono text-[11px] tracking-widest uppercase" style={{ color: 'var(--muted)' }}>IQ pts</span>
+                  {user.football_iq_points} <span className="font-mono text-xs tracking-widest uppercase" style={{ color: 'var(--muted)' }}>IQ pts</span>
                 </span>
                 {user.favorite_nation && (
-                  <span className="font-mono text-[11px] tracking-widest uppercase" style={{ color: 'var(--muted)' }}>
+                  <span className="font-mono text-xs tracking-widest uppercase" style={{ color: 'var(--muted)' }}>
                     {user.favorite_nation}
                   </span>
                 )}
@@ -333,7 +333,7 @@ export default function Home() {
                 }}
               >
                 <div>
-                  <div className="font-mono text-[10px] uppercase tracking-widest mb-2" style={{ color: 'var(--gold)' }}>
+                  <div className="font-mono text-xs uppercase tracking-widest mb-2" style={{ color: 'var(--gold)' }}>
                     // Your First Call
                   </div>
                   <h3 className="font-display font-semibold leading-tight mb-3" style={{ fontSize: '22px' }}>
@@ -359,11 +359,11 @@ export default function Home() {
                   Make Your First Prediction →
                 </button>
                 <div className="flex items-center gap-3 pt-2 border-t" style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
-                  <span className="font-mono text-[9px] uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.25)' }}>48 nations</span>
+                  <span className="font-mono text-xs uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.25)' }}>48 nations</span>
                   <span style={{ color: 'rgba(255,255,255,0.12)' }}>·</span>
-                  <span className="font-mono text-[9px] uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.25)' }}>104 matches</span>
+                  <span className="font-mono text-xs uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.25)' }}>104 matches</span>
                   <span style={{ color: 'rgba(255,255,255,0.12)' }}>·</span>
-                  <span className="font-mono text-[9px] uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.25)' }}>Free to play</span>
+                  <span className="font-mono text-xs uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.25)' }}>Free to play</span>
                 </div>
               </div>
             ) : (
@@ -388,7 +388,7 @@ export default function Home() {
                     >
                       {s.num}
                     </div>
-                    <div className="font-mono text-[9px] tracking-widest uppercase mt-1.5 text-center" style={{ color: 'var(--muted)' }}>
+                    <div className="font-mono text-xs tracking-widest uppercase mt-1.5 text-center" style={{ color: 'var(--muted)' }}>
                       {s.label}
                     </div>
                   </div>
@@ -401,7 +401,7 @@ export default function Home() {
 
       {/* ── TICKER ── */}
       <div className="w-full overflow-hidden relative z-10 py-3 theme-transition" style={{ background: primary, color: 'var(--dark)' }}>
-        <div className="ticker-inner font-mono font-bold text-[11px] tracking-widest uppercase">
+        <div className="ticker-inner font-mono font-bold text-xs tracking-widest uppercase">
           {tickerFull} &nbsp;&nbsp; {tickerFull}
         </div>
       </div>
@@ -410,11 +410,11 @@ export default function Home() {
       <section className="py-14" style={{ background: 'transparent' }}>
         <div className="max-w-[1400px] mx-auto px-7">
           <div className="flex items-center gap-3 mb-5">
-            <div className="font-mono text-[11px] tracking-widest uppercase theme-transition" style={{ color: primary }}>
+            <div className="font-mono text-xs tracking-widest uppercase theme-transition" style={{ color: primary }}>
               // Quick Actions
             </div>
             {isNewUser && (
-              <div className="font-mono text-[9px] uppercase tracking-widest px-2 py-0.5 animate-pulse"
+              <div className="font-mono text-xs uppercase tracking-widest px-2 py-0.5 animate-pulse"
                 style={{ color: 'var(--gold)', border: '1px solid rgba(255,210,63,0.3)', background: 'rgba(255,210,63,0.08)' }}>
                 Start here ↓
               </div>
@@ -438,7 +438,7 @@ export default function Home() {
                   onMouseLeave={e => (e.currentTarget.style.borderColor = highlight ? 'rgba(220,38,38,0.5)' : 'var(--border)')}
                 >
                   {highlight && (
-                    <div className="absolute -top-2.5 left-4 font-mono text-[9px] uppercase tracking-widest px-2 py-0.5"
+                    <div className="absolute -top-2.5 left-4 font-mono text-xs uppercase tracking-widest px-2 py-0.5"
                       style={{ background: '#dc2626', color: '#fff' }}>
                       Start here
                     </div>
@@ -452,7 +452,7 @@ export default function Home() {
                       {a.desc}
                     </div>
                   </div>
-                  <div className="mt-auto font-mono text-[10px] tracking-widest uppercase" style={{ color: a.color, opacity: 0.6 }}>
+                  <div className="mt-auto font-mono text-xs tracking-widest uppercase" style={{ color: a.color, opacity: 0.6 }}>
                     Open →
                   </div>
                 </button>
@@ -468,7 +468,7 @@ export default function Home() {
           <div className="max-w-[1400px] mx-auto px-7">
             <div className="flex items-end justify-between mb-6">
               <div>
-                <div className="font-mono text-[11px] tracking-widest uppercase mb-2 theme-transition" style={{ color: primary }}>
+                <div className="font-mono text-xs tracking-widest uppercase mb-2 theme-transition" style={{ color: primary }}>
                   // Next Up
                 </div>
                 <h2 className="font-display font-semibold leading-none" style={{ fontSize: 'clamp(32px, 4vw, 52px)' }}>
@@ -477,7 +477,7 @@ export default function Home() {
               </div>
               <button
                 onClick={() => router.push('/matches')}
-                className="font-mono text-[10px] tracking-widest uppercase px-4 py-2 transition-all hidden sm:block"
+                className="font-mono text-xs tracking-widest uppercase px-4 py-2 transition-all hidden sm:block"
                 style={{ color: 'var(--muted)', border: '1px solid var(--border)' }}
                 onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.color = primary; (e.currentTarget as HTMLButtonElement).style.borderColor = `color-mix(in srgb, ${primary} 40%, transparent)`; }}
                 onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.color = 'var(--muted)'; (e.currentTarget as HTMLButtonElement).style.borderColor = 'var(--border)'; }}
@@ -499,13 +499,13 @@ export default function Home() {
                   >
                     <div className="flex items-center gap-2">
                       <span
-                        className="font-mono text-[9px] tracking-widest uppercase px-1.5 py-0.5"
+                        className="font-mono text-xs tracking-widest uppercase px-1.5 py-0.5"
                         style={{ color: primary, border: `1px solid color-mix(in srgb, ${primary} 25%, transparent)`, background: `color-mix(in srgb, ${primary} 8%, transparent)` }}
                       >
                         {m.round}
                       </span>
                       {isSoon && (
-                        <span className="font-mono text-[9px] tracking-widest uppercase px-1.5 py-0.5 animate-pulse"
+                        <span className="font-mono text-xs tracking-widest uppercase px-1.5 py-0.5 animate-pulse"
                           style={{ color: '#00FF85', border: '1px solid rgba(0,255,133,0.3)', background: 'rgba(0,255,133,0.08)' }}>
                           {Math.floor(hours)}h
                         </span>
@@ -516,17 +516,17 @@ export default function Home() {
                         <span className="text-2xl">{m.home_flag}</span>
                         <span className="font-display font-semibold text-[14px] text-center leading-tight">{m.home_team}</span>
                       </div>
-                      <span className="font-mono text-[10px]" style={{ color: 'rgba(255,255,255,0.25)' }}>VS</span>
+                      <span className="font-mono text-xs" style={{ color: 'rgba(255,255,255,0.25)' }}>VS</span>
                       <div className="flex flex-col items-center gap-1 flex-1">
                         <span className="text-2xl">{m.away_flag}</span>
                         <span className="font-display font-semibold text-[14px] text-center leading-tight">{m.away_team}</span>
                       </div>
                     </div>
-                    <div className="font-mono text-[10px] tracking-wide" style={{ color: 'var(--muted)' }}>
+                    <div className="font-mono text-xs tracking-wide" style={{ color: 'var(--muted)' }}>
                       {formatMatchTime(m.kickoff)}
                     </div>
                     {isNewUser && (
-                      <div className="font-mono text-[9px] uppercase tracking-widest" style={{ color: 'rgba(255,210,63,0.6)' }}>
+                      <div className="font-mono text-xs uppercase tracking-widest" style={{ color: 'rgba(255,210,63,0.6)' }}>
                         🔒 Lock in before kickoff to score
                       </div>
                     )}
@@ -554,7 +554,7 @@ export default function Home() {
 
             {/* My Predictions */}
             <div>
-              <div className="font-mono text-[11px] tracking-widest uppercase mb-2 theme-transition" style={{ color: primary }}>
+              <div className="font-mono text-xs tracking-widest uppercase mb-2 theme-transition" style={{ color: primary }}>
                 // My Activity
               </div>
               <div className="flex items-end justify-between mb-6">
@@ -563,7 +563,7 @@ export default function Home() {
                 </h2>
                 <button
                   onClick={() => router.push('/predict?tab=history')}
-                  className="font-mono text-[10px] tracking-widest uppercase px-4 py-2 transition-all hidden sm:block"
+                  className="font-mono text-xs tracking-widest uppercase px-4 py-2 transition-all hidden sm:block"
                   style={{ color: 'var(--muted)', border: '1px solid var(--border)' }}
                   onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.color = primary; (e.currentTarget as HTMLButtonElement).style.borderColor = `color-mix(in srgb, ${primary} 40%, transparent)`; }}
                   onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.color = 'var(--muted)'; (e.currentTarget as HTMLButtonElement).style.borderColor = 'var(--border)'; }}
@@ -574,7 +574,7 @@ export default function Home() {
 
               {dataLoading ? (
                 <div className="flex items-center gap-2 py-8" style={{ color: 'var(--muted)' }}>
-                  <span className="font-mono text-[11px] tracking-widest uppercase">Loading...</span>
+                  <span className="font-mono text-xs tracking-widest uppercase">Loading...</span>
                 </div>
               ) : predictions.length === 0 ? (
                 <div
@@ -607,20 +607,20 @@ export default function Home() {
                       <div className="flex items-center gap-2 flex-1 min-w-0">
                         <span className="text-xl">{p.home_flag || '🏳'}</span>
                         <span className="font-display font-semibold text-[14px] truncate">{p.home_team || `Match #${p.match_id}`}</span>
-                        <span className="font-mono text-[10px]" style={{ color: 'rgba(255,255,255,0.25)' }}>vs</span>
+                        <span className="font-mono text-xs" style={{ color: 'rgba(255,255,255,0.25)' }}>vs</span>
                         <span className="font-display font-semibold text-[14px] truncate">{p.away_team || ''}</span>
                         <span className="text-xl">{p.away_flag || ''}</span>
                       </div>
                       {p.formation && (
                         <span
-                          className="font-mono text-[10px] tracking-widest uppercase px-2 py-1 flex-shrink-0"
+                          className="font-mono text-xs tracking-widest uppercase px-2 py-1 flex-shrink-0"
                           style={{ color: primary, border: `1px solid color-mix(in srgb, ${primary} 25%, transparent)`, background: `color-mix(in srgb, ${primary} 8%, transparent)` }}
                         >
                           {p.formation}
                         </span>
                       )}
                       <span
-                        className="font-mono text-[10px] tracking-widest uppercase px-2 py-1 flex-shrink-0"
+                        className="font-mono text-xs tracking-widest uppercase px-2 py-1 flex-shrink-0"
                         style={p.locked
                           ? { color: '#00FF85', border: '1px solid rgba(0,255,133,0.3)', background: 'rgba(0,255,133,0.08)' }
                           : { color: 'var(--muted)', border: '1px solid var(--border)' }
@@ -636,7 +636,7 @@ export default function Home() {
 
             {/* Leaderboard preview */}
             <div>
-              <div className="font-mono text-[11px] tracking-widest uppercase mb-2 theme-transition" style={{ color: 'var(--gold)' }}>
+              <div className="font-mono text-xs tracking-widest uppercase mb-2 theme-transition" style={{ color: 'var(--gold)' }}>
                 // Global Rankings
               </div>
               <div className="flex items-end justify-between mb-6">
@@ -645,7 +645,7 @@ export default function Home() {
                 </h2>
                 <button
                   onClick={() => router.push('/leaderboard')}
-                  className="font-mono text-[10px] tracking-widest uppercase px-4 py-2 transition-all hidden sm:block"
+                  className="font-mono text-xs tracking-widest uppercase px-4 py-2 transition-all hidden sm:block"
                   style={{ color: 'var(--muted)', border: '1px solid var(--border)' }}
                   onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.color = 'var(--gold)'; (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(255,210,63,0.4)'; }}
                   onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.color = 'var(--muted)'; (e.currentTarget as HTMLButtonElement).style.borderColor = 'var(--border)'; }}
@@ -656,7 +656,7 @@ export default function Home() {
 
               {dataLoading ? (
                 <div className="flex items-center gap-2 py-8" style={{ color: 'var(--muted)' }}>
-                  <span className="font-mono text-[11px] tracking-widest uppercase">Loading...</span>
+                  <span className="font-mono text-xs tracking-widest uppercase">Loading...</span>
                 </div>
               ) : (
                 <div className="flex flex-col gap-2">
@@ -678,15 +678,15 @@ export default function Home() {
                         </span>
                         <div className="flex-1 min-w-0">
                           <div className="font-sans font-semibold text-[14px] truncate" style={{ color: isMe ? primary : 'var(--text)' }}>
-                            {entry.username} {isMe && <span className="font-mono text-[9px] tracking-widest uppercase" style={{ color: primary }}>(you)</span>}
+                            {entry.username} {isMe && <span className="font-mono text-xs tracking-widest uppercase" style={{ color: primary }}>(you)</span>}
                           </div>
-                          <div className="font-mono text-[9px] tracking-widest uppercase" style={{ color: rankColor }}>
+                          <div className="font-mono text-xs tracking-widest uppercase" style={{ color: rankColor }}>
                             {entry.rank_title}
                           </div>
                         </div>
                         <div className="font-display font-semibold text-[18px] flex-shrink-0" style={{ color: 'var(--gold)' }}>
                           {entry.football_iq_points}
-                          <span className="font-mono text-[9px] tracking-widest uppercase ml-1" style={{ color: 'var(--muted)' }}>pts</span>
+                          <span className="font-mono text-xs tracking-widest uppercase ml-1" style={{ color: 'var(--muted)' }}>pts</span>
                         </div>
                       </div>
                     );
@@ -701,7 +701,7 @@ export default function Home() {
                       {isNewUser ? (
                         <div className="w-full text-center py-1">
                           <span
-                            className="font-mono text-[10px] uppercase tracking-widest px-3 py-1.5"
+                            className="font-mono text-xs uppercase tracking-widest px-3 py-1.5"
                             style={{
                               color: 'var(--gold)',
                               border: '1px solid rgba(255,210,63,0.25)',
@@ -713,15 +713,15 @@ export default function Home() {
                         </div>
                       ) : (
                         <>
-                          <span className="font-mono text-[10px] tracking-widest uppercase" style={{ color: 'var(--muted)' }}>—</span>
+                          <span className="font-mono text-xs tracking-widest uppercase" style={{ color: 'var(--muted)' }}>—</span>
                           <div className="flex-1">
                             <div className="font-sans font-semibold text-[14px]" style={{ color: primary }}>
-                              {user.username} <span className="font-mono text-[9px] tracking-widest uppercase">(you)</span>
+                              {user.username} <span className="font-mono text-xs tracking-widest uppercase">(you)</span>
                             </div>
-                            <div className="font-mono text-[9px] tracking-widest uppercase" style={{ color: 'var(--muted)' }}>{user.rank_title}</div>
+                            <div className="font-mono text-xs tracking-widest uppercase" style={{ color: 'var(--muted)' }}>{user.rank_title}</div>
                           </div>
                           <div className="font-display font-semibold text-[18px]" style={{ color: 'var(--gold)' }}>
-                            {user.football_iq_points} <span className="font-mono text-[9px] tracking-widest uppercase" style={{ color: 'var(--muted)' }}>pts</span>
+                            {user.football_iq_points} <span className="font-mono text-xs tracking-widest uppercase" style={{ color: 'var(--muted)' }}>pts</span>
                           </div>
                         </>
                       )}
@@ -739,7 +739,7 @@ export default function Home() {
         <div className="absolute inset-0 pointer-events-none" style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.45) 50%, rgba(0,0,0,0.25) 100%)' }} />
         <div className="relative z-10 max-w-[1400px] mx-auto px-7">
           <div className="mb-12 reveal">
-            <div className="font-mono text-[11px] tracking-widest uppercase mb-3 theme-transition" style={{ color: primary }}>
+            <div className="font-mono text-xs tracking-widest uppercase mb-3 theme-transition" style={{ color: primary }}>
               // Match Day Experience
             </div>
             <h2 className="font-display font-semibold leading-none" style={{ fontSize: 'clamp(44px, 6vw, 86px)', letterSpacing: '1px', lineHeight: '0.95' }}>
@@ -779,7 +779,7 @@ export default function Home() {
                 <div className="absolute right-4 top-4 font-display font-semibold leading-none select-none pointer-events-none"
                   style={{ fontSize: '120px', color: c.color, opacity: 0.04, lineHeight: 1 }}>{c.num}</div>
                 <div className="flex items-center justify-between">
-                  <span className="font-mono text-[9px] tracking-widest uppercase px-2 py-1"
+                  <span className="font-mono text-xs tracking-widest uppercase px-2 py-1"
                     style={{ background: `color-mix(in srgb, ${c.color} 10%, transparent)`, color: c.color, border: `1px solid color-mix(in srgb, ${c.color} 25%, transparent)` }}>
                     {c.phase}
                   </span>
@@ -798,7 +798,7 @@ export default function Home() {
                     </li>
                   ))}
                 </ul>
-                <div className="flex items-center gap-2 px-4 py-2.5 font-mono text-[10px] tracking-widest uppercase mt-auto w-fit"
+                <div className="flex items-center gap-2 px-4 py-2.5 font-mono text-xs tracking-widest uppercase mt-auto w-fit"
                   style={{ background: `color-mix(in srgb, ${c.color} 8%, transparent)`, color: c.color, border: `1px solid color-mix(in srgb, ${c.color} 22%, transparent)` }}>
                   {c.badge}
                 </div>
@@ -811,7 +811,7 @@ export default function Home() {
       {/* ── LEAGUES ── */}
       <section id="leagues" className="py-24 border-t" style={{ background: 'transparent', borderColor: 'var(--border)' }}>
         <div className="max-w-[1400px] mx-auto px-7">
-          <div className="font-mono text-[11px] tracking-widest uppercase mb-3 theme-transition" style={{ color: primary }}>// Competition</div>
+          <div className="font-mono text-xs tracking-widest uppercase mb-3 theme-transition" style={{ color: primary }}>// Competition</div>
           <h2 className="font-display font-semibold mb-14 leading-none" style={{ fontSize: 'clamp(44px, 6vw, 86px)', letterSpacing: '1px', lineHeight: '0.95' }}>
             LEAGUE<br />FORMATS
           </h2>
@@ -825,7 +825,7 @@ export default function Home() {
                 onMouseLeave={e => ((e.currentTarget as HTMLDivElement).style.borderColor = league.featured ? 'rgba(255,210,63,0.3)' : 'var(--border)')}
               >
                 {league.featured && (
-                  <span className="absolute top-4 right-4 font-mono text-[8px] font-bold tracking-wide uppercase px-2 py-1"
+                  <span className="absolute top-4 right-4 font-mono text-xs font-bold tracking-wide uppercase px-2 py-1"
                     style={{ background: 'var(--gold)', color: 'var(--dark)' }}>
                     Popular
                   </span>
@@ -834,7 +834,7 @@ export default function Home() {
                 <h3 className="font-display font-semibold mb-3 tracking-wide" style={{ fontSize: '26px', letterSpacing: '1px' }}>{league.title}</h3>
                 <p className="text-[13px] leading-relaxed mb-5" style={{ color: 'var(--muted)' }}>{league.desc}</p>
                 <div className="flex gap-3 flex-wrap">
-                  {league.meta.map(m => <span key={m} className="font-mono text-[9px] tracking-wide" style={{ color: primary }}>{m}</span>)}
+                  {league.meta.map(m => <span key={m} className="font-mono text-xs tracking-wide" style={{ color: primary }}>{m}</span>)}
                 </div>
               </div>
             ))}
@@ -855,7 +855,7 @@ export default function Home() {
               </p>
             </div>
             <div>
-              <div className="font-mono text-[9px] tracking-widest uppercase mb-4" style={{ color: primary }}>Platform</div>
+              <div className="font-mono text-xs tracking-widest uppercase mb-4" style={{ color: primary }}>Platform</div>
               <ul className="space-y-2">
                 {[['Predict', '/predict'], ['Leaderboard', '/leaderboard'], ['Matches', '/matches'], ['Guide', '/guide']].map(([label, href]) => (
                   <li key={label}><a href={href} className="text-[13px] transition-colors" style={{ color: 'var(--muted)' }}
@@ -865,7 +865,7 @@ export default function Home() {
               </ul>
             </div>
             <div>
-              <div className="font-mono text-[9px] tracking-widest uppercase mb-4" style={{ color: primary }}>Info</div>
+              <div className="font-mono text-xs tracking-widest uppercase mb-4" style={{ color: primary }}>Info</div>
               <ul className="space-y-2">
                 {[['How It Works', '#'], ['Nation Intel', '/nation'], ['Guide', '/guide']].map(([label, href]) => (
                   <li key={label}><a href={href} className="text-[13px] transition-colors" style={{ color: 'var(--muted)' }}
@@ -875,7 +875,7 @@ export default function Home() {
               </ul>
             </div>
             <div>
-              <div className="font-mono text-[9px] tracking-widest uppercase mb-4" style={{ color: primary }}>Dev</div>
+              <div className="font-mono text-xs tracking-widest uppercase mb-4" style={{ color: primary }}>Dev</div>
               <ul className="space-y-2">
                 {([
                   { label: 'GitHub ↗', href: 'https://github.com/venomraw', external: true },
@@ -891,10 +891,10 @@ export default function Home() {
             </div>
           </div>
           <div className="flex justify-between items-center pt-7 border-t flex-wrap gap-2" style={{ borderColor: 'var(--border)' }}>
-            <span className="font-mono text-[10px] tracking-wider" style={{ color: 'var(--muted)' }}>
+            <span className="font-mono text-xs tracking-wide" style={{ color: 'var(--muted)' }}>
               © 2026 FanXI · Built by Venomraw · Free-to-play · Not affiliated with FIFA.
             </span>
-            <span className="font-mono text-[10px] tracking-wider" style={{ color: primary }}>
+            <span className="font-mono text-xs tracking-wider" style={{ color: primary }}>
               DALLAS · TEXAS · USA
             </span>
           </div>

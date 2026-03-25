@@ -141,7 +141,7 @@ export default function NewsStrip() {
             >
               {article.source}
             </span>
-            <span className="font-mono text-white/30" style={{ fontSize: '10px' }}>
+            <span className="font-mono text-white/60" style={{ fontSize: '10px' }}>
               {timeAgo(article.publishedAt)}
             </span>
           </div>

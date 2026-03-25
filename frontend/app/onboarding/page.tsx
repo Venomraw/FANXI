@@ -111,11 +111,12 @@ function NationSelect({
         >
           <div className="p-2 border-b" style={{ borderColor: 'var(--border)' }}>
             <input
+              aria-label="Search nation"
               autoFocus
               value={search}
               onChange={e => setSearch(e.target.value)}
               placeholder="Search nation..."
-              className="w-full px-3 py-1.5 text-[13px] outline-none"
+              className="w-full px-3 py-1.5 text-[13px] outline-none focus:ring-2 focus:ring-red-500/50"
               style={{ background: 'transparent', color: 'var(--text)', border: 'none' }}
             />
           </div>
@@ -304,7 +305,7 @@ export default function OnboardingPage() {
               return (
                 <div key={label} className="flex items-center gap-2">
                   <div
-                    className="flex items-center justify-center w-7 h-7 font-mono text-[10px] font-bold transition-all duration-300"
+                    className="flex items-center justify-center w-7 h-7 font-mono text-xs font-bold transition-all duration-300"
                     style={{
                       borderRadius: '50%',
                       border: `2px solid ${active || done ? primary : 'var(--border)'}`,
@@ -315,7 +316,7 @@ export default function OnboardingPage() {
                     {done ? '✓' : n}
                   </div>
                   <span
-                    className="font-mono text-[9px] tracking-widest uppercase hidden sm:block transition-colors duration-300"
+                    className="font-mono text-xs tracking-widest uppercase hidden sm:block transition-colors duration-300"
                     style={{ color: active ? primary : 'var(--muted)' }}
                   >
                     {label}
@@ -354,7 +355,7 @@ export default function OnboardingPage() {
           {/* ── STEP 1 ── */}
           {step === 1 && (
             <div>
-              <div className="font-mono text-[9px] tracking-widest uppercase mb-2" style={{ color: primary }}>
+              <div className="font-mono text-xs tracking-widest uppercase mb-2" style={{ color: primary }}>
                 // Step 01 — Identity
               </div>
               <h2 className="font-display font-semibold mb-6 leading-none" style={{ fontSize: 'clamp(28px,5vw,40px)', letterSpacing: '0.5px' }}>
@@ -363,7 +364,7 @@ export default function OnboardingPage() {
 
               {/* Avatar picker */}
               <div className="mb-6">
-                <label className="block font-mono text-[9px] tracking-widest uppercase mb-3" style={{ color: primary }}>
+                <label className="block font-mono text-xs tracking-widest uppercase mb-3" style={{ color: primary }}>
                   Pick your avatar
                 </label>
                 <div className="grid grid-cols-6 gap-2">
@@ -389,16 +390,17 @@ export default function OnboardingPage() {
 
               {/* Username */}
               <div className="mb-4">
-                <label className="block font-mono text-[9px] tracking-widest uppercase mb-2" style={{ color: primary }}>
+                <label className="block font-mono text-xs tracking-widest uppercase mb-2" style={{ color: primary }}>
                   Username *
                 </label>
                 <div className="relative">
                   <input
+                    aria-label="Username"
                     value={username}
                     onChange={e => setUsername(e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, ''))}
                     maxLength={20}
                     placeholder="your_handle"
-                    className="w-full px-4 py-3 font-mono text-[13px] outline-none transition-colors"
+                    className="w-full px-4 py-3 font-mono text-[13px] outline-none focus:ring-2 focus:ring-red-500/50 transition-colors"
                     style={{
                       background: 'rgba(10,25,15,0.6)',
                       color: 'var(--text)',
@@ -411,28 +413,29 @@ export default function OnboardingPage() {
                       else e.target.style.borderColor = 'var(--border)';
                     }}
                   />
-                  <div className="absolute right-3 top-1/2 -translate-y-1/2 font-mono text-[10px]">
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2 font-mono text-xs">
                     {usernameStatus === 'checking' && <span style={{ color: 'var(--muted)' }}>...</span>}
                     {usernameStatus === 'available' && <span style={{ color: 'var(--success)' }}>✓</span>}
                     {usernameStatus === 'taken' && <span style={{ color: 'var(--red)' }}>✗ taken</span>}
                   </div>
                 </div>
-                <p className="mt-1 font-mono text-[9px]" style={{ color: 'var(--muted)' }}>
+                <p className="mt-1 font-mono text-xs" style={{ color: 'var(--muted)' }}>
                   3–20 chars · letters, numbers, underscore
                 </p>
               </div>
 
               {/* Display name */}
               <div className="mb-6">
-                <label className="block font-mono text-[9px] tracking-widest uppercase mb-2" style={{ color: primary }}>
+                <label className="block font-mono text-xs tracking-widest uppercase mb-2" style={{ color: primary }}>
                   Display name <span style={{ color: 'var(--muted)' }}>(optional)</span>
                 </label>
                 <input
+                  aria-label="Display name"
                   value={displayName}
                   onChange={e => setDisplayName(e.target.value)}
                   maxLength={40}
                   placeholder="How you appear on the leaderboard"
-                  className="w-full px-4 py-3 font-mono text-[13px] outline-none transition-colors"
+                  className="w-full px-4 py-3 font-mono text-[13px] outline-none focus:ring-2 focus:ring-red-500/50 transition-colors"
                   style={{
                     background: 'rgba(10,25,15,0.6)',
                     color: 'var(--text)',
@@ -464,7 +467,7 @@ export default function OnboardingPage() {
           {/* ── STEP 2 ── */}
           {step === 2 && (
             <div>
-              <div className="font-mono text-[9px] tracking-widest uppercase mb-2" style={{ color: primary }}>
+              <div className="font-mono text-xs tracking-widest uppercase mb-2" style={{ color: primary }}>
                 // Step 02 — Football DNA
               </div>
               <h2 className="font-display font-semibold mb-6 leading-none" style={{ fontSize: 'clamp(28px,5vw,40px)', letterSpacing: '0.5px' }}>
@@ -473,7 +476,7 @@ export default function OnboardingPage() {
 
               {/* Favorite nation */}
               <div className="mb-4">
-                <label className="block font-mono text-[9px] tracking-widest uppercase mb-2" style={{ color: primary }}>
+                <label className="block font-mono text-xs tracking-widest uppercase mb-2" style={{ color: primary }}>
                   Favourite Nation *
                 </label>
                 <NationSelect
@@ -486,15 +489,16 @@ export default function OnboardingPage() {
 
               {/* Favorite club */}
               <div className="mb-5">
-                <label className="block font-mono text-[9px] tracking-widest uppercase mb-2" style={{ color: primary }}>
+                <label className="block font-mono text-xs tracking-widest uppercase mb-2" style={{ color: primary }}>
                   Favourite Club <span style={{ color: 'var(--muted)' }}>(optional)</span>
                 </label>
                 <input
+                  aria-label="Favourite club"
                   value={favoriteClub}
                   onChange={e => setFavoriteClub(e.target.value)}
                   maxLength={50}
                   placeholder="e.g. Barcelona, Bayern Munich..."
-                  className="w-full px-4 py-3 font-mono text-[13px] outline-none transition-colors"
+                  className="w-full px-4 py-3 font-mono text-[13px] outline-none focus:ring-2 focus:ring-red-500/50 transition-colors"
                   style={{
                     background: 'rgba(10,25,15,0.6)',
                     color: 'var(--text)',
@@ -507,7 +511,7 @@ export default function OnboardingPage() {
 
               {/* Formation */}
               <div className="mb-5">
-                <label className="block font-mono text-[9px] tracking-widest uppercase mb-3" style={{ color: primary }}>
+                <label className="block font-mono text-xs tracking-widest uppercase mb-3" style={{ color: primary }}>
                   Preferred Formation *
                 </label>
                 <div className="grid grid-cols-5 gap-2">
@@ -525,7 +529,7 @@ export default function OnboardingPage() {
                       }}
                     >
                       <FormationDots rows={f.rows} />
-                      <span className="font-mono text-[9px] tracking-wide mt-1">{f.label}</span>
+                      <span className="font-mono text-xs tracking-wide mt-1">{f.label}</span>
                     </button>
                   ))}
                 </div>
@@ -533,7 +537,7 @@ export default function OnboardingPage() {
 
               {/* Tactical style */}
               <div className="mb-6">
-                <label className="block font-mono text-[9px] tracking-widest uppercase mb-3" style={{ color: primary }}>
+                <label className="block font-mono text-xs tracking-widest uppercase mb-3" style={{ color: primary }}>
                   Tactical Style *
                 </label>
                 <div className="grid grid-cols-3 gap-2">
@@ -550,8 +554,8 @@ export default function OnboardingPage() {
                       }}
                     >
                       <span style={{ fontSize: '20px' }}>{t.icon}</span>
-                      <span className="font-sans font-semibold text-[11px]" style={{ color: tacticalStyle === t.id ? primary : 'var(--text)' }}>{t.label}</span>
-                      <span className="font-mono text-[8px]" style={{ color: 'var(--muted)' }}>{t.desc}</span>
+                      <span className="font-sans font-semibold text-xs" style={{ color: tacticalStyle === t.id ? primary : 'var(--text)' }}>{t.label}</span>
+                      <span className="font-mono text-xs" style={{ color: 'var(--muted)' }}>{t.desc}</span>
                     </button>
                   ))}
                 </div>
@@ -589,7 +593,7 @@ export default function OnboardingPage() {
           {/* ── STEP 3 ── */}
           {step === 3 && (
             <div>
-              <div className="font-mono text-[9px] tracking-widest uppercase mb-2" style={{ color: primary }}>
+              <div className="font-mono text-xs tracking-widest uppercase mb-2" style={{ color: primary }}>
                 // Step 03 — Bold Predictions
               </div>
               <h2 className="font-display font-semibold mb-1 leading-none" style={{ fontSize: 'clamp(28px,5vw,40px)', letterSpacing: '0.5px' }}>
@@ -601,7 +605,7 @@ export default function OnboardingPage() {
 
               {/* WC Winner */}
               <div className="mb-4">
-                <label className="block font-mono text-[9px] tracking-widest uppercase mb-2" style={{ color: 'var(--gold)' }}>
+                <label className="block font-mono text-xs tracking-widest uppercase mb-2" style={{ color: 'var(--gold)' }}>
                   🏆 World Cup 2026 Winner
                 </label>
                 <NationSelect
@@ -614,15 +618,16 @@ export default function OnboardingPage() {
 
               {/* Top scorer */}
               <div className="mb-4">
-                <label className="block font-mono text-[9px] tracking-widest uppercase mb-2" style={{ color: 'var(--gold)' }}>
+                <label className="block font-mono text-xs tracking-widest uppercase mb-2" style={{ color: 'var(--gold)' }}>
                   ⚽ Top Scorer
                 </label>
                 <input
+                  aria-label="Top scorer"
                   value={topScorer}
                   onChange={e => setTopScorer(e.target.value)}
                   maxLength={50}
                   placeholder="e.g. Kylian Mbappé"
-                  className="w-full px-4 py-3 font-mono text-[13px] outline-none transition-colors"
+                  className="w-full px-4 py-3 font-mono text-[13px] outline-none focus:ring-2 focus:ring-red-500/50 transition-colors"
                   style={{
                     background: 'rgba(10,25,15,0.6)',
                     color: 'var(--text)',
@@ -635,15 +640,16 @@ export default function OnboardingPage() {
 
               {/* Biggest upset */}
               <div className="mb-6">
-                <label className="block font-mono text-[9px] tracking-widest uppercase mb-2" style={{ color: 'var(--gold)' }}>
+                <label className="block font-mono text-xs tracking-widest uppercase mb-2" style={{ color: 'var(--gold)' }}>
                   💥 Biggest Upset
                 </label>
                 <input
+                  aria-label="Biggest upset"
                   value={biggestUpset}
                   onChange={e => setBiggestUpset(e.target.value)}
                   maxLength={80}
                   placeholder="e.g. Saudi Arabia beat Germany in the group stage"
-                  className="w-full px-4 py-3 font-mono text-[13px] outline-none transition-colors"
+                  className="w-full px-4 py-3 font-mono text-[13px] outline-none focus:ring-2 focus:ring-red-500/50 transition-colors"
                   style={{
                     background: 'rgba(10,25,15,0.6)',
                     color: 'var(--text)',
@@ -656,7 +662,7 @@ export default function OnboardingPage() {
 
               {error && (
                 <div className="mb-4 px-4 py-3" style={{ border: '1px solid rgba(255,45,85,0.4)', background: 'rgba(255,45,85,0.06)' }}>
-                  <p className="font-mono text-[11px]" style={{ color: 'var(--red)' }}>{error}</p>
+                  <p className="font-mono text-xs" style={{ color: 'var(--red)' }}>{error}</p>
                 </div>
               )}
 
@@ -692,7 +698,7 @@ export default function OnboardingPage() {
                   type="button"
                   onClick={() => handleSubmit(true)}
                   disabled={loading}
-                  className="font-mono text-[10px] tracking-widest uppercase transition-colors"
+                  className="font-mono text-xs tracking-widest uppercase transition-colors"
                   style={{ color: 'var(--muted)', background: 'none', border: 'none' }}
                   onMouseEnter={e => (e.currentTarget.style.color = 'var(--text)')}
                   onMouseLeave={e => (e.currentTarget.style.color = 'var(--muted)')}
@@ -706,7 +712,7 @@ export default function OnboardingPage() {
         </div>
 
         {/* Step label */}
-        <p className="text-center mt-4 font-mono text-[9px] tracking-widest uppercase" style={{ color: 'var(--muted)' }}>
+        <p className="text-center mt-4 font-mono text-xs tracking-widest uppercase" style={{ color: 'var(--muted)' }}>
           Step {step} of 3 · World Cup 2026 · Free to play
         </p>
       </div>

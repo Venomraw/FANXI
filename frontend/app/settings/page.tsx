@@ -99,6 +99,7 @@ function NationSelect({
         <div className="absolute z-50 w-full mt-1 border max-h-48 overflow-y-auto" style={{ background: 'rgba(6,10,6,0.98)', backdropFilter: 'blur(24px)', borderColor: 'var(--border)', boxShadow: '0 16px 48px rgba(0,0,0,0.6)' }}>
           <div className="p-2 border-b" style={{ borderColor: 'var(--border)' }}>
             <input
+              aria-label="Search nation"
               autoFocus
               value={search}
               onChange={e => setSearch(e.target.value)}
@@ -267,7 +268,7 @@ export default function SettingsPage() {
 
             {/* Avatar */}
             <div>
-              <p className="font-mono text-[10px] uppercase tracking-[1.5px] mb-3" style={{ color: 'var(--muted)' }}>Avatar</p>
+              <p className="font-mono text-xs uppercase tracking-[1.5px] mb-3" style={{ color: 'var(--muted)' }}>Avatar</p>
               <div className="grid grid-cols-6 gap-2">
                 {AVATARS.map(a => (
                   <button
@@ -298,15 +299,16 @@ export default function SettingsPage() {
 
             {/* Display name */}
             <div>
-              <label className="font-mono text-[10px] uppercase tracking-[1.5px] block mb-2" style={{ color: 'var(--muted)' }}>
+              <label className="font-mono text-xs uppercase tracking-[1.5px] block mb-2" style={{ color: 'var(--muted)' }}>
                 Display Name
               </label>
               <input
+                aria-label="Display name"
                 value={displayName}
                 onChange={e => setDisplayName(e.target.value)}
                 placeholder="How you appear to others"
                 maxLength={40}
-                className="w-full px-4 py-3 font-sans text-[14px] border outline-none transition-all"
+                className="w-full px-4 py-3 font-sans text-[14px] border outline-none focus:ring-2 focus:ring-red-500/50 transition-all"
                 style={{ background: 'var(--dark3)', borderColor: 'var(--border)', color: 'var(--text)' }}
                 onFocus={e => (e.currentTarget.style.borderColor = primary)}
                 onBlur={e => (e.currentTarget.style.borderColor = 'var(--border)')}
@@ -315,21 +317,22 @@ export default function SettingsPage() {
 
             {/* Username */}
             <div>
-              <label className="font-mono text-[10px] uppercase tracking-[1.5px] block mb-2" style={{ color: 'var(--muted)' }}>
+              <label className="font-mono text-xs uppercase tracking-[1.5px] block mb-2" style={{ color: 'var(--muted)' }}>
                 Username
               </label>
               <div className="relative">
                 <input
+                  aria-label="Username"
                   value={username}
                   onChange={e => setUsername(e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, '').slice(0, 20))}
                   placeholder="your_handle"
-                  className="w-full px-4 py-3 pr-24 font-sans text-[14px] border outline-none transition-all"
+                  className="w-full px-4 py-3 pr-24 font-sans text-[14px] border outline-none focus:ring-2 focus:ring-red-500/50 transition-all"
                   style={{ background: 'var(--dark3)', borderColor: 'var(--border)', color: 'var(--text)' }}
                   onFocus={e => (e.currentTarget.style.borderColor = primary)}
                   onBlur={e => (e.currentTarget.style.borderColor = 'var(--border)')}
                 />
                 <span
-                  className="absolute right-3 top-1/2 -translate-y-1/2 font-mono text-[10px] uppercase tracking-wider"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 font-mono text-xs uppercase tracking-wider"
                   style={{
                     color: usernameStatus === 'available' ? 'var(--success)'
                          : usernameStatus === 'taken'     ? '#FF2D55'
@@ -343,7 +346,7 @@ export default function SettingsPage() {
                   {usernameStatus === 'idle' && username === user.username && 'Current'}
                 </span>
               </div>
-              <p className="font-mono text-[10px] mt-1.5" style={{ color: 'var(--muted)' }}>3–20 chars, letters/numbers/underscore only</p>
+              <p className="font-mono text-xs mt-1.5" style={{ color: 'var(--muted)' }}>3–20 chars, letters/numbers/underscore only</p>
             </div>
           </section>
 
@@ -358,7 +361,7 @@ export default function SettingsPage() {
 
             {/* Nation */}
             <div>
-              <label className="font-mono text-[10px] uppercase tracking-[1.5px] block mb-2" style={{ color: 'var(--muted)' }}>
+              <label className="font-mono text-xs uppercase tracking-[1.5px] block mb-2" style={{ color: 'var(--muted)' }}>
                 Favourite Nation
               </label>
               <NationSelect value={nation} onChange={setNation} primary={primary} />
@@ -366,15 +369,16 @@ export default function SettingsPage() {
 
             {/* Club */}
             <div>
-              <label className="font-mono text-[10px] uppercase tracking-[1.5px] block mb-2" style={{ color: 'var(--muted)' }}>
+              <label className="font-mono text-xs uppercase tracking-[1.5px] block mb-2" style={{ color: 'var(--muted)' }}>
                 Favourite Club
               </label>
               <input
+                aria-label="Favourite club"
                 value={club}
                 onChange={e => setClub(e.target.value)}
                 placeholder="e.g. Real Madrid"
                 maxLength={50}
-                className="w-full px-4 py-3 font-sans text-[14px] border outline-none transition-all"
+                className="w-full px-4 py-3 font-sans text-[14px] border outline-none focus:ring-2 focus:ring-red-500/50 transition-all"
                 style={{ background: 'var(--dark3)', borderColor: 'var(--border)', color: 'var(--text)' }}
                 onFocus={e => (e.currentTarget.style.borderColor = primary)}
                 onBlur={e => (e.currentTarget.style.borderColor = 'var(--border)')}
@@ -383,7 +387,7 @@ export default function SettingsPage() {
 
             {/* Formation */}
             <div>
-              <label className="font-mono text-[10px] uppercase tracking-[1.5px] block mb-2" style={{ color: 'var(--muted)' }}>
+              <label className="font-mono text-xs uppercase tracking-[1.5px] block mb-2" style={{ color: 'var(--muted)' }}>
                 Preferred Formation
               </label>
               <div className="flex gap-2 flex-wrap">
@@ -392,7 +396,7 @@ export default function SettingsPage() {
                     key={f}
                     type="button"
                     onClick={() => setFormation(f)}
-                    className="px-4 py-2 font-mono text-[11px] border transition-all"
+                    className="px-4 py-2 font-mono text-xs border transition-all"
                     style={{
                       background: formation === f ? `color-mix(in srgb, ${primary} 16%, transparent)` : 'var(--dark3)',
                       borderColor: formation === f ? primary : 'var(--border)',
@@ -407,7 +411,7 @@ export default function SettingsPage() {
 
             {/* Tactical style */}
             <div>
-              <label className="font-mono text-[10px] uppercase tracking-[1.5px] block mb-2" style={{ color: 'var(--muted)' }}>
+              <label className="font-mono text-xs uppercase tracking-[1.5px] block mb-2" style={{ color: 'var(--muted)' }}>
                 Tactical Style
               </label>
               <div className="flex flex-col gap-2">
@@ -426,7 +430,7 @@ export default function SettingsPage() {
                     <span className="text-xl">{s.icon}</span>
                     <span>{s.label}</span>
                     {tacticalStyle === s.id && (
-                      <span className="ml-auto font-mono text-[10px]" style={{ color: primary }}>Selected</span>
+                      <span className="ml-auto font-mono text-xs" style={{ color: primary }}>Selected</span>
                     )}
                   </button>
                 ))}

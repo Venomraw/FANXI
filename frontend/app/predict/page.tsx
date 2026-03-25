@@ -125,7 +125,7 @@ function TutorialOverlay({ primary, onDone }: { primary: string; onDone: () => v
 
           {/* Content */}
           <div className="flex flex-col gap-2">
-            <div className="font-mono text-[10px] uppercase tracking-widest" style={{ color: current.color }}>
+            <div className="font-mono text-xs uppercase tracking-widest" style={{ color: current.color }}>
               Step {step + 1} of {TUTORIAL_STEPS.length}
             </div>
             <h3 className="font-display font-semibold leading-tight" style={{ fontSize: '22px' }}>
@@ -144,7 +144,7 @@ function TutorialOverlay({ primary, onDone }: { primary: string; onDone: () => v
               border: `1px solid color-mix(in srgb, ${current.color} 15%, transparent)`,
             }}
           >
-            <p className="font-mono text-[11px]" style={{ color: `color-mix(in srgb, ${current.color} 80%, rgba(255,255,255,0.6))` }}>
+            <p className="font-mono text-xs" style={{ color: `color-mix(in srgb, ${current.color} 80%, rgba(255,255,255,0.6))` }}>
               💡 {current.hint}
             </p>
           </div>
@@ -165,7 +165,7 @@ function TutorialOverlay({ primary, onDone }: { primary: string; onDone: () => v
             {!isLast && (
               <button
                 onClick={handleSkip}
-                className="font-mono text-[10px] uppercase tracking-widest px-4 py-3 border transition-all"
+                className="font-mono text-xs uppercase tracking-widest px-4 py-3 border transition-all"
                 style={{ borderColor: 'rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.35)' }}
                 onMouseEnter={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.65)')}
                 onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.35)')}
@@ -214,7 +214,7 @@ export default function PredictPage() {
       {/* Page header */}
       <div style={{ background: 'rgba(0,0,0,0.45)', borderBottom: '1px solid var(--border)' }}>
         <div className="max-w-[1400px] mx-auto px-7 py-8">
-          <div className="font-mono text-[11px] tracking-widest uppercase mb-2 theme-transition" style={{ color: primary }}>
+          <div className="font-mono text-xs tracking-widest uppercase mb-2 theme-transition" style={{ color: primary }}>
             // Tactical Lab
           </div>
           <div className="flex items-end justify-between flex-wrap gap-4">
@@ -225,12 +225,12 @@ export default function PredictPage() {
               BUILD YOUR <span style={{ color: primary }}>XI</span>
             </h1>
             <div className="flex items-center gap-3">
-              <span className="font-mono text-[11px] tracking-widest uppercase" style={{ color: 'var(--muted)' }}>
+              <span className="font-mono text-xs tracking-widest uppercase" style={{ color: 'var(--muted)' }}>
                 Select a match below to begin
               </span>
               <button
                 onClick={() => router.push('/matches')}
-                className="font-mono text-[10px] tracking-widest uppercase px-4 py-2 transition-all"
+                className="font-mono text-xs tracking-widest uppercase px-4 py-2 transition-all"
                 style={{
                   color: primary,
                   border: `1px solid color-mix(in srgb, ${primary} 30%, transparent)`,
@@ -242,7 +242,7 @@ export default function PredictPage() {
               {/* Help button — re-triggers tutorial */}
               <button
                 onClick={() => setShowTutorial(true)}
-                className="font-mono text-[10px] uppercase tracking-widest px-3 py-2 border transition-all"
+                className="font-mono text-xs uppercase tracking-widest px-3 py-2 border transition-all"
                 title="How to use the pitch"
                 style={{
                   borderColor: 'var(--border)',
@@ -264,7 +264,7 @@ export default function PredictPage() {
         <div className="max-w-[1400px] mx-auto px-7">
           <Suspense fallback={
             <div className="flex items-center justify-center py-24">
-              <span className="font-mono text-[11px] tracking-widest uppercase" style={{ color: 'var(--muted)' }}>
+              <span className="font-mono text-xs tracking-widest uppercase" style={{ color: 'var(--muted)' }}>
                 Loading Tactical Engine...
               </span>
             </div>
@@ -337,7 +337,7 @@ export default function PredictPage() {
             </div>
             <button
               onClick={() => setLockSuccess(null)}
-              className="font-mono text-[10px] uppercase tracking-widest transition-colors"
+              className="font-mono text-xs uppercase tracking-widest transition-colors"
               style={{ background: 'none', border: 'none', color: 'var(--muted)' }}
               onMouseEnter={e => { e.currentTarget.style.color = 'var(--text)'; }}
               onMouseLeave={e => { e.currentTarget.style.color = 'var(--muted)'; }}

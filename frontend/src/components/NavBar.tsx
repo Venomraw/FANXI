@@ -285,7 +285,7 @@ export default function NavBar({ subtitle }: NavBarProps) {
                       <p className="font-sans font-semibold text-[13px]" style={{ color: 'var(--text)' }}>
                         {user.display_name || user.username}
                       </p>
-                      <p className="font-mono text-[9px] tracking-widest uppercase mt-0.5" style={{ color: primary }}>
+                      <p className="font-mono text-xs tracking-widest uppercase mt-0.5" style={{ color: primary }}>
                         {user.rank_title} · {user.football_iq_points} pts
                       </p>
                     </div>
@@ -326,7 +326,7 @@ export default function NavBar({ subtitle }: NavBarProps) {
                           <button
                             key={l}
                             onClick={() => handleLang(l)}
-                            className="flex-1 py-1 font-mono text-[9px] tracking-wider transition-all"
+                            className="flex-1 py-1 font-mono text-xs tracking-wider transition-all"
                             style={{
                               background: lang === l ? primary : 'transparent',
                               color: lang === l ? 'var(--dark)' : 'var(--muted)',
@@ -467,7 +467,7 @@ export default function NavBar({ subtitle }: NavBarProps) {
                 >
                   <span className="text-xl">{team.flag}</span>
                   <span>{team.name}</span>
-                  <span className="font-mono text-[10px] opacity-50 ml-auto tracking-wider">Change</span>
+                  <span className="font-mono text-xs opacity-50 ml-auto tracking-wider">Change</span>
                 </button>
               )}
 
@@ -493,13 +493,13 @@ export default function NavBar({ subtitle }: NavBarProps) {
 
                   {/* Mobile language */}
                   <div className="px-4 py-3">
-                    <p className="font-mono text-[9px] tracking-widest uppercase mb-2" style={{ color: 'var(--muted)' }}>🌍 Language</p>
+                    <p className="font-mono text-xs tracking-widest uppercase mb-2" style={{ color: 'var(--muted)' }}>🌍 Language</p>
                     <div className="flex gap-1">
                       {LANGUAGES.map(l => (
                         <button
                           key={l}
                           onClick={() => handleLang(l)}
-                          className="flex-1 py-1.5 font-mono text-[10px] tracking-wider transition-all"
+                          className="flex-1 py-1.5 font-mono text-xs tracking-wider transition-all"
                           style={{
                             background: lang === l ? primary : 'transparent',
                             color: lang === l ? 'var(--dark)' : 'var(--muted)',

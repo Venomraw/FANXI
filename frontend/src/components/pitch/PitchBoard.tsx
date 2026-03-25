@@ -262,7 +262,7 @@ export default function PitchBoard({ onLockSuccess }: PitchBoardProps = {}) {
         style={{ borderColor: `color-mix(in srgb, ${primary} 20%, transparent)` }}
       >
         <div className="flex items-center justify-between mb-3">
-          <p className="font-mono text-[11px] uppercase tracking-[3px]" style={{ color: 'var(--muted)' }}>
+          <p className="font-mono text-xs uppercase tracking-[3px]" style={{ color: 'var(--muted)' }}>
             Select Match to Predict
           </p>
           {selectedMatch && (
@@ -285,7 +285,7 @@ export default function PitchBoard({ onLockSuccess }: PitchBoardProps = {}) {
           <div className="flex items-center justify-center gap-3">
             <button
               onClick={() => setActiveTeam(homeTeam)}
-              className="flex items-center gap-2 px-6 py-2.5 font-mono text-[11px] tracking-widest uppercase transition-all border"
+              className="flex items-center gap-2 px-6 py-2.5 font-mono text-xs tracking-widest uppercase transition-all border"
               style={activeTeam === homeTeam
                 ? { background: primary, color: 'var(--dark)', borderColor: primary, boxShadow: `0 0 16px color-mix(in srgb, ${primary} 40%, transparent)` }
                 : { background: 'var(--dark3)', color: 'var(--muted)', borderColor: 'var(--border)' }
@@ -295,11 +295,11 @@ export default function PitchBoard({ onLockSuccess }: PitchBoardProps = {}) {
               <span>{homeTeam}</span>
             </button>
 
-            <span className="font-mono text-[11px] uppercase tracking-widest" style={{ color: 'var(--muted)' }}>VS</span>
+            <span className="font-mono text-xs uppercase tracking-widest" style={{ color: 'var(--muted)' }}>VS</span>
 
             <button
               onClick={() => setActiveTeam(awayTeam)}
-              className="flex items-center gap-2 px-6 py-2.5 font-mono text-[11px] tracking-widest uppercase transition-all border"
+              className="flex items-center gap-2 px-6 py-2.5 font-mono text-xs tracking-widest uppercase transition-all border"
               style={activeTeam === awayTeam
                 ? { background: primary, color: 'var(--dark)', borderColor: primary, boxShadow: `0 0 16px color-mix(in srgb, ${primary} 40%, transparent)` }
                 : { background: 'var(--dark3)', color: 'var(--muted)', borderColor: 'var(--border)' }
@@ -326,12 +326,12 @@ export default function PitchBoard({ onLockSuccess }: PitchBoardProps = {}) {
               className="flex items-center justify-between px-4 py-3 border-b"
               style={{ borderColor: `color-mix(in srgb, ${primary} 12%, transparent)` }}
             >
-              <span className="font-mono text-[10px] uppercase tracking-[3px]" style={{ color: primary }}>
+              <span className="font-mono text-xs uppercase tracking-[3px]" style={{ color: primary }}>
                 Bench
               </span>
               <div className="flex items-center gap-2">
                 <span
-                  className="font-mono text-[10px] px-2 py-0.5 theme-transition"
+                  className="font-mono text-xs px-2 py-0.5 theme-transition"
                   style={{
                     background: `color-mix(in srgb, ${primary} 12%, transparent)`,
                     color: primary,
@@ -342,7 +342,7 @@ export default function PitchBoard({ onLockSuccess }: PitchBoardProps = {}) {
                 </span>
                 <button
                   onClick={handleResetPitch}
-                  className="font-mono text-[9px] uppercase tracking-wider transition-colors"
+                  className="font-mono text-xs uppercase tracking-wider transition-colors"
                   style={{ color: 'var(--muted)', background: 'none', border: 'none' }}
                   onMouseEnter={e => (e.currentTarget.style.color = primary)}
                   onMouseLeave={e => (e.currentTarget.style.color = 'var(--muted)')}
@@ -355,14 +355,14 @@ export default function PitchBoard({ onLockSuccess }: PitchBoardProps = {}) {
             {/* Squad list */}
             <div className="p-3 flex flex-col gap-2 overflow-y-auto custom-scrollbar flex-1 min-h-0">
               {squadLoading && (
-                <p className="font-mono text-[11px] uppercase tracking-widest text-center py-6 theme-transition" style={{ color: primary }}>
+                <p className="font-mono text-xs uppercase tracking-widest text-center py-6 theme-transition" style={{ color: primary }}>
                   Scouting squad...
                 </p>
               )}
               {!squadLoading && squad.length === 0 && (
                 <div className="flex flex-col items-center justify-center py-8 gap-2">
                   <span className="text-2xl">✅</span>
-                  <p className="font-mono text-[11px] text-center" style={{ color: 'var(--muted)' }}>
+                  <p className="font-mono text-xs text-center" style={{ color: 'var(--muted)' }}>
                     All players on pitch
                   </p>
                 </div>
@@ -466,7 +466,7 @@ export default function PitchBoard({ onLockSuccess }: PitchBoardProps = {}) {
                 className="px-3 py-2 border-b text-center"
                 style={{ borderColor: `color-mix(in srgb, ${primary} 12%, transparent)` }}
               >
-                <span className="font-mono text-[9px] uppercase tracking-[2px]" style={{ color: 'var(--muted)' }}>
+                <span className="font-mono text-xs uppercase tracking-[2px]" style={{ color: 'var(--muted)' }}>
                   Formation
                 </span>
               </div>
@@ -546,7 +546,7 @@ export default function PitchBoard({ onLockSuccess }: PitchBoardProps = {}) {
                   }
                 >
                   <span className="text-sm leading-none">{tab.icon}</span>
-                  <span className="font-mono text-[8px] uppercase tracking-widest font-bold">{tab.label}</span>
+                  <span className="font-mono text-xs uppercase tracking-widest font-bold">{tab.label}</span>
                 </button>
               ))}
             </div>
@@ -563,7 +563,7 @@ export default function PitchBoard({ onLockSuccess }: PitchBoardProps = {}) {
                     className="flex-1 flex flex-col px-4 py-5 border-b"
                     style={{ borderColor: `color-mix(in srgb, ${primary} 10%, transparent)` }}
                   >
-                    <p className="font-mono text-[10px] uppercase tracking-[2px] mb-4" style={{ color: 'var(--muted)' }}>
+                    <p className="font-mono text-xs uppercase tracking-[2px] mb-4" style={{ color: 'var(--muted)' }}>
                       Mentality
                     </p>
                     <div className="grid grid-cols-3 gap-2 flex-1">
@@ -588,7 +588,7 @@ export default function PitchBoard({ onLockSuccess }: PitchBoardProps = {}) {
                             <span className="font-sans font-semibold text-[13px] leading-none theme-transition" style={{ color: active ? primary : 'var(--text)' }}>
                               {opt.label}
                             </span>
-                            <span className="font-mono text-[10px] text-center leading-tight" style={{ color: 'var(--muted)' }}>
+                            <span className="font-mono text-xs text-center leading-tight" style={{ color: 'var(--muted)' }}>
                               {opt.desc}
                             </span>
                           </button>
@@ -602,7 +602,7 @@ export default function PitchBoard({ onLockSuccess }: PitchBoardProps = {}) {
                     className="flex-1 flex flex-col px-4 py-5 border-b"
                     style={{ borderColor: `color-mix(in srgb, ${primary} 10%, transparent)` }}
                   >
-                    <p className="font-mono text-[10px] uppercase tracking-[2px] mb-4" style={{ color: 'var(--muted)' }}>
+                    <p className="font-mono text-xs uppercase tracking-[2px] mb-4" style={{ color: 'var(--muted)' }}>
                       Pressing
                     </p>
                     <div className="grid grid-cols-2 gap-2 flex-1">
@@ -628,7 +628,7 @@ export default function PitchBoard({ onLockSuccess }: PitchBoardProps = {}) {
                             <span className="font-sans font-semibold text-[13px] leading-none theme-transition" style={{ color: active ? primary : 'var(--text)' }}>
                               {opt.label}
                             </span>
-                            <span className="font-mono text-[10px]" style={{ color: 'var(--muted)' }}>
+                            <span className="font-mono text-xs" style={{ color: 'var(--muted)' }}>
                               {opt.desc}
                             </span>
                           </button>
@@ -639,7 +639,7 @@ export default function PitchBoard({ onLockSuccess }: PitchBoardProps = {}) {
 
                   {/* WIDTH */}
                   <div className="flex-1 flex flex-col px-4 py-5">
-                    <p className="font-mono text-[10px] uppercase tracking-[2px] mb-4" style={{ color: 'var(--muted)' }}>
+                    <p className="font-mono text-xs uppercase tracking-[2px] mb-4" style={{ color: 'var(--muted)' }}>
                       Team Width
                     </p>
                     <div className="grid grid-cols-3 gap-2 flex-1">
@@ -664,7 +664,7 @@ export default function PitchBoard({ onLockSuccess }: PitchBoardProps = {}) {
                             <span className="font-sans font-semibold text-[13px] leading-none theme-transition" style={{ color: active ? primary : 'var(--text)' }}>
                               {opt.label}
                             </span>
-                            <span className="font-mono text-[10px]" style={{ color: 'var(--muted)' }}>
+                            <span className="font-mono text-xs" style={{ color: 'var(--muted)' }}>
                               {opt.desc}
                             </span>
                           </button>
@@ -711,8 +711,8 @@ export default function PitchBoard({ onLockSuccess }: PitchBoardProps = {}) {
                       style={{ flex: '3 1 0', borderColor: `color-mix(in srgb, ${primary} 10%, transparent)` }}
                     >
                       <div className="flex items-center justify-between mb-4">
-                        <p className="font-mono text-[10px] uppercase tracking-[2px]" style={{ color: 'var(--muted)' }}>Substitutions</p>
-                        <span className="font-mono text-[9px] px-2 py-0.5 font-bold theme-transition"
+                        <p className="font-mono text-xs uppercase tracking-[2px]" style={{ color: 'var(--muted)' }}>Substitutions</p>
+                        <span className="font-mono text-xs px-2 py-0.5 font-bold theme-transition"
                           style={{ background: `color-mix(in srgb, ${primary} 12%, transparent)`, color: primary, border: `1px solid color-mix(in srgb, ${primary} 25%, transparent)` }}>
                           5 pts each
                         </span>
@@ -727,9 +727,9 @@ export default function PitchBoard({ onLockSuccess }: PitchBoardProps = {}) {
                             <div className="flex gap-2">
                               {/* OUT */}
                               <div className="flex-1 flex items-center gap-1.5">
-                                <span className="font-mono text-[9px] font-bold flex-shrink-0" style={{ color: '#FF2D55' }}>OUT</span>
+                                <span className="font-mono text-xs font-bold flex-shrink-0" style={{ color: '#FF2D55' }}>OUT</span>
                                 <select value={halfTime.subs[i].out ?? ''} onChange={e => setSub(i, { out: e.target.value || null })}
-                                  className="flex-1 px-2 py-1.5 border font-sans font-semibold text-[11px] focus:outline-none"
+                                  className="flex-1 px-2 py-1.5 border font-sans font-semibold text-xs focus:outline-none focus:ring-2 focus:ring-red-500/50"
                                   style={{ background: 'var(--dark3)', borderColor: halfTime.subs[i].out ? '#FF2D5540' : 'rgba(255,255,255,0.08)', color: halfTime.subs[i].out ? 'var(--text)' : 'rgba(255,255,255,0.3)' }}>
                                   <option value="">— XI —</option>
                                   {lineupPlayers.map(p => <option key={p.name} value={p.name}>{p.name}</option>)}
@@ -737,9 +737,9 @@ export default function PitchBoard({ onLockSuccess }: PitchBoardProps = {}) {
                               </div>
                               {/* IN */}
                               <div className="flex-1 flex items-center gap-1.5">
-                                <span className="font-mono text-[9px] font-bold flex-shrink-0" style={{ color: 'var(--success)' }}>IN</span>
+                                <span className="font-mono text-xs font-bold flex-shrink-0" style={{ color: 'var(--success)' }}>IN</span>
                                 <select value={halfTime.subs[i].in ?? ''} onChange={e => setSub(i, { in: e.target.value || null })}
-                                  className="flex-1 px-2 py-1.5 border font-sans font-semibold text-[11px] focus:outline-none"
+                                  className="flex-1 px-2 py-1.5 border font-sans font-semibold text-xs focus:outline-none focus:ring-2 focus:ring-red-500/50"
                                   style={{ background: 'var(--dark3)', borderColor: halfTime.subs[i].in ? 'color-mix(in srgb, var(--success) 40%, transparent)' : 'rgba(255,255,255,0.08)', color: halfTime.subs[i].in ? 'var(--text)' : 'rgba(255,255,255,0.3)' }}>
                                   <option value="">— Bench —</option>
                                   {benchPlayers.map(p => <option key={p.name} value={p.name}>{p.name}</option>)}
@@ -757,8 +757,8 @@ export default function PitchBoard({ onLockSuccess }: PitchBoardProps = {}) {
                       style={{ flex: '2 1 0', borderColor: `color-mix(in srgb, ${primary} 10%, transparent)` }}
                     >
                       <div className="flex items-center justify-between mb-4">
-                        <p className="font-mono text-[10px] uppercase tracking-[2px]" style={{ color: 'var(--muted)' }}>Formation Change?</p>
-                        <span className="font-mono text-[9px] px-2 py-0.5 font-bold theme-transition"
+                        <p className="font-mono text-xs uppercase tracking-[2px]" style={{ color: 'var(--muted)' }}>Formation Change?</p>
+                        <span className="font-mono text-xs px-2 py-0.5 font-bold theme-transition"
                           style={{ background: `color-mix(in srgb, ${primary} 12%, transparent)`, color: primary, border: `1px solid color-mix(in srgb, ${primary} 25%, transparent)` }}>
                           8 pts
                         </span>
@@ -780,7 +780,7 @@ export default function PitchBoard({ onLockSuccess }: PitchBoardProps = {}) {
                           {FORMATIONS.map(f => (
                             <button key={f.name}
                               onClick={() => setPatch({ newFormation: halfTime.newFormation === f.name ? null : f.name })}
-                              className="px-3 py-2 border font-mono text-[10px] tracking-wider transition-all theme-transition"
+                              className="px-3 py-2 border font-mono text-xs tracking-wider transition-all theme-transition"
                               style={halfTime.newFormation === f.name
                                 ? { background: primary, borderColor: primary, color: 'var(--dark)', fontWeight: 700 }
                                 : { background: 'var(--dark3)', borderColor: `color-mix(in srgb, ${primary} 20%, transparent)`, color: 'var(--muted)' }}>
@@ -796,7 +796,7 @@ export default function PitchBoard({ onLockSuccess }: PitchBoardProps = {}) {
                       className="flex flex-col px-4 py-5 border-b"
                       style={{ flex: '2 1 0', borderColor: `color-mix(in srgb, ${primary} 10%, transparent)` }}
                     >
-                      <p className="font-mono text-[10px] uppercase tracking-[2px] mb-4" style={{ color: 'var(--muted)' }}>Tactical Shift</p>
+                      <p className="font-mono text-xs uppercase tracking-[2px] mb-4" style={{ color: 'var(--muted)' }}>Tactical Shift</p>
                       <div className="grid grid-cols-3 gap-2 flex-1">
                         {([
                           { val: 'hold',   icon: '🛡️', label: 'Hold On',   desc: 'Defend lead' },
@@ -815,7 +815,7 @@ export default function PitchBoard({ onLockSuccess }: PitchBoardProps = {}) {
                               }}>
                               <span className="text-2xl leading-none">{opt.icon}</span>
                               <span className="font-sans font-semibold text-[13px] leading-none theme-transition" style={{ color: active ? primary : 'var(--text)' }}>{opt.label}</span>
-                              <span className="font-mono text-[10px] text-center" style={{ color: 'var(--muted)' }}>{opt.desc}</span>
+                              <span className="font-mono text-xs text-center" style={{ color: 'var(--muted)' }}>{opt.desc}</span>
                             </button>
                           );
                         })}
@@ -828,8 +828,8 @@ export default function PitchBoard({ onLockSuccess }: PitchBoardProps = {}) {
                       style={{ flex: '1 1 0', borderColor: `color-mix(in srgb, ${primary} 10%, transparent)` }}
                     >
                       <div className="flex items-center justify-between mb-4">
-                        <p className="font-mono text-[10px] uppercase tracking-[2px]" style={{ color: 'var(--muted)' }}>2nd Half Result</p>
-                        <span className="font-mono text-[9px] px-2 py-0.5 font-bold theme-transition"
+                        <p className="font-mono text-xs uppercase tracking-[2px]" style={{ color: 'var(--muted)' }}>2nd Half Result</p>
+                        <span className="font-mono text-xs px-2 py-0.5 font-bold theme-transition"
                           style={{ background: `color-mix(in srgb, ${primary} 12%, transparent)`, color: primary, border: `1px solid color-mix(in srgb, ${primary} 25%, transparent)` }}>
                           4 pts
                         </span>
@@ -851,10 +851,10 @@ export default function PitchBoard({ onLockSuccess }: PitchBoardProps = {}) {
                     {/* ── Next Goalscorer (flex-1) ── */}
                     <div className="flex flex-col px-4 py-5" style={{ flex: '1 1 0' }}>
                       <div className="flex items-center justify-between mb-4">
-                        <p className="font-mono text-[10px] uppercase tracking-[2px]" style={{ color: 'var(--muted)' }}>
+                        <p className="font-mono text-xs uppercase tracking-[2px]" style={{ color: 'var(--muted)' }}>
                           Next Goalscorer
                         </p>
-                        <span className="font-mono text-[9px] px-2 py-0.5 font-bold theme-transition"
+                        <span className="font-mono text-xs px-2 py-0.5 font-bold theme-transition"
                           style={{ background: `color-mix(in srgb, ${primary} 12%, transparent)`, color: primary, border: `1px solid color-mix(in srgb, ${primary} 25%, transparent)` }}>
                           8 pts
                         </span>
@@ -862,7 +862,7 @@ export default function PitchBoard({ onLockSuccess }: PitchBoardProps = {}) {
                       <select
                         value={halfTime.nextGoalscorer ?? ''}
                         onChange={e => setPatch({ nextGoalscorer: e.target.value || null })}
-                        className="w-full px-3 py-3 border font-sans font-semibold text-[13px] focus:outline-none transition-colors"
+                        className="w-full px-3 py-3 border font-sans font-semibold text-[13px] focus:outline-none focus:ring-2 focus:ring-red-500/50 transition-colors"
                         style={{
                           background: 'var(--dark3)',
                           borderColor: `color-mix(in srgb, ${primary} 20%, transparent)`,
@@ -884,12 +884,12 @@ export default function PitchBoard({ onLockSuccess }: PitchBoardProps = {}) {
               {rightTab === 'history' && (
                 <div className="p-4 flex flex-col gap-2.5">
                   <div className="flex justify-between items-center">
-                    <p className="font-mono text-[10px] uppercase tracking-[3px] theme-transition" style={{ color: primary }}>
+                    <p className="font-mono text-xs uppercase tracking-[3px] theme-transition" style={{ color: primary }}>
                       Past Locks
                     </p>
                     <button
                       onClick={fetchHistory}
-                      className="font-mono text-[10px] uppercase tracking-widest transition-colors"
+                      className="font-mono text-xs uppercase tracking-widest transition-colors"
                       style={{ color: 'var(--muted)', background: 'none', border: 'none' }}
                       onMouseEnter={e => (e.currentTarget.style.color = primary)}
                       onMouseLeave={e => (e.currentTarget.style.color = 'var(--muted)')}
@@ -900,7 +900,7 @@ export default function PitchBoard({ onLockSuccess }: PitchBoardProps = {}) {
                   {history.length === 0 ? (
                     <div className="flex flex-col items-center justify-center py-12 gap-3">
                       <span className="text-3xl">📋</span>
-                      <p className="font-mono text-[11px] text-center" style={{ color: 'var(--muted)' }}>
+                      <p className="font-mono text-xs text-center" style={{ color: 'var(--muted)' }}>
                         No locked predictions yet.<br />Lock your first XI to see it here.
                       </p>
                     </div>
@@ -923,7 +923,7 @@ export default function PitchBoard({ onLockSuccess }: PitchBoardProps = {}) {
                               Match #{save.match_id}
                             </span>
                             <span
-                              className="font-mono text-[8px] uppercase tracking-widest px-2 py-0.5 font-bold"
+                              className="font-mono text-xs uppercase tracking-widest px-2 py-0.5 font-bold"
                               style={{
                                 background: isComplete ? `color-mix(in srgb, var(--success) 12%, transparent)` : `color-mix(in srgb, ${primary} 12%, transparent)`,
                                 color: isComplete ? 'var(--success)' : primary,
@@ -947,17 +947,17 @@ export default function PitchBoard({ onLockSuccess }: PitchBoardProps = {}) {
                                   />
                                 ))}
                               </div>
-                              <span className="font-mono text-[10px]" style={{ color: 'var(--muted)' }}>
+                              <span className="font-mono text-xs" style={{ color: 'var(--muted)' }}>
                                 {placed}/11
                               </span>
                             </div>
-                            <span className="font-mono text-[10px]" style={{ color: 'var(--muted)' }}>
+                            <span className="font-mono text-xs" style={{ color: 'var(--muted)' }}>
                               {new Date(save.created_at).toLocaleDateString()}
                             </span>
                           </div>
 
                           {/* Load label */}
-                          <div className="mt-2 font-mono text-[9px] uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity theme-transition" style={{ color: primary }}>
+                          <div className="mt-2 font-mono text-xs uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity theme-transition" style={{ color: primary }}>
                             Click to restore →
                           </div>
                         </div>
@@ -975,7 +975,7 @@ export default function PitchBoard({ onLockSuccess }: PitchBoardProps = {}) {
             >
               {lockMsg && (
                 <div
-                  className="py-2 px-3 font-mono text-[11px] text-center border theme-transition"
+                  className="py-2 px-3 font-mono text-xs text-center border theme-transition"
                   style={{
                     borderColor: lockMsg.ok ? 'var(--success)' : 'var(--red)',
                     color:       lockMsg.ok ? 'var(--success)' : 'var(--red)',
@@ -987,7 +987,7 @@ export default function PitchBoard({ onLockSuccess }: PitchBoardProps = {}) {
               )}
 
               {/* Progress indicator */}
-              <div className="flex items-center justify-between font-mono text-[10px] mb-1" style={{ color: 'var(--muted)' }}>
+              <div className="flex items-center justify-between font-mono text-xs mb-1" style={{ color: 'var(--muted)' }}>
                 <span>Starting XI</span>
                 <span className="theme-transition" style={{ color: placedCount === 11 ? 'var(--success)' : primary }}>
                   {placedCount}/11 placed

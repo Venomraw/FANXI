@@ -39,7 +39,7 @@ export default function TeamPicker() {
             </h2>
             {currentTeam && (
               <button onClick={() => setShowPicker(false)}
-                className="font-mono text-[11px] tracking-widest uppercase transition-colors"
+                className="font-mono text-xs tracking-widest uppercase transition-colors"
                 style={{ color: 'var(--muted)' }}
                 onMouseEnter={e => (e.currentTarget.style.color = primary)}
                 onMouseLeave={e => (e.currentTarget.style.color = 'var(--muted)')}>
@@ -47,7 +47,7 @@ export default function TeamPicker() {
               </button>
             )}
           </div>
-          <p className="font-mono text-[11px] uppercase tracking-[4px]" style={{ color: 'var(--muted)' }}>
+          <p className="font-mono text-xs uppercase tracking-[4px]" style={{ color: 'var(--muted)' }}>
             FIFA World Cup 2026 · 48 Nations
           </p>
 
@@ -57,7 +57,7 @@ export default function TeamPicker() {
             placeholder="Search team..."
             value={search}
             onChange={e => setSearch(e.target.value)}
-            className="mt-4 w-full border px-4 py-2.5 font-mono text-sm placeholder-[var(--muted)] focus:outline-none transition-colors text-[var(--text)]"
+            className="mt-4 w-full border px-4 py-2.5 font-mono text-sm placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-red-500/50 transition-colors text-[var(--text)]"
             style={{
               background: 'var(--dark2)',
               borderColor: `color-mix(in srgb, ${primary} 20%, transparent)`,
@@ -70,7 +70,7 @@ export default function TeamPicker() {
           <div className="flex flex-wrap gap-1.5 mt-3">
             {(['ALL', ...CONFEDERATIONS] as const).map(conf => (
               <button key={conf} onClick={() => setFilter(conf)}
-                className="px-3 py-1.5 font-mono text-[10px] tracking-widest uppercase border transition-all theme-transition"
+                className="px-3 py-1.5 font-mono text-xs tracking-widest uppercase border transition-all theme-transition"
                 style={filter === conf
                   ? { background: primary, color: 'var(--dark)', borderColor: primary }
                   : {
@@ -120,7 +120,7 @@ export default function TeamPicker() {
               </div>
               <div className="min-w-0">
                 <div className="text-[var(--text)] text-xs font-bold truncate">{t.name}</div>
-                <div className="font-mono text-[10px] uppercase tracking-wider" style={{ color: 'var(--muted)' }}>
+                <div className="font-mono text-xs uppercase tracking-wider" style={{ color: 'var(--muted)' }}>
                   {t.confederation}
                 </div>
               </div>
@@ -131,7 +131,7 @@ export default function TeamPicker() {
         {/* Footer */}
         <div className="p-4 border-t text-center"
           style={{ borderColor: `color-mix(in srgb, ${primary} 12%, transparent)` }}>
-          <p className="font-mono text-[11px] uppercase tracking-[3px]" style={{ color: 'var(--muted)' }}>
+          <p className="font-mono text-xs uppercase tracking-[3px]" style={{ color: 'var(--muted)' }}>
             Colors adapt to your chosen nation
           </p>
         </div>

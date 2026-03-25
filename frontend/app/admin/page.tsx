@@ -225,7 +225,7 @@ function OverviewTab({ authFetch }: { authFetch: AuthFetchFn }) {
           <Card key={c.label}>
             <div className="text-white/50 text-xs font-sans uppercase tracking-wider">{c.label}</div>
             <div className="text-3xl font-display text-white mt-1">{c.value.toLocaleString()}</div>
-            <div className="text-white/30 text-xs font-sans mt-1">{c.sub}</div>
+            <div className="text-white/60 text-xs font-sans mt-1">{c.sub}</div>
           </Card>
         ))}
       </div>
@@ -310,7 +310,7 @@ function AgentsTab({ authFetch, toast }: { authFetch: AuthFetchFn; toast: ToastO
                   <span className={`w-2.5 h-2.5 rounded-full ${dotColor}`} />
                   <span className="font-display text-white text-lg">{agent.name}</span>
                 </div>
-                <span className="text-white/30 text-xs font-sans">{agent.dept}</span>
+                <span className="text-white/60 text-xs font-sans">{agent.dept}</span>
               </div>
               {run ? (
                 <>
@@ -320,9 +320,9 @@ function AgentsTab({ authFetch, toast }: { authFetch: AuthFetchFn; toast: ToastO
                   <div className="text-white/70 text-sm font-sans mb-3 line-clamp-2">{run.summary}</div>
                 </>
               ) : (
-                <div className="text-white/30 text-sm font-sans mb-3">Never run</div>
+                <div className="text-white/60 text-sm font-sans mb-3">Never run</div>
               )}
-              <div className="text-white/20 text-xs font-mono mb-3">Schedule: {agent.schedule}</div>
+              <div className="text-white/50 text-xs font-mono mb-3">Schedule: {agent.schedule}</div>
               <button
                 onClick={() => triggerAgent(agent.name)}
                 disabled={running === agent.name}
@@ -340,12 +340,12 @@ function AgentsTab({ authFetch, toast }: { authFetch: AuthFetchFn; toast: ToastO
         <h3 className="text-lg font-display text-white mb-4">Recent Activity</h3>
         <Card className="!p-0 overflow-hidden">
           {recentRuns.length === 0 ? (
-            <div className="text-white/30 text-sm font-sans text-center py-6">No agent runs yet</div>
+            <div className="text-white/60 text-sm font-sans text-center py-6">No agent runs yet</div>
           ) : (
             recentRuns.map((r) => (
               <div key={r.id} className="flex items-center gap-3 px-4 py-2.5 border-b border-white/5 last:border-0">
                 <span className={`w-2 h-2 rounded-full flex-shrink-0 ${severityDot(r.severity)}`} />
-                <span className="text-white/30 text-xs font-mono w-16 flex-shrink-0">{timeAgo(r.created_at)}</span>
+                <span className="text-white/60 text-xs font-mono w-16 flex-shrink-0">{timeAgo(r.created_at)}</span>
                 <span className="text-white font-sans text-sm w-20 flex-shrink-0">{r.agent}</span>
                 <span className="text-white/50 text-sm font-sans truncate">{r.summary}</span>
               </div>
@@ -401,9 +401,9 @@ function QueueTab({ authFetch, toast }: { authFetch: AuthFetchFn; toast: ToastOb
                 <div className="flex items-center gap-2">
                   <span className={`w-2.5 h-2.5 rounded-full ${severityDot(item.severity)}`} />
                   <span className="font-display text-white">{item.agent}</span>
-                  <span className="text-white/30 text-xs font-sans">&middot; {item.action_type}</span>
+                  <span className="text-white/60 text-xs font-sans">&middot; {item.action_type}</span>
                 </div>
-                <span className="text-white/30 text-xs font-sans">{timeAgo(item.created_at)}</span>
+                <span className="text-white/60 text-xs font-sans">{timeAgo(item.created_at)}</span>
               </div>
               <p className="text-white/60 text-sm font-sans mb-4">{item.reason}</p>
               <div className="flex gap-2">
@@ -460,16 +460,16 @@ function MatchesTab({ authFetch }: { authFetch: AuthFetchFn }) {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
         {matches.slice(0, 24).map((m) => (
           <Card key={m.id} className="!p-4">
-            <div className="text-white/30 text-xs font-sans mb-1">Group {m.group} &middot; {m.round}</div>
+            <div className="text-white/60 text-xs font-sans mb-1">Group {m.group} &middot; {m.round}</div>
             <div className="flex items-center gap-2 mb-1">
               <span>{m.home_flag}</span>
               <span className="font-display text-white text-sm">{m.home_team}</span>
-              <span className="text-white/30 text-xs font-sans mx-1">vs</span>
+              <span className="text-white/60 text-xs font-sans mx-1">vs</span>
               <span className="font-display text-white text-sm">{m.away_team}</span>
               <span>{m.away_flag}</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-white/30 text-xs font-sans">
+              <span className="text-white/60 text-xs font-sans">
                 {new Date(m.kickoff).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} &middot; {m.venue}
               </span>
               <span className="text-white/50 text-xs font-mono">{predCounts[m.id] ?? 0} preds</span>
@@ -540,7 +540,7 @@ function UsersTab({ authFetch, toast }: { authFetch: AuthFetchFn; toast: ToastOb
           <tbody>
             {users.map((u, i) => (
               <tr key={u.id} className={`border-b border-white/5 hover:bg-white/5 transition-colors ${u.is_banned ? 'bg-red-500/10' : ''}`}>
-                <td className="p-3 text-white/30">{page * 20 + i + 1}</td>
+                <td className="p-3 text-white/60">{page * 20 + i + 1}</td>
                 <td className="p-3 text-white font-semibold">
                   {u.username}
                   {u.is_admin && <span className="ml-1.5 text-yellow-500 text-xs">ADMIN</span>}
@@ -569,7 +569,7 @@ function UsersTab({ authFetch, toast }: { authFetch: AuthFetchFn; toast: ToastOb
       <div className="flex justify-center gap-2 mt-4">
         <button onClick={() => setPage(p => Math.max(0, p - 1))} disabled={page === 0}
           className="px-3 py-1 text-xs font-sans text-white/50 bg-white/5 rounded hover:bg-white/10 disabled:opacity-30">Prev</button>
-        <span className="px-3 py-1 text-xs font-sans text-white/30">Page {page + 1} of {Math.ceil(total / 20) || 1}</span>
+        <span className="px-3 py-1 text-xs font-sans text-white/60">Page {page + 1} of {Math.ceil(total / 20) || 1}</span>
         <button onClick={() => setPage(p => p + 1)} disabled={(page + 1) * 20 >= total}
           className="px-3 py-1 text-xs font-sans text-white/50 bg-white/5 rounded hover:bg-white/10 disabled:opacity-30">Next</button>
       </div>
@@ -618,7 +618,7 @@ function LogsTab({ authFetch }: { authFetch: AuthFetchFn }) {
       </div>
       <Card className="!p-0 overflow-hidden">
         {runs.length === 0 ? (
-          <div className="text-white/30 text-sm font-sans text-center py-8">No logs found</div>
+          <div className="text-white/60 text-sm font-sans text-center py-8">No logs found</div>
         ) : (
           <div>
             {runs.map((r) => (
@@ -628,7 +628,7 @@ function LogsTab({ authFetch }: { authFetch: AuthFetchFn }) {
                   className="w-full text-left px-4 py-3 flex items-center gap-3 border-b border-white/5 hover:bg-white/5 transition-colors"
                 >
                   <span className={`w-2 h-2 rounded-full flex-shrink-0 ${severityDot(r.severity)}`} />
-                  <span className="text-white/30 text-xs font-mono w-16 flex-shrink-0">{timeAgo(r.created_at)}</span>
+                  <span className="text-white/60 text-xs font-mono w-16 flex-shrink-0">{timeAgo(r.created_at)}</span>
                   <span className="text-white font-sans text-sm w-20 flex-shrink-0">{r.agent}</span>
                   <span className="text-white/50 text-sm font-sans truncate flex-1">{r.summary}</span>
                 </button>

@@ -339,7 +339,7 @@ export default function AIPage() {
         <div className="max-w-[1400px] mx-auto px-7 py-6">
           <div className="flex items-end justify-between flex-wrap gap-4">
             <div>
-              <div className="font-mono text-[11px] tracking-widest uppercase mb-2" style={{ color: accentColor }}>
+              <div className="font-mono text-xs tracking-widest uppercase mb-2" style={{ color: accentColor }}>
                 // AI Tactical Brain
               </div>
               <h1 className="font-display font-semibold leading-none" style={{ fontSize: 'clamp(36px, 5vw, 64px)', letterSpacing: '-1px' }}>
@@ -362,7 +362,7 @@ export default function AIPage() {
             className="flex-shrink-0 flex-col gap-1 hidden lg:flex"
             style={{ width: '210px' }}
           >
-            <p className="font-mono text-[10px] tracking-widest uppercase mb-2" style={{ color: 'var(--muted)', padding: '0 8px' }}>
+            <p className="font-mono text-xs tracking-widest uppercase mb-2" style={{ color: 'var(--muted)', padding: '0 8px' }}>
               Mode
             </p>
             {MODES.map(m => {
@@ -402,7 +402,7 @@ export default function AIPage() {
                   <span>{m.label}</span>
                   {active && messages.length > 0 && (
                     <span
-                      className="font-mono text-[9px] ml-auto"
+                      className="font-mono text-xs ml-auto"
                       style={{ background: `color-mix(in srgb, ${m.color} 20%, transparent)`, color: m.color, padding: '1px 5px', borderRadius: '4px' }}
                     >
                       {Math.ceil(messages.length / 2)}
@@ -416,7 +416,7 @@ export default function AIPage() {
             <div className="lg:hidden mt-auto">
               <button
                 onClick={() => setSidebarOpen(o => !o)}
-                className="w-full font-mono text-[10px] tracking-widest uppercase px-4 py-2.5 text-left"
+                className="w-full font-mono text-xs tracking-widest uppercase px-4 py-2.5 text-left"
                 style={{ color: accentColor, border: `1px solid color-mix(in srgb, ${accentColor} 30%, transparent)`, background: `color-mix(in srgb, ${accentColor} 8%, transparent)` }}
               >
                 {currentMode.icon} {currentMode.label} ▾
@@ -446,7 +446,7 @@ export default function AIPage() {
                   <span className="font-sans font-semibold text-[14px]" style={{ color: accentColor }}>
                     {currentMode.label}
                   </span>
-                  <span className="font-mono text-[10px] ml-3 tracking-widest uppercase" style={{ color: 'var(--muted)' }}>
+                  <span className="font-mono text-xs ml-3 tracking-widest uppercase" style={{ color: 'var(--muted)' }}>
                     Llama 3.3 70B · Groq
                   </span>
                 </div>
@@ -475,7 +475,7 @@ export default function AIPage() {
                 {messages.length > 0 && (
                   <button
                     onClick={clearChat}
-                    className="font-mono text-[10px] tracking-widest uppercase px-3 py-1.5 transition-all"
+                    className="font-mono text-xs tracking-widest uppercase px-3 py-1.5 transition-all"
                     style={{ color: 'rgba(255,255,255,0.3)', border: '1px solid var(--border)' }}
                     onMouseEnter={e => { e.currentTarget.style.color = '#FF2D55'; e.currentTarget.style.borderColor = 'rgba(255,45,85,0.3)'; }}
                     onMouseLeave={e => { e.currentTarget.style.color = 'rgba(255,255,255,0.3)'; e.currentTarget.style.borderColor = 'var(--border)'; }}
@@ -504,7 +504,7 @@ export default function AIPage() {
 
                   {/* Starter prompts */}
                   <div className="flex flex-col gap-2 w-full">
-                    <p className="font-mono text-[10px] tracking-widest uppercase" style={{ color: 'var(--muted)' }}>
+                    <p className="font-mono text-xs tracking-widest uppercase" style={{ color: 'var(--muted)' }}>
                       Try asking:
                     </p>
                     {currentMode.starters.map((s, i) => (
@@ -545,7 +545,7 @@ export default function AIPage() {
                 >
                   {msg.role === 'assistant' && (
                     <div
-                      className="flex-shrink-0 w-7 h-7 flex items-center justify-center mr-2.5 mt-0.5 font-mono text-[10px] font-bold"
+                      className="flex-shrink-0 w-7 h-7 flex items-center justify-center mr-2.5 mt-0.5 font-mono text-xs font-bold"
                       style={{
                         background: `color-mix(in srgb, ${accentColor} 15%, transparent)`,
                         color: accentColor,
@@ -587,7 +587,7 @@ export default function AIPage() {
               {loading && (
                 <div className="flex items-center gap-2.5">
                   <div
-                    className="flex-shrink-0 w-7 h-7 flex items-center justify-center font-mono text-[10px] font-bold"
+                    className="flex-shrink-0 w-7 h-7 flex items-center justify-center font-mono text-xs font-bold"
                     style={{
                       background: `color-mix(in srgb, ${accentColor} 15%, transparent)`,
                       color: accentColor,
@@ -686,7 +686,7 @@ export default function AIPage() {
 
       {/* Footer hint */}
       <div className="text-center pb-4">
-        <span className="font-mono text-[11px]" style={{ color: 'rgba(255,255,255,0.2)' }}>
+        <span className="font-mono text-xs" style={{ color: 'rgba(255,255,255,0.2)' }}>
           Enter to send · Shift+Enter for new line · Chats saved per mode
         </span>
       </div>

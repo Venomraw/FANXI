@@ -166,7 +166,7 @@ function LiveDot() {
   return (
     <span className="inline-flex items-center gap-1.5">
       <span className="w-2 h-2 rounded-full" style={{ background: '#FF2D55', boxShadow: '0 0 6px #FF2D55', animation: 'livepulse 1.4s ease-in-out infinite' }} />
-      <span className="font-mono text-[10px] font-bold uppercase tracking-[2px]" style={{ color: '#FF2D55' }}>LIVE</span>
+      <span className="font-mono text-xs font-bold uppercase tracking-[2px]" style={{ color: '#FF2D55' }}>LIVE</span>
     </span>
   );
 }
@@ -182,7 +182,7 @@ function MiniPitch({ lineup }: { lineup: Lineup | null | undefined }) {
     for (const n of nums) { result.push(players.slice(idx, idx + n)); idx += n; }
     return result.reverse();
   }, [lineup]);
-  if (!lineup || !rows.length) return <div className="flex items-center justify-center h-48 font-mono text-[11px]" style={{ color: 'rgba(255,255,255,0.2)' }}>Lineup not yet confirmed</div>;
+  if (!lineup || !rows.length) return <div className="flex items-center justify-center h-48 font-mono text-xs" style={{ color: 'rgba(255,255,255,0.2)' }}>Lineup not yet confirmed</div>;
   return (
     <div className="relative w-full rounded-lg overflow-hidden" style={{ background: 'radial-gradient(ellipse 80% 80% at 50% 50%, rgba(0,200,80,0.12) 0%, transparent 70%), rgba(0,100,40,0.25)', paddingBottom: '75%' }}>
       <div className="absolute inset-0 flex flex-col justify-between py-2 opacity-20 pointer-events-none">
@@ -193,10 +193,10 @@ function MiniPitch({ lineup }: { lineup: Lineup | null | undefined }) {
           <div key={ri} className="flex justify-around">
             {row.map((p, pi) => (
               <div key={pi} className="flex flex-col items-center gap-0.5">
-                <div className="w-6 h-6 rounded-full flex items-center justify-center font-mono text-[9px] font-bold" style={{ background: 'rgba(0,255,133,0.18)', border: '1px solid rgba(0,255,133,0.4)', color: '#00FF85' }}>
+                <div className="w-6 h-6 rounded-full flex items-center justify-center font-mono text-xs font-bold" style={{ background: 'rgba(0,255,133,0.18)', border: '1px solid rgba(0,255,133,0.4)', color: '#00FF85' }}>
                   {p.number ?? (pi + 1)}
                 </div>
-                <span className="font-sans text-[8px] text-center leading-tight" style={{ color: 'rgba(255,255,255,0.7)', maxWidth: 36, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
+                <span className="font-sans text-xs text-center leading-tight" style={{ color: 'rgba(255,255,255,0.7)', maxWidth: 36, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
                   {(p.name || '').split(' ').pop()}
                 </span>
               </div>
@@ -212,15 +212,15 @@ function MomentumMeter({ home, away, homePct, awayPct, primary }: { home: string
     <div className="flex flex-col gap-2">
       <div className="flex items-center justify-between">
         <span className="font-sans font-semibold text-[12px]">{home}</span>
-        <span className="font-mono text-[10px] uppercase tracking-[1px]" style={{ color: 'var(--muted)' }}>Momentum</span>
+        <span className="font-mono text-xs uppercase tracking-[1px]" style={{ color: 'var(--muted)' }}>Momentum</span>
         <span className="font-sans font-semibold text-[12px]">{away}</span>
       </div>
       <div className="h-3 w-full rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.08)' }}>
         <div className="h-full transition-all duration-1000 ease-in-out rounded-full" style={{ width: `${homePct}%`, background: `linear-gradient(90deg, ${primary}, rgba(0,255,133,0.6))` }} />
       </div>
       <div className="flex justify-between">
-        <span className="font-mono text-[11px] font-bold" style={{ color: primary }}>{homePct}%</span>
-        <span className="font-mono text-[11px] font-bold" style={{ color: 'rgba(255,255,255,0.4)' }}>{awayPct}%</span>
+        <span className="font-mono text-xs font-bold" style={{ color: primary }}>{homePct}%</span>
+        <span className="font-mono text-xs font-bold" style={{ color: 'rgba(255,255,255,0.4)' }}>{awayPct}%</span>
       </div>
     </div>
   );
@@ -362,7 +362,7 @@ function ScoreReveal({
 
         {/* ── PLAYER GRID ── */}
         <div className="mb-4" style={vis(4)}>
-          <div className="font-mono text-[10px] tracking-widest uppercase mb-3 text-center" style={{ color: 'var(--muted)' }}>
+          <div className="font-mono text-xs tracking-widest uppercase mb-3 text-center" style={{ color: 'var(--muted)' }}>
             Your Starting XI
           </div>
           <div className="grid gap-2" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))' }}>
@@ -389,10 +389,10 @@ function ScoreReveal({
                 >
                   {p.correct === true ? '✅' : p.correct === false ? '❌' : '⏳'}
                 </div>
-                <div className="font-mono text-[8px] tracking-widest uppercase mb-0.5" style={{ color: 'var(--muted)' }}>
+                <div className="font-mono text-xs tracking-widest uppercase mb-0.5" style={{ color: 'var(--muted)' }}>
                   {p.position || p.slot}
                 </div>
-                <div className="font-sans font-semibold text-[11px] leading-tight" style={{ color: 'var(--text)' }}>
+                <div className="font-sans font-semibold text-xs leading-tight" style={{ color: 'var(--text)' }}>
                   {(p.name || '').split(' ').pop()}
                 </div>
               </div>
@@ -403,7 +403,7 @@ function ScoreReveal({
         {/* ── ACCURACY BAR ── */}
         <div className="mb-8" style={vis(5)}>
           <div className="flex items-end justify-between mb-2">
-            <span className="font-mono text-[11px] tracking-widest uppercase" style={{ color: 'var(--muted)' }}>
+            <span className="font-mono text-xs tracking-widest uppercase" style={{ color: 'var(--muted)' }}>
               Players Correct
             </span>
             <span className="font-display font-semibold" style={{ fontSize: '28px', color: gradeColor }}>
@@ -423,18 +423,18 @@ function ScoreReveal({
             />
           </div>
           <div className="flex justify-between mt-1">
-            <span className="font-mono text-[10px]" style={{ color: 'var(--muted)' }}>0%</span>
+            <span className="font-mono text-xs" style={{ color: 'var(--muted)' }}>0%</span>
             <span className="font-mono text-[13px] font-bold" style={{ color: gradeColor }}>{cm.accuracy_pct}%</span>
           </div>
 
           {/* Formation badge */}
           <div className="flex items-center gap-3 mt-3 justify-center flex-wrap">
-            <span className="font-mono text-[10px] tracking-widest uppercase px-3 py-1" style={{ color: 'var(--muted)', border: '1px solid var(--border)' }}>
+            <span className="font-mono text-xs tracking-widest uppercase px-3 py-1" style={{ color: 'var(--muted)', border: '1px solid var(--border)' }}>
               You predicted: {cm.predicted_formation || '—'}
             </span>
             {cm.actual_formation && (
               <span
-                className="font-mono text-[10px] tracking-widest uppercase px-3 py-1"
+                className="font-mono text-xs tracking-widest uppercase px-3 py-1"
                 style={{
                   color: cm.formation_match ? '#00FF85' : '#FF6B6B',
                   border: `1px solid ${cm.formation_match ? 'rgba(0,255,133,0.3)' : 'rgba(255,107,107,0.3)'}`,
@@ -467,7 +467,7 @@ function ScoreReveal({
               <div style={{ fontSize: '18px', marginBottom: '4px' }}>
                 {item.correct ? '✅' : '❌'}
               </div>
-              <div className="font-mono text-[8px] tracking-widest uppercase mb-1" style={{ color: 'var(--muted)' }}>
+              <div className="font-mono text-xs tracking-widest uppercase mb-1" style={{ color: 'var(--muted)' }}>
                 {item.label}
               </div>
               <div
@@ -482,7 +482,7 @@ function ScoreReveal({
 
         {/* ── IQ TOTAL ── */}
         <div className="text-center mb-10" style={vis(7)}>
-          <div className="font-mono text-[11px] tracking-[4px] uppercase mb-3" style={{ color: 'var(--muted)' }}>
+          <div className="font-mono text-xs tracking-[4px] uppercase mb-3" style={{ color: 'var(--muted)' }}>
             IQ Points Awarded
           </div>
           <div
@@ -513,7 +513,7 @@ function ScoreReveal({
               borderRadius: '12px',
             }}
           >
-            <div className="font-mono text-[10px] tracking-widest uppercase" style={{ color: 'var(--muted)' }}>
+            <div className="font-mono text-xs tracking-widest uppercase" style={{ color: 'var(--muted)' }}>
               Global Rank
             </div>
             <div className="font-display font-semibold" style={{ fontSize: 'clamp(32px, 6vw, 52px)', color: primary, lineHeight: 1 }}>
@@ -523,7 +523,7 @@ function ScoreReveal({
               of {data.rank.total_scouts.toLocaleString()} scouts worldwide
             </div>
             <div
-              className="font-mono text-[11px] tracking-widest uppercase px-3 py-1"
+              className="font-mono text-xs tracking-widest uppercase px-3 py-1"
               style={{
                 background: `color-mix(in srgb, ${gradeColor} 12%, transparent)`,
                 color: gradeColor,
@@ -742,16 +742,16 @@ export default function LiveMatchPage() {
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-3 mb-1 flex-wrap">
                 {isLive  ? <LiveDot /> : (
-                  <span className="font-mono text-[10px] uppercase tracking-[2px]" style={{ color: isFinished ? 'var(--gold)' : 'var(--muted)' }}>
+                  <span className="font-mono text-xs uppercase tracking-[2px]" style={{ color: isFinished ? 'var(--gold)' : 'var(--muted)' }}>
                     {statusLabel(matchState?.status ?? '')}
                   </span>
                 )}
                 {matchState?.minute && isLive && (
-                  <span className="font-mono text-[11px] font-bold" style={{ color: '#FF2D55' }}>{matchState.minute}&apos;</span>
+                  <span className="font-mono text-xs font-bold" style={{ color: '#FF2D55' }}>{matchState.minute}&apos;</span>
                 )}
-                {!connected && <span className="font-mono text-[9px] uppercase tracking-[1px]" style={{ color: 'var(--muted)' }}>reconnecting…</span>}
+                {!connected && <span className="font-mono text-xs uppercase tracking-[1px]" style={{ color: 'var(--muted)' }}>reconnecting…</span>}
               </div>
-              <p className="font-mono text-[11px] uppercase tracking-[1.5px]" style={{ color: 'var(--muted)' }}>
+              <p className="font-mono text-xs uppercase tracking-[1.5px]" style={{ color: 'var(--muted)' }}>
                 {matchState?.venue ?? '—'}
               </p>
             </div>
@@ -793,7 +793,7 @@ export default function LiveMatchPage() {
             }}
           >
             <div>
-              <div className="font-mono text-[10px] tracking-widest uppercase mb-1" style={{ color: 'var(--gold)' }}>
+              <div className="font-mono text-xs tracking-widest uppercase mb-1" style={{ color: 'var(--gold)' }}>
                 Match Over
               </div>
               <p className="font-sans font-semibold text-[15px]">
@@ -824,16 +824,16 @@ export default function LiveMatchPage() {
           <GlassCard className="p-5 flex flex-col gap-3" style={{ minHeight: 280 }}>
             <h3 className="font-sans font-semibold text-[13px] uppercase tracking-[1.5px]" style={{ color: 'var(--muted)' }}>Live Events</h3>
             {events.length === 0 ? (
-              <p className="font-mono text-[11px]" style={{ color: 'rgba(255,255,255,0.2)' }}>No events yet</p>
+              <p className="font-mono text-xs" style={{ color: 'rgba(255,255,255,0.2)' }}>No events yet</p>
             ) : (
               <div className="flex flex-col gap-2 overflow-y-auto" style={{ maxHeight: 280 }}>
                 {[...events].reverse().map((evt, i) => (
                   <div key={i} className="flex items-start gap-2.5">
-                    <span className="font-mono text-[10px] font-bold flex-shrink-0 mt-0.5" style={{ color: 'var(--muted)', minWidth: 28 }}>{evt.minute ?? '—'}&apos;</span>
+                    <span className="font-mono text-xs font-bold flex-shrink-0 mt-0.5" style={{ color: 'var(--muted)', minWidth: 28 }}>{evt.minute ?? '—'}&apos;</span>
                     <span className="text-base leading-none flex-shrink-0">{eventIcon(evt)}</span>
                     <div className="flex-1 min-w-0">
                       <p className="font-sans font-semibold text-[13px] leading-tight">{eventLabel(evt)}</p>
-                      <p className="font-mono text-[10px]" style={{ color: 'var(--muted)' }}>{evt.team}</p>
+                      <p className="font-mono text-xs" style={{ color: 'var(--muted)' }}>{evt.team}</p>
                     </div>
                   </div>
                 ))}
@@ -845,11 +845,11 @@ export default function LiveMatchPage() {
             <div className="flex items-center justify-between">
               <h3 className="font-sans font-semibold text-[13px] uppercase tracking-[1.5px]" style={{ color: 'var(--muted)' }}>Tactical Pitch</h3>
               {activeLineup?.formation && (
-                <span className="font-mono text-[10px] px-2 py-0.5 border" style={{ color: primary, borderColor: `color-mix(in srgb, ${primary} 30%, transparent)` }}>{activeLineup.formation}</span>
+                <span className="font-mono text-xs px-2 py-0.5 border" style={{ color: primary, borderColor: `color-mix(in srgb, ${primary} 30%, transparent)` }}>{activeLineup.formation}</span>
               )}
             </div>
             <MiniPitch lineup={activeLineup} />
-            {activeLineup?.team && <p className="font-mono text-[10px] text-center" style={{ color: 'var(--muted)' }}>{activeLineup.team}</p>}
+            {activeLineup?.team && <p className="font-mono text-xs text-center" style={{ color: 'var(--muted)' }}>{activeLineup.team}</p>}
           </GlassCard>
 
           <GlassCard className="p-5 flex flex-col gap-5">
@@ -857,14 +857,14 @@ export default function LiveMatchPage() {
             <MomentumMeter home={homeTeam} away={awayTeam} homePct={momentum.home_pct} awayPct={momentum.away_pct} primary={primary} />
             <div className="flex flex-col gap-2 mt-2">
               <div className="flex items-center gap-2">
-                <span className="font-mono text-[10px] w-16 text-right" style={{ color: primary }}>{momentum.home_pct}%</span>
+                <span className="font-mono text-xs w-16 text-right" style={{ color: primary }}>{momentum.home_pct}%</span>
                 <div className="flex-1 h-1.5 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.06)' }}>
                   <div className="h-full transition-all duration-700" style={{ width: `${momentum.home_pct}%`, background: primary }} />
                 </div>
-                <span className="font-mono text-[10px] w-10" style={{ color: 'var(--muted)' }}>{momentum.away_pct}%</span>
+                <span className="font-mono text-xs w-10" style={{ color: 'var(--muted)' }}>{momentum.away_pct}%</span>
               </div>
             </div>
-            <p className="font-mono text-[9px] text-center mt-auto" style={{ color: 'rgba(255,255,255,0.15)' }}>Updates every 60s</p>
+            <p className="font-mono text-xs text-center mt-auto" style={{ color: 'rgba(255,255,255,0.15)' }}>Updates every 60s</p>
           </GlassCard>
         </div>
 
@@ -891,7 +891,7 @@ export default function LiveMatchPage() {
                         <span className="text-base leading-none">{row.icon}</span>
                         <span className="font-sans text-[14px]">{row.label}</span>
                       </div>
-                      <span className="font-mono text-[11px] font-bold px-2 py-0.5" style={{ color: row.pts > 0 ? 'var(--success)' : 'var(--muted)', background: row.pts > 0 ? 'rgba(0,255,133,0.08)' : 'transparent' }}>
+                      <span className="font-mono text-xs font-bold px-2 py-0.5" style={{ color: row.pts > 0 ? 'var(--success)' : 'var(--muted)', background: row.pts > 0 ? 'rgba(0,255,133,0.08)' : 'transparent' }}>
                         {row.pts > 0 ? `+${row.pts}pts` : '—'}
                       </span>
                     </div>
@@ -900,11 +900,11 @@ export default function LiveMatchPage() {
                 <div className="border-t pt-4 flex items-center justify-between" style={{ borderColor: 'rgba(255,255,255,0.08)' }}>
                   <div>
                     <p className="font-display" style={{ fontSize: '2rem', color: primary, lineHeight: 1 }}>{myScore.total_pts}pts</p>
-                    <p className="font-mono text-[10px] uppercase tracking-[1.5px] mt-0.5" style={{ color: 'var(--muted)' }}>Current score</p>
+                    <p className="font-mono text-xs uppercase tracking-[1.5px] mt-0.5" style={{ color: 'var(--muted)' }}>Current score</p>
                   </div>
                   <div className="text-right">
                     <p className="font-display" style={{ fontSize: '1.5rem', lineHeight: 1 }}>#{myScore.current_rank}</p>
-                    <p className="font-mono text-[10px] uppercase tracking-[1.5px] mt-0.5" style={{ color: 'var(--muted)' }}>of {myScore.total_scouts.toLocaleString()} scouts</p>
+                    <p className="font-mono text-xs uppercase tracking-[1.5px] mt-0.5" style={{ color: 'var(--muted)' }}>of {myScore.total_scouts.toLocaleString()} scouts</p>
                   </div>
                 </div>
                 <ShareCardButton
@@ -930,7 +930,7 @@ export default function LiveMatchPage() {
               <>
                 <div className="flex items-center gap-2 mb-1">
                   <span className="font-display text-[2rem] leading-none" style={{ color: primary }}>{pulse.total_scouts.toLocaleString()}</span>
-                  <span className="font-mono text-[10px] uppercase tracking-[1px]" style={{ color: 'var(--muted)' }}>scouts watching</span>
+                  <span className="font-mono text-xs uppercase tracking-[1px]" style={{ color: 'var(--muted)' }}>scouts watching</span>
                 </div>
                 <div className="flex flex-col gap-2">
                   {(['home', 'draw', 'away'] as const).map(r => {
@@ -938,21 +938,21 @@ export default function LiveMatchPage() {
                     const lbl = r === 'home' ? homeTeam : r === 'away' ? awayTeam : 'Draw';
                     return (
                       <div key={r} className="flex items-center gap-2">
-                        <span className="font-mono text-[10px] w-20 truncate">{lbl}</span>
+                        <span className="font-mono text-xs w-20 truncate">{lbl}</span>
                         <div className="flex-1 h-2 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.06)' }}>
                           <div className="h-full rounded-full transition-all duration-700" style={{ width: `${pct}%`, background: r === 'home' ? primary : r === 'draw' ? 'var(--gold)' : 'rgba(255,255,255,0.3)' }} />
                         </div>
-                        <span className="font-mono text-[10px] font-bold w-8 text-right" style={{ color: 'var(--muted)' }}>{pct}%</span>
+                        <span className="font-mono text-xs font-bold w-8 text-right" style={{ color: 'var(--muted)' }}>{pct}%</span>
                       </div>
                     );
                   })}
                 </div>
                 {pulse.top_captain && (
                   <div className="border-t pt-3 flex flex-col gap-1" style={{ borderColor: 'rgba(255,255,255,0.08)' }}>
-                    <p className="font-mono text-[10px] uppercase tracking-[1.5px]" style={{ color: 'var(--muted)' }}>Top scorer pick</p>
+                    <p className="font-mono text-xs uppercase tracking-[1.5px]" style={{ color: 'var(--muted)' }}>Top scorer pick</p>
                     <div className="flex items-center justify-between">
                       <span className="font-sans font-semibold text-[14px]">{pulse.top_captain}</span>
-                      <span className="font-mono text-[11px] font-bold" style={{ color: primary }}>{pulse.top_captain_pct}%</span>
+                      <span className="font-mono text-xs font-bold" style={{ color: primary }}>{pulse.top_captain_pct}%</span>
                     </div>
                   </div>
                 )}
@@ -966,7 +966,7 @@ export default function LiveMatchPage() {
           <div className="flex items-center gap-3 mb-4">
             <span className="text-xl">⚡</span>
             <h3 className="font-sans font-semibold text-[15px] uppercase tracking-[1.5px]">AI Tactical Pulse</h3>
-            <span className="font-mono text-[9px] uppercase tracking-[1px] px-2 py-0.5" style={{ color: 'var(--muted)', border: '1px solid var(--border)' }}>Updates every 10 min</span>
+            <span className="font-mono text-xs uppercase tracking-[1px] px-2 py-0.5" style={{ color: 'var(--muted)', border: '1px solid var(--border)' }}>Updates every 10 min</span>
           </div>
           {commentary.length === 0 ? (
             <p className="font-sans text-[14px]" style={{ color: 'rgba(255,255,255,0.25)' }}>AI commentary will appear here once the match kicks off.</p>
@@ -974,7 +974,7 @@ export default function LiveMatchPage() {
             <div className="flex flex-col gap-4">
               {[...commentary].reverse().map((c, i) => (
                 <div key={i} className="flex gap-3 border-l-2 pl-4" style={{ borderColor: i === 0 ? primary : 'rgba(255,255,255,0.1)' }}>
-                  {c.minute && <span className="font-mono text-[10px] font-bold flex-shrink-0 mt-0.5" style={{ color: i === 0 ? primary : 'var(--muted)' }}>{c.minute}&apos;</span>}
+                  {c.minute && <span className="font-mono text-xs font-bold flex-shrink-0 mt-0.5" style={{ color: i === 0 ? primary : 'var(--muted)' }}>{c.minute}&apos;</span>}
                   <p className="font-sans text-[14px] leading-relaxed" style={{ color: i === 0 ? 'var(--text)' : 'rgba(255,255,255,0.5)' }}>{c.content}</p>
                 </div>
               ))}

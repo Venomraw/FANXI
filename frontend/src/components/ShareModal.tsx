@@ -131,7 +131,7 @@ export default function ShareModal({
         {/* Header */}
         <div className="flex items-center justify-between px-6 pt-5 pb-4" style={{ borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
           <div>
-            <p className="font-mono text-[10px] uppercase tracking-widest mb-0.5" style={{ color: 'var(--red)' }}>
+            <p className="font-mono text-xs uppercase tracking-widest mb-0.5" style={{ color: 'var(--red)' }}>
               // SHARE
             </p>
             <h3 className="font-display font-semibold" style={{ fontSize: '20px' }}>
@@ -162,7 +162,7 @@ export default function ShareModal({
             {loading && (
               <div className="flex flex-col items-center gap-3">
                 <div className="w-8 h-8 rounded-full border-2 border-t-transparent animate-spin" style={{ borderColor: 'rgba(255,45,85,0.4)', borderTopColor: 'var(--red)' }} />
-                <p className="font-mono text-[11px] uppercase tracking-widest" style={{ color: 'var(--muted)' }}>
+                <p className="font-mono text-xs uppercase tracking-widest" style={{ color: 'var(--muted)' }}>
                   Generating card…
                 </p>
               </div>

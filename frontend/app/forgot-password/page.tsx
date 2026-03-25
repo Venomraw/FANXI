@@ -109,12 +109,13 @@ export default function ForgotPasswordPage() {
                     Email Address
                   </label>
                   <input
+                    aria-label="Email address"
                     value={email}
                     onChange={e => setEmail(e.target.value)}
                     required
                     type="email"
                     placeholder="you@example.com"
-                    className="w-full px-4 py-3 font-mono text-sm outline-none transition-colors theme-transition"
+                    className="w-full px-4 py-3 font-mono text-sm outline-none focus:ring-2 focus:ring-red-500/50 transition-colors theme-transition"
                     style={{
                       background: 'var(--dark3)', color: 'var(--text)',
                       border: `1px solid ${borderPrimary}`,

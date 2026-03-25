@@ -63,7 +63,7 @@ function SectionCard({ children, pts, label, icon }: {
         </div>
         {pts && (
           <span
-            className="font-mono text-[10px] font-bold px-2.5 py-1 theme-transition"
+            className="font-mono text-xs font-bold px-2.5 py-1 theme-transition"
             style={{ color: primary, background: `color-mix(in srgb, ${primary} 12%, transparent)`, border: `1px solid color-mix(in srgb, ${primary} 25%, transparent)` }}
           >
             +{pts}
@@ -115,7 +115,7 @@ function PlayerPicker({
     <select
       value={value ?? ''}
       onChange={(e) => onChange(e.target.value || null)}
-      className="w-full px-3 py-3 border font-sans font-semibold text-[13px] focus:outline-none transition-colors"
+      className="w-full px-3 py-3 border font-sans font-semibold text-[13px] focus:outline-none focus:ring-2 focus:ring-red-500/50 transition-colors"
       style={{
         background: 'var(--dark3)',
         borderColor: `color-mix(in srgb, ${primary} 20%, transparent)`,
@@ -167,7 +167,7 @@ export default function MatchEvents({
                 <span className="font-display text-3xl leading-none" style={{ color: 'rgba(255,255,255,0.25)' }}>:</span>
               )}
               <div className="flex flex-col items-center gap-2">
-                <span className="font-mono text-[10px] uppercase tracking-wider" style={{ color: 'var(--muted)' }}>{side}</span>
+                <span className="font-mono text-xs uppercase tracking-wider" style={{ color: 'var(--muted)' }}>{side}</span>
                 <div className="flex items-center gap-3">
                   <button
                     onClick={() => set({ correctScore: { ...outcomes.correctScore, [side]: Math.max(0, outcomes.correctScore[side] - 1) } })}
@@ -248,7 +248,7 @@ export default function MatchEvents({
         <div className="flex flex-col gap-3">
           {(['ht', 'ft'] as const).map((half) => (
             <div key={half}>
-              <p className="font-mono text-[10px] uppercase tracking-wider mb-2" style={{ color: 'var(--muted)' }}>
+              <p className="font-mono text-xs uppercase tracking-wider mb-2" style={{ color: 'var(--muted)' }}>
                 {half === 'ht' ? 'Half Time' : 'Full Time'}
               </p>
               <PillGroup<ResultOption>
@@ -274,7 +274,7 @@ export default function MatchEvents({
         style={{ color: 'rgba(255,255,255,0.2)' }}
       >
         <div className="flex-1 h-px" style={{ background: 'rgba(255,255,255,0.07)' }} />
-        <span className="font-mono text-[10px] uppercase tracking-[3px]">Sniper Stats</span>
+        <span className="font-mono text-xs uppercase tracking-[3px]">Sniper Stats</span>
         <div className="flex-1 h-px" style={{ background: 'rgba(255,255,255,0.07)' }} />
       </div>
 

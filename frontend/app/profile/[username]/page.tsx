@@ -149,7 +149,7 @@ function StatCard({ label, value, color }: { label: string; value: string | numb
       <span className="font-display leading-none theme-transition" style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', color: col }}>
         {value}
       </span>
-      <span className="font-mono text-[10px] uppercase tracking-[1.5px]" style={{ color: 'var(--muted)' }}>
+      <span className="font-mono text-xs uppercase tracking-[1.5px]" style={{ color: 'var(--muted)' }}>
         {label}
       </span>
     </div>
@@ -199,11 +199,11 @@ function BadgeCard({
         <p className="font-sans font-semibold text-[15px]" style={{ color: earned ? 'var(--text)' : 'var(--muted)' }}>
           {label}
         </p>
-        <p className="font-mono text-[11px] mt-0.5" style={{ color: 'var(--muted)' }}>{desc}</p>
+        <p className="font-mono text-xs mt-0.5" style={{ color: 'var(--muted)' }}>{desc}</p>
       </div>
       {earned && (
         <span
-          className="font-mono text-[10px] uppercase px-2.5 py-1 flex-shrink-0 theme-transition"
+          className="font-mono text-xs uppercase px-2.5 py-1 flex-shrink-0 theme-transition"
           style={{ color: primary, background: `color-mix(in srgb, ${primary} 14%, transparent)`, border: `1px solid color-mix(in srgb, ${primary} 30%, transparent)` }}
         >
           Earned
@@ -218,7 +218,7 @@ function DNABar({ label, pct, color }: { label: string; pct: number; color: stri
     <div className="flex flex-col gap-2">
       <div className="flex items-center justify-between">
         <span className="font-sans font-semibold text-[13px]" style={{ color: 'var(--text)' }}>{label}</span>
-        <span className="font-mono text-[11px]" style={{ color }}>{pct}%</span>
+        <span className="font-mono text-xs" style={{ color }}>{pct}%</span>
       </div>
       <div className="h-1.5 w-full rounded-full" style={{ background: 'var(--border)' }}>
         <div
@@ -400,7 +400,7 @@ export default function ProfilePage() {
                   {profile.display_name || profile.username}
                 </h1>
                 <span
-                  className="font-mono text-[11px] uppercase tracking-[1.5px] px-3 py-1.5 flex-shrink-0 theme-transition"
+                  className="font-mono text-xs uppercase tracking-[1.5px] px-3 py-1.5 flex-shrink-0 theme-transition"
                   style={{
                     color: rankColor,
                     background: `color-mix(in srgb, ${rankColor} 14%, transparent)`,
@@ -415,7 +415,7 @@ export default function ProfilePage() {
                   {countryFlag} Scout from {profile.country_allegiance}
                 </span>
                 {percentile !== null && (
-                  <span className="font-mono text-[11px]" style={{ color: primary }}>
+                  <span className="font-mono text-xs" style={{ color: primary }}>
                     · Top {100 - percentile + 1}%
                   </span>
                 )}
@@ -474,15 +474,15 @@ export default function ProfilePage() {
           >
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
-                <span className="font-mono text-[11px] uppercase tracking-[1.5px]" style={{ color: rankColor }}>
+                <span className="font-mono text-xs uppercase tracking-[1.5px]" style={{ color: rankColor }}>
                   {profile.rank_title}
                 </span>
-                <span className="font-mono text-[11px]" style={{ color: 'var(--muted)' }}>→</span>
-                <span className="font-mono text-[11px] uppercase tracking-[1.5px]" style={{ color: RANK_COLORS[next.name] ?? 'var(--muted)' }}>
+                <span className="font-mono text-xs" style={{ color: 'var(--muted)' }}>→</span>
+                <span className="font-mono text-xs uppercase tracking-[1.5px]" style={{ color: RANK_COLORS[next.name] ?? 'var(--muted)' }}>
                   {next.name}
                 </span>
               </div>
-              <span className="font-mono text-[11px]" style={{ color: 'var(--muted)' }}>
+              <span className="font-mono text-xs" style={{ color: 'var(--muted)' }}>
                 {next.needed} pts needed
               </span>
             </div>
@@ -529,7 +529,7 @@ export default function ProfilePage() {
                   <div className="font-display leading-none mb-2 theme-transition" style={{ fontSize: 'clamp(2.5rem, 5vw, 3.5rem)', color }}>
                     {value}
                   </div>
-                  <div className="font-mono text-[11px] uppercase tracking-[1.5px]" style={{ color: 'var(--muted)' }}>
+                  <div className="font-mono text-xs uppercase tracking-[1.5px]" style={{ color: 'var(--muted)' }}>
                     {label}
                   </div>
                 </div>
@@ -541,7 +541,7 @@ export default function ProfilePage() {
               className="border p-6 theme-transition"
               style={{ background: 'var(--dark3)', borderColor: 'var(--border)' }}
             >
-              <p className="font-mono text-[11px] uppercase tracking-[1.5px] mb-4" style={{ color: 'var(--muted)' }}>
+              <p className="font-mono text-xs uppercase tracking-[1.5px] mb-4" style={{ color: 'var(--muted)' }}>
                 Tactical Identity
               </p>
               <div className="flex flex-wrap gap-2">
@@ -571,18 +571,18 @@ export default function ProfilePage() {
               className="border p-6 theme-transition"
               style={{ background: 'var(--dark3)', borderColor: 'var(--border)' }}
             >
-              <p className="font-mono text-[11px] uppercase tracking-[1.5px] mb-4" style={{ color: 'var(--muted)' }}>
+              <p className="font-mono text-xs uppercase tracking-[1.5px] mb-4" style={{ color: 'var(--muted)' }}>
                 Scout Intel
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <p className="font-mono text-[10px] uppercase tracking-[1.5px] mb-1" style={{ color: 'var(--muted)' }}>Nation</p>
+                  <p className="font-mono text-xs uppercase tracking-[1.5px] mb-1" style={{ color: 'var(--muted)' }}>Nation</p>
                   <p className="font-sans font-semibold text-[16px]" style={{ color: 'var(--text)' }}>
                     {countryFlag} {profile.favorite_nation || profile.country_allegiance}
                   </p>
                 </div>
                 <div>
-                  <p className="font-mono text-[10px] uppercase tracking-[1.5px] mb-1" style={{ color: 'var(--muted)' }}>Global Standing</p>
+                  <p className="font-mono text-xs uppercase tracking-[1.5px] mb-1" style={{ color: 'var(--muted)' }}>Global Standing</p>
                   <p className="font-sans font-semibold text-[16px]" style={{ color: 'var(--text)' }}>
                     #{profile.global_rank} worldwide
                     {percentile !== null && ` · Top ${100 - percentile + 1}%`}
@@ -590,7 +590,7 @@ export default function ProfilePage() {
                 </div>
                 {profile.favorite_club && (
                   <div>
-                    <p className="font-mono text-[10px] uppercase tracking-[1.5px] mb-1" style={{ color: 'var(--muted)' }}>Club</p>
+                    <p className="font-mono text-xs uppercase tracking-[1.5px] mb-1" style={{ color: 'var(--muted)' }}>Club</p>
                     <p className="font-sans font-semibold text-[16px]" style={{ color: 'var(--text)' }}>
                       {profile.favorite_club}
                     </p>
@@ -598,7 +598,7 @@ export default function ProfilePage() {
                 )}
                 {profile.preferred_formation && (
                   <div>
-                    <p className="font-mono text-[10px] uppercase tracking-[1.5px] mb-1" style={{ color: 'var(--muted)' }}>Formation</p>
+                    <p className="font-mono text-xs uppercase tracking-[1.5px] mb-1" style={{ color: 'var(--muted)' }}>Formation</p>
                     <p className="font-sans font-semibold text-[16px]" style={{ color: 'var(--text)' }}>
                       {profile.preferred_formation}
                     </p>
@@ -606,7 +606,7 @@ export default function ProfilePage() {
                 )}
                 {profile.tactical_style && (
                   <div>
-                    <p className="font-mono text-[10px] uppercase tracking-[1.5px] mb-1" style={{ color: 'var(--muted)' }}>Tactical Style</p>
+                    <p className="font-mono text-xs uppercase tracking-[1.5px] mb-1" style={{ color: 'var(--muted)' }}>Tactical Style</p>
                     <p className="font-sans font-semibold text-[16px]" style={{ color: 'var(--text)' }}>
                       {profile.tactical_style.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}
                     </p>
@@ -649,7 +649,7 @@ export default function ProfilePage() {
                       <p className="font-sans font-semibold text-[14px]" style={{ color: 'var(--text)' }}>
                         Match #{pred.match_id}
                       </p>
-                      <p className="font-mono text-[11px]" style={{ color: 'var(--muted)' }}>
+                      <p className="font-mono text-xs" style={{ color: 'var(--muted)' }}>
                         {formatMatchTime(pred.created_at, { showTimezone: false })}
                       </p>
                     </div>
@@ -658,25 +658,25 @@ export default function ProfilePage() {
                   {/* Prediction summary chips */}
                   <div className="flex flex-wrap gap-1.5">
                     {pred.match_result && (
-                      <span className="font-mono text-[10px] uppercase px-2 py-1 border theme-transition"
+                      <span className="font-mono text-xs uppercase px-2 py-1 border theme-transition"
                         style={{ color: primary, borderColor: `color-mix(in srgb, ${primary} 25%, transparent)`, background: `color-mix(in srgb, ${primary} 8%, transparent)` }}>
                         {pred.match_result}
                       </span>
                     )}
                     {pred.correct_score && (
-                      <span className="font-mono text-[10px] uppercase px-2 py-1 border theme-transition"
+                      <span className="font-mono text-xs uppercase px-2 py-1 border theme-transition"
                         style={{ color: '#00D1FF', borderColor: 'rgba(0,209,255,0.25)', background: 'rgba(0,209,255,0.08)' }}>
                         {pred.correct_score.home}–{pred.correct_score.away}
                       </span>
                     )}
                     {pred.btts_prediction !== null && (
-                      <span className="font-mono text-[10px] uppercase px-2 py-1 border"
+                      <span className="font-mono text-xs uppercase px-2 py-1 border"
                         style={{ color: 'var(--muted)', borderColor: 'var(--border)', background: 'transparent' }}>
                         BTTS {pred.btts_prediction ? 'Yes' : 'No'}
                       </span>
                     )}
                     {pred.over_under && (
-                      <span className="font-mono text-[10px] uppercase px-2 py-1 border"
+                      <span className="font-mono text-xs uppercase px-2 py-1 border"
                         style={{ color: 'var(--muted)', borderColor: 'var(--border)', background: 'transparent' }}>
                         {pred.over_under.pick} {pred.over_under.line}
                       </span>
@@ -685,7 +685,7 @@ export default function ProfilePage() {
 
                   {/* Status */}
                   <span
-                    className="font-mono text-[10px] uppercase px-3 py-1.5 flex-shrink-0"
+                    className="font-mono text-xs uppercase px-3 py-1.5 flex-shrink-0"
                     style={{
                       color: pred.status === 'SCORED' ? '#00FF85' : 'var(--muted)',
                       background: pred.status === 'SCORED' ? 'rgba(0,255,133,0.1)' : 'var(--border)',
@@ -709,7 +709,7 @@ export default function ProfilePage() {
               className="border p-5 text-center mt-2 theme-transition"
               style={{ borderColor: 'var(--border)', background: 'var(--dark3)' }}
             >
-              <span className="font-mono text-[11px] uppercase tracking-[2px]" style={{ color: 'rgba(255,255,255,0.2)' }}>
+              <span className="font-mono text-xs uppercase tracking-[2px]" style={{ color: 'rgba(255,255,255,0.2)' }}>
                 More badges coming soon
               </span>
             </div>
@@ -732,7 +732,7 @@ export default function ProfilePage() {
                   className="border p-6 flex flex-col gap-5 theme-transition"
                   style={{ background: 'var(--dark3)', borderColor: 'var(--border)' }}
                 >
-                  <p className="font-mono text-[11px] uppercase tracking-[1.5px]" style={{ color: 'var(--muted)' }}>
+                  <p className="font-mono text-xs uppercase tracking-[1.5px]" style={{ color: 'var(--muted)' }}>
                     Prediction Tendencies
                   </p>
                   <DNABar label="BTTS Optimism" pct={dna.bttsYes} color="#00FF85" />
@@ -745,7 +745,7 @@ export default function ProfilePage() {
                   className="border p-6 theme-transition"
                   style={{ background: 'var(--dark3)', borderColor: 'var(--border)' }}
                 >
-                  <p className="font-mono text-[11px] uppercase tracking-[1.5px] mb-4" style={{ color: 'var(--muted)' }}>
+                  <p className="font-mono text-xs uppercase tracking-[1.5px] mb-4" style={{ color: 'var(--muted)' }}>
                     Scout Archetype
                   </p>
                   <div className="flex flex-wrap gap-2">
@@ -770,7 +770,7 @@ export default function ProfilePage() {
                   className="border p-6 theme-transition"
                   style={{ background: 'var(--dark3)', borderColor: 'var(--border)' }}
                 >
-                  <p className="font-mono text-[11px] uppercase tracking-[1.5px] mb-2" style={{ color: 'var(--muted)' }}>
+                  <p className="font-mono text-xs uppercase tracking-[1.5px] mb-2" style={{ color: 'var(--muted)' }}>
                     Formation Heatmap
                   </p>
                   <p className="font-sans text-[14px]" style={{ color: 'rgba(255,255,255,0.3)' }}>

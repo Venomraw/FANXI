@@ -48,7 +48,7 @@ export default function LeaderboardPage() {
         {/* Header */}
         <div className="flex items-end justify-between mb-8">
           <div>
-            <p className="font-mono text-[11px] tracking-[1.5px] uppercase mb-3 theme-transition"
+            <p className="font-mono text-xs tracking-[1.5px] uppercase mb-3 theme-transition"
               style={{ color: primary }}>
               World Cup 2026 · Global Rankings
             </p>
@@ -70,7 +70,7 @@ export default function LeaderboardPage() {
             <div key={title} className="flex items-center gap-2 px-3 py-1.5 border"
               style={{ background: `${color}0d`, borderColor: `${color}30` }}>
               <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: color }} />
-              <span className="font-mono text-[10px] tracking-widest uppercase font-bold" style={{ color }}>
+              <span className="font-mono text-xs tracking-widest uppercase font-bold" style={{ color }}>
                 {title}
               </span>
             </div>
@@ -83,14 +83,14 @@ export default function LeaderboardPage() {
           {/* Column headers */}
           <div className="flex items-center gap-4 px-5 py-3 border-b"
             style={{ borderColor: 'rgba(255,255,255,0.06)', background: 'rgba(255,255,255,0.02)' }}>
-            <div className="w-8 font-mono text-[10px] tracking-widest uppercase theme-transition" style={{ color: primary }}>#</div>
+            <div className="w-8 font-mono text-xs tracking-widest uppercase theme-transition" style={{ color: primary }}>#</div>
             <div className="w-9" />
-            <div className="flex-1 font-mono text-[10px] tracking-widest uppercase theme-transition" style={{ color: primary }}>Scout</div>
-            <div className="font-mono text-[10px] tracking-widest uppercase text-right theme-transition" style={{ color: primary }}>IQ Pts</div>
+            <div className="flex-1 font-mono text-xs tracking-widest uppercase theme-transition" style={{ color: primary }}>Scout</div>
+            <div className="font-mono text-xs tracking-widest uppercase text-right theme-transition" style={{ color: primary }}>IQ Pts</div>
           </div>
 
           {loading ? (
-            <div className="py-16 text-center font-mono text-sm tracking-widest"
+            <div className="py-16 text-center font-mono text-sm tracking-normal"
               style={{ color: 'rgba(255,255,255,0.25)' }}>
               Loading scouts...
             </div>
@@ -142,13 +142,13 @@ export default function LeaderboardPage() {
                           {entry.username}
                         </Link>
                         {isMe && (
-                          <span className="font-mono text-[10px] tracking-widest uppercase px-2 py-0.5 font-bold theme-transition"
+                          <span className="font-mono text-xs tracking-widest uppercase px-2 py-0.5 font-bold theme-transition"
                             style={{ background: `${primary}25`, color: primary }}>
                             You
                           </span>
                         )}
                       </div>
-                      <div className="font-mono text-[11px] uppercase tracking-widest mt-0.5"
+                      <div className="font-mono text-xs uppercase tracking-widest mt-0.5"
                         style={{ color: 'rgba(255,255,255,0.3)' }}>
                         {entry.country_allegiance}
                       </div>
@@ -159,7 +159,7 @@ export default function LeaderboardPage() {
                       <div className="font-display text-3xl leading-none" style={{ color: rankColor }}>
                         {entry.football_iq_points.toLocaleString()}
                       </div>
-                      <div className="font-mono text-[10px] uppercase tracking-wider" style={{ color: rankColor }}>
+                      <div className="font-mono text-xs uppercase tracking-wider" style={{ color: rankColor }}>
                         {entry.rank_title}
                       </div>
                     </div>
@@ -170,7 +170,7 @@ export default function LeaderboardPage() {
           )}
         </div>
 
-        <p className="text-center font-mono text-[11px] uppercase tracking-[3px] mt-8 pb-6"
+        <p className="text-center font-mono text-xs uppercase tracking-[3px] mt-8 pb-6"
           style={{ color: 'rgba(255,255,255,0.2)' }}>
           Points awarded after each match result is confirmed
         </p>

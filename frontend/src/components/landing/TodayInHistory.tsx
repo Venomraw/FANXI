@@ -127,7 +127,7 @@ export default function TodayInHistory() {
           <span className="font-mono text-red-500 uppercase" style={{ fontSize: '11px', letterSpacing: '1.5px' }}>
             // TODAY IN WORLD CUP HISTORY
           </span>
-          <div className="font-mono text-white/30 mt-1" style={{ fontSize: '11px' }}>
+          <div className="font-mono text-white/60 mt-1" style={{ fontSize: '11px' }}>
             {formatDisplayDate(entryKey)}
           </div>
         </div>
@@ -211,7 +211,7 @@ export default function TodayInHistory() {
             }}
           />
         </div>
-        <span className="font-mono text-white/30" style={{ fontSize: '10px', flexShrink: 0 }}>
+        <span className="font-mono text-white/60" style={{ fontSize: '10px', flexShrink: 0 }}>
           {currentIndex + 1} / {ALL_ENTRIES.length}
         </span>
       </div>

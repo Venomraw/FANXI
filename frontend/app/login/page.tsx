@@ -321,9 +321,9 @@ export default function LoginPage() {
                 style={{ fontFamily: 'var(--font-mono)', fontSize: '9px', letterSpacing: '2px', textTransform: 'uppercase', color: primary }}>
                 Username
               </label>
-              <input value={username} onChange={e => setUsername(e.target.value)}
+              <input aria-label="Username" value={username} onChange={e => setUsername(e.target.value)}
                 required placeholder="your_username" suppressHydrationWarning
-                className="w-full px-4 py-3 font-mono text-sm outline-none transition-colors theme-transition"
+                className="w-full px-4 py-3 font-mono text-sm outline-none focus:ring-2 focus:ring-red-500/50 transition-colors theme-transition"
                 style={{
                   background: 'var(--dark3)', color: 'var(--text)',
                   border: `1px solid ${borderPrimary}`,
@@ -347,9 +347,9 @@ export default function LoginPage() {
                     style={{ fontFamily: 'var(--font-mono)', fontSize: '9px', letterSpacing: '2px', textTransform: 'uppercase', color: primary }}>
                     Email
                   </label>
-                  <input value={email} onChange={e => setEmail(e.target.value)}
+                  <input aria-label="Email" value={email} onChange={e => setEmail(e.target.value)}
                     required type="email" placeholder="you@example.com" suppressHydrationWarning
-                    className="w-full px-4 py-3 font-mono text-sm outline-none transition-colors theme-transition"
+                    className="w-full px-4 py-3 font-mono text-sm outline-none focus:ring-2 focus:ring-red-500/50 transition-colors theme-transition"
                     style={{
                       background: 'var(--dark3)', color: 'var(--text)',
                       border: `1px solid ${borderPrimary}`,
@@ -364,9 +364,9 @@ export default function LoginPage() {
                     style={{ fontFamily: 'var(--font-mono)', fontSize: '9px', letterSpacing: '2px', textTransform: 'uppercase', color: primary }}>
                     Country
                   </label>
-                  <input value={country} onChange={e => setCountry(e.target.value)}
+                  <input aria-label="Country" value={country} onChange={e => setCountry(e.target.value)}
                     required placeholder="e.g. Brazil"
-                    className="w-full px-4 py-3 font-mono text-sm outline-none transition-colors theme-transition"
+                    className="w-full px-4 py-3 font-mono text-sm outline-none focus:ring-2 focus:ring-red-500/50 transition-colors theme-transition"
                     style={{
                       background: 'var(--dark3)', color: 'var(--text)',
                       border: `1px solid ${borderPrimary}`,
@@ -384,9 +384,9 @@ export default function LoginPage() {
                 style={{ fontFamily: 'var(--font-mono)', fontSize: '9px', letterSpacing: '2px', textTransform: 'uppercase', color: primary }}>
                 Password
               </label>
-              <input value={password} onChange={e => setPassword(e.target.value)}
+              <input aria-label="Password" value={password} onChange={e => setPassword(e.target.value)}
                 required type="password" placeholder="••••••••" suppressHydrationWarning
-                className="w-full px-4 py-3 font-mono text-sm outline-none transition-colors theme-transition"
+                className="w-full px-4 py-3 font-mono text-sm outline-none focus:ring-2 focus:ring-red-500/50 transition-colors theme-transition"
                 style={{
                   background: 'var(--dark3)', color: 'var(--text)',
                   border: `1px solid ${borderPrimary}`,
@@ -435,7 +435,7 @@ export default function LoginPage() {
           {/* ── Google OAuth ── */}
           <div className="flex items-center gap-3 my-6">
             <div className="flex-1 h-px" style={{ background: 'var(--border)' }} />
-            <span className="font-mono text-[9px] tracking-widest uppercase" style={{ color: 'var(--muted)' }}>or</span>
+            <span className="font-mono text-xs tracking-widest uppercase" style={{ color: 'var(--muted)' }}>or</span>
             <div className="flex-1 h-px" style={{ background: 'var(--border)' }} />
           </div>
 
