@@ -18,7 +18,7 @@ export default function ShareModal({
   matchLabel,
   onClose,
 }: ShareModalProps) {
-  const { fetchPredictionCard, fetchProfileCard, downloadCard, shareToX, shareToWhatsApp, copyLink, nativeShare } =
+  const { fetchPredictionCard, fetchProfileCard, downloadCard, shareToX, shareToWhatsApp, copyLink } =
     useShareCard();
 
   const [imgSrc, setImgSrc]       = useState<string | null>(null);
@@ -91,15 +91,6 @@ export default function ShareModal({
 
   // ── Share actions ─────────────────────────────────────────────────────────────
 
-  async function handleNativeOrFallback() {
-    const shared = await nativeShare(
-      type === 'prediction' ? 'My FanXI Prediction' : 'My FanXI Profile',
-      shareText,
-      shareUrl,
-    );
-    if (!shared) shareToX(shareText, shareUrl);
-  }
-
   async function handleCopy() {
     await copyLink(shareUrl);
     setCopied(true);
@@ -132,7 +123,7 @@ export default function ShareModal({
         <div className="flex items-center justify-between px-6 pt-5 pb-4" style={{ borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
           <div>
             <p className="font-mono text-xs uppercase tracking-widest mb-0.5" style={{ color: 'var(--red)' }}>
-              // SHARE
+              {'// SHARE'}
             </p>
             <h3 className="font-display font-semibold" style={{ fontSize: '20px' }}>
               {type === 'prediction' ? 'Your Prediction Card' : 'Your Scout Profile'}
@@ -180,14 +171,14 @@ export default function ShareModal({
                 </button>
               </div>
             )}
-            {imgSrc && !loading && (
-              <img
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            {imgSrc && !loading && <img
                 src={imgSrc}
                 alt="Share card preview"
                 className="w-full h-full object-contain"
                 style={{ display: 'block' }}
               />
-            )}
+            }
           </div>
         </div>
 

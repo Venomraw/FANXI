@@ -156,7 +156,7 @@ export default function HomePage() {
                 className="font-display font-semibold text-red-500 uppercase"
                 style={{ fontSize: '13px', letterSpacing: '1.5px' }}
               >
-                // TODAY IN WORLD CUP HISTORY
+                {'// TODAY IN WORLD CUP HISTORY'}
               </p>
             </div>
             <TodayInHistory />
@@ -173,7 +173,7 @@ export default function HomePage() {
                 className="font-display font-semibold text-red-500 uppercase"
                 style={{ fontSize: '13px', letterSpacing: '1.5px' }}
               >
-                // WC2026 INTELLIGENCE FEED
+                {'// WC2026 INTELLIGENCE FEED'}
               </p>
               <h2
                 className="font-sans font-bold mt-2"
@@ -197,7 +197,7 @@ export default function HomePage() {
               className="font-display font-semibold text-red-500 uppercase mb-4"
               style={{ fontSize: '13px', letterSpacing: '1.5px' }}
             >
-              // THE CLOCK IS RUNNING
+              {'// THE CLOCK IS RUNNING'}
             </p>
             <UrgencyCountdown />
           </div>

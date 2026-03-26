@@ -45,7 +45,7 @@ const STORAGE_KEY = 'fanxi_predict_tutorial_seen';
 
 // ── Tutorial Overlay ─────────────────────────────────────────────────────────
 
-function TutorialOverlay({ primary, onDone }: { primary: string; onDone: () => void }) {
+function TutorialOverlay({ onDone }: { onDone: () => void }) {
   const [step, setStep] = useState(0);
   const current = TUTORIAL_STEPS[step];
   const isLast = step === TUTORIAL_STEPS.length - 1;
@@ -215,7 +215,7 @@ export default function PredictPage() {
       <div style={{ background: 'rgba(0,0,0,0.45)', borderBottom: '1px solid var(--border)' }}>
         <div className="max-w-[1400px] mx-auto px-7 py-8">
           <div className="font-mono text-xs tracking-widest uppercase mb-2 theme-transition" style={{ color: primary }}>
-            // Tactical Lab
+            {'// Tactical Lab'}
           </div>
           <div className="flex items-end justify-between flex-wrap gap-4">
             <h1
@@ -277,7 +277,6 @@ export default function PredictPage() {
       {/* Tutorial overlay */}
       {showTutorial && (
         <TutorialOverlay
-          primary={primary}
           onDone={() => setShowTutorial(false)}
         />
       )}

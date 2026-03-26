@@ -1,6 +1,6 @@
 'use client';
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { WCTeam, WC2026_TEAMS, DEFAULT_THEME, getTeamById } from '@/src/data/teamColors';
+import { WCTeam, DEFAULT_THEME, getTeamById } from '@/src/data/teamColors';
 
 interface ThemeContextValue {
   team: WCTeam | null;
@@ -26,6 +26,12 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [team, setTeamState] = useState<WCTeam | null>(null);
   const [showPicker, setShowPicker] = useState(false);
 
+  function applyTeam(t: WCTeam) {
+    document.documentElement.style.setProperty('--team-primary', t.primary);
+    document.documentElement.style.setProperty('--team-accent', t.accent);
+    document.documentElement.style.setProperty('--team-text', t.text);
+  }
+
   // On mount: load saved team from localStorage, or show picker
   useEffect(() => {
     const saved = localStorage.getItem('fanxi_team');
@@ -39,12 +45,6 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     }
     setShowPicker(true);
   }, []);
-
-  function applyTeam(t: WCTeam) {
-    document.documentElement.style.setProperty('--team-primary', t.primary);
-    document.documentElement.style.setProperty('--team-accent', t.accent);
-    document.documentElement.style.setProperty('--team-text', t.text);
-  }
 
   function setTeam(t: WCTeam) {
     setTeamState(t);

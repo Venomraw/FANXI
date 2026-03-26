@@ -207,6 +207,7 @@ export default function OnboardingPage() {
   useEffect(() => {
     if (user && !username) setUsername(user.username);
     if (user && !displayName) setDisplayName(user.display_name || '');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   // Debounced username check
@@ -356,7 +357,7 @@ export default function OnboardingPage() {
           {step === 1 && (
             <div>
               <div className="font-mono text-xs tracking-widest uppercase mb-2" style={{ color: primary }}>
-                // Step 01 — Identity
+                {'// Step 01 — Identity'}
               </div>
               <h2 className="font-display font-semibold mb-6 leading-none" style={{ fontSize: 'clamp(28px,5vw,40px)', letterSpacing: '0.5px' }}>
                 WHO ARE YOU?
@@ -468,7 +469,7 @@ export default function OnboardingPage() {
           {step === 2 && (
             <div>
               <div className="font-mono text-xs tracking-widest uppercase mb-2" style={{ color: primary }}>
-                // Step 02 — Football DNA
+                {'// Step 02 — Football DNA'}
               </div>
               <h2 className="font-display font-semibold mb-6 leading-none" style={{ fontSize: 'clamp(28px,5vw,40px)', letterSpacing: '0.5px' }}>
                 YOUR FOOTBALL<br /><span style={{ color: primary }}>DNA</span>
@@ -594,7 +595,7 @@ export default function OnboardingPage() {
           {step === 3 && (
             <div>
               <div className="font-mono text-xs tracking-widest uppercase mb-2" style={{ color: primary }}>
-                // Step 03 — Bold Predictions
+                {'// Step 03 — Bold Predictions'}
               </div>
               <h2 className="font-display font-semibold mb-1 leading-none" style={{ fontSize: 'clamp(28px,5vw,40px)', letterSpacing: '0.5px' }}>
                 BOLD<br /><span style={{ color: primary }}>PREDICTIONS</span>

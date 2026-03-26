@@ -310,7 +310,7 @@ export default function ChampionsTimeline() {
               className="font-display font-semibold uppercase tracking-wider text-red-600"
               style={{ fontSize: '13px', letterSpacing: '1.5px' }}
             >
-              // WORLD CUP CHAMPIONS
+              {'// WORLD CUP CHAMPIONS'}
             </p>
             <h2
               className="font-sans font-bold text-white mt-2"

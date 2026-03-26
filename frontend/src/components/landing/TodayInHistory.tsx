@@ -125,7 +125,7 @@ export default function TodayInHistory() {
       <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
         <div>
           <span className="font-mono text-red-500 uppercase" style={{ fontSize: '11px', letterSpacing: '1.5px' }}>
-            // TODAY IN WORLD CUP HISTORY
+            {'// TODAY IN WORLD CUP HISTORY'}
           </span>
           <div className="font-mono text-white/60 mt-1" style={{ fontSize: '11px' }}>
             {formatDisplayDate(entryKey)}
