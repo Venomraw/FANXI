@@ -41,11 +41,8 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Syntax check
-        run: python -c "
-          import ast, pathlib;
-          [ast.parse(f.read_text()) for f in pathlib.Path('app').rglob('*.py')];
-          print('Syntax OK')
-          "
+        run: |
+          python -c "import ast, pathlib; files = list(pathlib.Path('app').rglob('*.py')); [ast.parse(f.read_text()) for f in files]; print(f'Syntax OK: {len(files)} files')"
 
       - name: Import check
         env:
