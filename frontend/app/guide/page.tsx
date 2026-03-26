@@ -104,13 +104,6 @@ const RANKS = [
   },
 ];
 
-const TIP_LINKS: Record<string, string> = {
-  'Captain wisely':    '/',
-  'Lock early':        '/',
-  'Formation matters': '/',
-  'BTTS is high value':'/',
-};
-
 const TIPS = [
   { icon: '🎯', title: 'Captain wisely', desc: 'Your captain earns double points — pick a player likely to score or assist, not just the biggest name.' },
   { icon: '🔒', title: 'Lock early', desc: 'Predictions lock at kickoff. A late lock costs −3 pts. Set your XI as soon as the lineup is confirmed.' },
@@ -260,7 +253,7 @@ export default function GuidePage() {
       {/* ── HOW TO PLAY ── */}
       <section id="how" className="py-24 md:py-32 border-b" style={{ background: 'var(--dark3)', borderColor: 'var(--border)' }}>
         <div className="max-w-[1400px] mx-auto px-8 lg:px-16">
-          <div className="font-mono text-xs tracking-widest uppercase mb-4" style={{ color: primary, paddingTop: '8px' }}>// 01 — Process</div>
+          <div className="font-mono text-xs tracking-widest uppercase mb-4" style={{ color: primary, paddingTop: '8px' }}>{'// 01 — Process'}</div>
           <h2
             className="font-display font-semibold leading-none mt-2 mb-20 md:mb-24"
             style={{ fontSize: 'clamp(56px, 7vw, 100px)', letterSpacing: '1px', lineHeight: '0.95' }}
@@ -304,7 +297,7 @@ export default function GuidePage() {
       {/* ── SCORING ── */}
       <section id="scoring" className="py-24 md:py-32 border-b" style={{ background: 'var(--dark)', borderColor: 'var(--border)' }}>
         <div className="max-w-[1400px] mx-auto px-8 lg:px-16">
-          <div className="font-mono text-xs tracking-widest uppercase mb-4" style={{ color: primary, paddingTop: '8px' }}>// 02 — Point System</div>
+          <div className="font-mono text-xs tracking-widest uppercase mb-4" style={{ color: primary, paddingTop: '8px' }}>{'// 02 — Point System'}</div>
           <h2
             className="font-display font-semibold leading-none mt-2 mb-20 md:mb-24"
             style={{ fontSize: 'clamp(56px, 7vw, 100px)', letterSpacing: '1px', lineHeight: '0.95' }}
@@ -387,7 +380,7 @@ export default function GuidePage() {
       {/* ── RANKS ── */}
       <section id="ranks" className="py-24 md:py-32 border-b" style={{ background: 'var(--dark3)', borderColor: 'var(--border)' }}>
         <div className="max-w-[1400px] mx-auto px-8 lg:px-16">
-          <div className="font-mono text-xs tracking-widest uppercase mb-4" style={{ color: primary, paddingTop: '8px' }}>// 03 — Progression</div>
+          <div className="font-mono text-xs tracking-widest uppercase mb-4" style={{ color: primary, paddingTop: '8px' }}>{'// 03 — Progression'}</div>
           <h2
             className="font-display font-semibold leading-none mt-2 mb-20 md:mb-24"
             style={{ fontSize: 'clamp(56px, 7vw, 100px)', letterSpacing: '1px', lineHeight: '0.95' }}
@@ -469,7 +462,7 @@ export default function GuidePage() {
       {/* ── TIPS ── */}
       <section id="tips" className="py-24 md:py-32 border-b" style={{ background: 'var(--dark)', borderColor: 'var(--border)' }}>
         <div className="max-w-[1400px] mx-auto px-8 lg:px-16">
-          <div className="font-mono text-xs tracking-widest uppercase mb-4" style={{ color: primary, paddingTop: '8px' }}>// 04 — Edge</div>
+          <div className="font-mono text-xs tracking-widest uppercase mb-4" style={{ color: primary, paddingTop: '8px' }}>{'// 04 — Edge'}</div>
           <h2
             className="font-display font-semibold leading-none mt-2 mb-20 md:mb-24"
             style={{ fontSize: 'clamp(56px, 7vw, 100px)', letterSpacing: '1px', lineHeight: '0.95' }}

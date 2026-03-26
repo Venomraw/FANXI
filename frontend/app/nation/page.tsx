@@ -1,5 +1,6 @@
 'use client';
 import React, { useEffect, useState, useCallback, useRef } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useTheme } from '@/src/context/ThemeContext';
 import { useAuth } from '@/src/context/AuthContext';
@@ -422,7 +423,7 @@ function AIAnalysisPanel({
           } catch { /* skip */ }
         }
       }
-    } catch (e) {
+    } catch {
       setAiText('Analysis unavailable. Please try again.');
     } finally {
       setLoading(false);
@@ -733,8 +734,8 @@ function ArticlePanel({
         </div>
         <div className="flex-1 overflow-y-auto">
           {article.thumbnail && (
-            <div className="w-full h-64 overflow-hidden">
-              <img src={article.thumbnail} alt="" className="w-full h-full object-cover" />
+            <div className="relative w-full h-64 overflow-hidden">
+              <Image src={article.thumbnail} alt="" fill className="object-cover" unoptimized />
             </div>
           )}
           <div className="px-6 py-6 flex flex-col gap-5">
@@ -775,8 +776,8 @@ function NewsCard({ article, primary, onSelect }: { article: Article; primary: s
       onMouseLeave={e => (e.currentTarget.style.borderColor = `color-mix(in srgb, ${primary} 12%, transparent)`)}>
       <div className="absolute top-0 left-0 right-0 h-[2px] transition-opacity opacity-0 group-hover:opacity-100" style={{ background: primary }} />
       {article.thumbnail ? (
-        <div className="h-48 overflow-hidden">
-          <img src={article.thumbnail} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+        <div className="relative h-48 overflow-hidden">
+          <Image src={article.thumbnail} alt="" fill className="object-cover group-hover:scale-105 transition-transform duration-300" unoptimized />
         </div>
       ) : (
         <div className="h-48 flex items-center justify-center text-3xl"
@@ -843,7 +844,7 @@ function VideoCard({ video, primary }: { video: Video; primary: string }) {
       onMouseEnter={e => (e.currentTarget.style.borderColor = `color-mix(in srgb, ${primary} 35%, transparent)`)}
       onMouseLeave={e => (e.currentTarget.style.borderColor = `color-mix(in srgb, ${primary} 12%, transparent)`)}>
       <div className="relative h-44 overflow-hidden" style={{ background: 'var(--border)' }}>
-        {video.thumbnail && <img src={video.thumbnail} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />}
+        {video.thumbnail && <Image src={video.thumbnail} alt="" fill className="object-cover group-hover:scale-105 transition-transform duration-300" unoptimized />}
         <div className="absolute top-2 left-2 font-mono text-xs tracking-wider uppercase px-2 py-0.5" style={{ background: 'rgba(0,0,0,0.75)', color: 'white', border: '1px solid rgba(255,255,255,0.15)' }}>
           {video.channel.slice(0, 12)}
         </div>
@@ -951,6 +952,7 @@ export default function NationPage() {
   useEffect(() => {
     if (isLoading) return;
     if (!user) { router.push('/login'); return; }
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- initial data fetch on auth, intentional
     fetchAll();
     setActiveTab('overview');
     setPosFilter('ALL');

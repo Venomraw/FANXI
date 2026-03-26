@@ -3,7 +3,6 @@
 import { useState, useRef, useEffect, KeyboardEvent, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import NavBar from '@/src/components/NavBar';
-import { useTheme } from '@/src/context/ThemeContext';
 import { useAuth } from '@/src/context/AuthContext';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -198,7 +197,6 @@ function renderInline(text: string): React.ReactNode {
 const LS_KEY = (mode: Mode) => `fanxi_ai_chat_${mode}`;
 
 export default function AIPage() {
-  const { primary } = useTheme();
   const { user, isLoading } = useAuth();
   const router = useRouter();
 
@@ -206,7 +204,7 @@ export default function AIPage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [, setSidebarOpen] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -340,7 +338,7 @@ export default function AIPage() {
           <div className="flex items-end justify-between flex-wrap gap-4">
             <div>
               <div className="font-mono text-xs tracking-widest uppercase mb-2" style={{ color: accentColor }}>
-                // AI Tactical Brain
+                {'// AI Tactical Brain'}
               </div>
               <h1 className="font-display font-semibold leading-none" style={{ fontSize: 'clamp(36px, 5vw, 64px)', letterSpacing: '-1px' }}>
                 FANXI <span style={{ color: accentColor }}>AI</span>

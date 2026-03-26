@@ -94,9 +94,8 @@ const LEAGUES = [
 
 // ─── Sub-components ────────────────────────────────────────────────────────────
 
-function LiveBanner({ matches, primary, onWatch }: {
+function LiveBanner({ matches, onWatch }: {
   matches: Match[];
-  primary: string;
   onWatch: (id: number) => void;
 }) {
   if (!matches.length) return null;
@@ -141,7 +140,7 @@ function LiveBanner({ matches, primary, onWatch }: {
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function Home() {
-  const { team, primary } = useTheme();
+  const { primary } = useTheme();
   const { user, isLoading } = useAuth();
   const router = useRouter();
   const { toast } = useToast();
@@ -240,7 +239,7 @@ export default function Home() {
       <NavBar subtitle="HUB" />
 
       {/* Live banner */}
-      <LiveBanner matches={liveMatches} primary={primary} onWatch={id => router.push(`/matches/${id}/live`)} />
+      <LiveBanner matches={liveMatches} onWatch={id => router.push(`/matches/${id}/live`)} />
 
       {/* ── PERSONAL HERO ── */}
       <section
@@ -334,7 +333,7 @@ export default function Home() {
               >
                 <div>
                   <div className="font-mono text-xs uppercase tracking-widest mb-2" style={{ color: 'var(--gold)' }}>
-                    // Your First Call
+                    {'// Your First Call'}
                   </div>
                   <h3 className="font-display font-semibold leading-tight mb-3" style={{ fontSize: '22px' }}>
                     Ready to prove your<br />
@@ -411,7 +410,7 @@ export default function Home() {
         <div className="max-w-[1400px] mx-auto px-7">
           <div className="flex items-center gap-3 mb-5">
             <div className="font-mono text-xs tracking-widest uppercase theme-transition" style={{ color: primary }}>
-              // Quick Actions
+              {'// Quick Actions'}
             </div>
             {isNewUser && (
               <div className="font-mono text-xs uppercase tracking-widest px-2 py-0.5 animate-pulse"
@@ -468,7 +467,7 @@ export default function Home() {
             <div className="flex items-end justify-between mb-6">
               <div>
                 <div className="font-mono text-xs tracking-widest uppercase mb-2 theme-transition" style={{ color: primary }}>
-                  // Next Up
+                  {'// Next Up'}
                 </div>
                 <h2 className="font-display font-semibold leading-none" style={{ fontSize: 'clamp(32px, 4vw, 52px)' }}>
                   UPCOMING <span style={{ color: primary }}>MATCHES</span>
@@ -554,7 +553,7 @@ export default function Home() {
             {/* My Predictions */}
             <div>
               <div className="font-mono text-xs tracking-widest uppercase mb-2 theme-transition" style={{ color: primary }}>
-                // My Activity
+                {'// My Activity'}
               </div>
               <div className="flex items-end justify-between mb-6">
                 <h2 className="font-display font-semibold leading-none" style={{ fontSize: 'clamp(28px, 4vw, 44px)' }}>
@@ -636,7 +635,7 @@ export default function Home() {
             {/* Leaderboard preview */}
             <div>
               <div className="font-mono text-xs tracking-widest uppercase mb-2 theme-transition" style={{ color: 'var(--gold)' }}>
-                // Global Rankings
+                {'// Global Rankings'}
               </div>
               <div className="flex items-end justify-between mb-6">
                 <h2 className="font-display font-semibold leading-none" style={{ fontSize: 'clamp(28px, 4vw, 44px)' }}>
@@ -739,7 +738,7 @@ export default function Home() {
         <div className="relative z-10 max-w-[1400px] mx-auto px-7">
           <div className="mb-12 reveal">
             <div className="font-mono text-xs tracking-widest uppercase mb-3 theme-transition" style={{ color: primary }}>
-              // Match Day Experience
+              {'// Match Day Experience'}
             </div>
             <h2 className="font-display font-semibold leading-none" style={{ fontSize: 'clamp(44px, 6vw, 86px)', letterSpacing: '1px', lineHeight: '0.95' }}>
               HOW IT<br /><span style={{ color: primary }}>WORKS</span>
@@ -810,7 +809,7 @@ export default function Home() {
       {/* ── LEAGUES ── */}
       <section id="leagues" className="py-24 border-t" style={{ background: 'transparent', borderColor: 'var(--border)' }}>
         <div className="max-w-[1400px] mx-auto px-7">
-          <div className="font-mono text-xs tracking-widest uppercase mb-3 theme-transition" style={{ color: primary }}>// Competition</div>
+          <div className="font-mono text-xs tracking-widest uppercase mb-3 theme-transition" style={{ color: primary }}>{'// Competition'}</div>
           <h2 className="font-display font-semibold mb-14 leading-none" style={{ fontSize: 'clamp(44px, 6vw, 86px)', letterSpacing: '1px', lineHeight: '0.95' }}>
             LEAGUE<br />FORMATS
           </h2>
