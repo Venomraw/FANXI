@@ -38,6 +38,14 @@ const PLACEHOLDER_SQUAD: Player[] = [
 
 type RightTab = 'tactics' | 'predictions' | 'halftime' | 'history';
 
+interface PredictionHistory {
+  id: number;
+  match_id: number;
+  lineup_data: Record<string, Player>;
+  tactics_data: { mentality: 'defensive' | 'balanced' | 'attacking'; pressing: 'low' | 'medium' | 'high' | 'gegenpress'; width: 'narrow' | 'balanced' | 'wide' };
+  created_at: string;
+}
+
 interface HalfTimeSub {
   out: string | null;
   in:  string | null;
@@ -77,7 +85,7 @@ export default function PitchBoard({ onLockSuccess }: PitchBoardProps = {}) {
   const [lineup, setLineup]               = useState<Record<string, Player>>({});
   const [selectedMatch, setSelectedMatch] = useState<WCMatch | null>(null);
   const [activeTeam, setActiveTeam]       = useState<string | null>(null);
-  const [history, setHistory]             = useState<any[]>([]);
+  const [history, setHistory]             = useState<PredictionHistory[]>([]);
   const [lockMsg, setLockMsg]             = useState<{ ok: boolean; text: string } | null>(null);
   const [halfTime, setHalfTime]           = useState<HalfTimePredictions>({
     subs:             [{ out: null, in: null }, { out: null, in: null }, { out: null, in: null }],
@@ -118,7 +126,7 @@ export default function PitchBoard({ onLockSuccess }: PitchBoardProps = {}) {
     try {
       const res  = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/squad/${encodeURIComponent(teamName)}`);
       const data = await res.json();
-      const players: Player[] = (data.players ?? []).map((p: any) => ({
+      const players: Player[] = (data.players ?? []).map((p: Record<string, unknown>) => ({
         name: p.name, number: p.number ?? 0, position: p.position,
       }));
       if (players.length > 0) { setSquad(players); setLineup({}); }
