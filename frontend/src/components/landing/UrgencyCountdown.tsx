@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState, useSyncExternalStore } from 'react';
 import Link from 'next/link';
 
 const WC_KICKOFF = new Date('2026-06-11T19:00:00Z');
@@ -11,13 +11,9 @@ function getDaysLeft(): number {
 }
 
 export default function UrgencyCountdown() {
-  const [days, setDays] = useState<number>(getDaysLeft());
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-    setDays(getDaysLeft());
-  }, []);
+  const [days] = useState<number>(getDaysLeft);
+  const emptySubscribe = () => () => {};
+  const mounted = useSyncExternalStore(emptySubscribe, () => true, () => false);
 
   return (
     <>

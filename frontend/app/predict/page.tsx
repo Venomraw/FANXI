@@ -201,6 +201,7 @@ export default function PredictPage() {
   // Show tutorial on first visit
   useEffect(() => {
     if (user && !localStorage.getItem(STORAGE_KEY)) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time check on mount
       setShowTutorial(true);
     }
   }, [user]);

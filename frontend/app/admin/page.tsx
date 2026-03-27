@@ -206,6 +206,7 @@ function OverviewTab({ authFetch }: { authFetch: AuthFetchFn }) {
     } catch { /* network error */ }
   }, [authFetch]);
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- initial fetch + polling
   useEffect(() => { load(); const i = setInterval(load, 30000); return () => clearInterval(i); }, [load]);
 
   if (!stats) return <div className="text-white/60 font-sans">Loading overview...</div>;
@@ -373,6 +374,7 @@ function QueueTab({ authFetch, toast }: { authFetch: AuthFetchFn; toast: ToastOb
     setLoading(false);
   }, [authFetch]);
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- initial fetch
   useEffect(() => { load(); }, [load]);
 
   async function handleAction(id: number, action: 'approve' | 'reject') {
@@ -450,6 +452,7 @@ function MatchesTab({ authFetch }: { authFetch: AuthFetchFn }) {
     setLoading(false);
   }, [authFetch]);
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- initial fetch
   useEffect(() => { load(); }, [load]);
 
   if (loading) return <div className="text-white/60 font-sans">Loading matches...</div>;
@@ -499,6 +502,7 @@ function UsersTab({ authFetch, toast }: { authFetch: AuthFetchFn; toast: ToastOb
     setLoading(false);
   }, [authFetch, page]);
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- initial fetch with loading state
   useEffect(() => { setLoading(true); load(); }, [load]);
 
   async function banUser(id: number, name: string) {
@@ -597,6 +601,7 @@ function LogsTab({ authFetch }: { authFetch: AuthFetchFn }) {
     setLoading(false);
   }, [authFetch, filter]);
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- initial fetch with loading state
   useEffect(() => { setLoading(true); load(); }, [load]);
 
   if (loading) return <div className="text-white/60 font-sans">Loading logs...</div>;

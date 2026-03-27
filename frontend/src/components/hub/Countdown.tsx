@@ -18,10 +18,9 @@ function calc(): TimeLeft {
 
 export default function Countdown() {
   const { primary } = useTheme();
-  const [time, setTime] = useState<TimeLeft>({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+  const [time, setTime] = useState<TimeLeft>(calc);
 
   useEffect(() => {
-    setTime(calc());
     const id = setInterval(() => setTime(calc()), 1000);
     return () => clearInterval(id);
   }, []);

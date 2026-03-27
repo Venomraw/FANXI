@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useSyncExternalStore } from 'react';
 
 // World Cup 2026 kickoff: June 11 2026 19:00 UTC
 const WC_KICKOFF = new Date('2026-06-11T19:00:00Z');
@@ -28,11 +28,11 @@ function pad(n: number): string {
 }
 
 export default function CountdownBar() {
-  const [timeLeft, setTimeLeft] = useState<TimeLeft>(getTimeLeft());
-  const [mounted, setMounted] = useState(false);
+  const [timeLeft, setTimeLeft] = useState<TimeLeft>(getTimeLeft);
+  const emptySubscribe = () => () => {};
+  const mounted = useSyncExternalStore(emptySubscribe, () => true, () => false);
 
   useEffect(() => {
-    setMounted(true);
     const id = setInterval(() => {
       setTimeLeft(getTimeLeft());
     }, 1000);

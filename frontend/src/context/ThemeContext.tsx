@@ -1,5 +1,5 @@
 'use client';
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { WCTeam, DEFAULT_THEME, getTeamById } from '@/src/data/teamColors';
 
 interface ThemeContextValue {
@@ -33,17 +33,21 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   }
 
   // On mount: load saved team from localStorage, or show picker
+  const didInit = useRef(false);
   useEffect(() => {
+    if (didInit.current) return;
+    didInit.current = true;
     const saved = localStorage.getItem('fanxi_team');
     if (saved) {
       const found = getTeamById(saved);
       if (found) {
         applyTeam(found);
-        setTeamState(found);
+        setTeam(found);
         return;
       }
     }
     setShowPicker(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function setTeam(t: WCTeam) {

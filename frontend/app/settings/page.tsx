@@ -157,6 +157,7 @@ export default function SettingsPage() {
   // Pre-populate from current user data
   useEffect(() => {
     if (!user) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- pre-fill form from user data
     setUsername(user.username ?? '');
     setDisplayName(user.display_name ?? '');
     setAvatarId(user.avatar_id ?? 'football');
@@ -168,6 +169,7 @@ export default function SettingsPage() {
 
   // Username availability check (debounced)
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- debounced async check requires setState in effect
     if (!user || username === user.username) { setUsernameStatus('idle'); return; }
     if (username.length < 3) { setUsernameStatus('idle'); return; }
 

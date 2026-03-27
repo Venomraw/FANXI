@@ -252,6 +252,7 @@ export default function ProfilePage() {
   useEffect(() => {
     if (!username) return;
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- initial profile fetch
     setLoading(true);
     setNotFound(false);
 
