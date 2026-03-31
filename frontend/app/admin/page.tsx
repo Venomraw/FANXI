@@ -260,6 +260,7 @@ const AGENTS = [
   { name: 'VISION', dept: 'Intelligence Bureau', schedule: 'audit 24h / scouts 6h / h2h 12h' },
   { name: 'PIETRO', dept: 'Game Command', schedule: 'nudge 15m / conversion 90m' },
   { name: 'WANDA', dept: 'Stark Design Labs', schedule: 'full_scan 24h / research 168h' },
+  { name: 'HERMES', dept: 'Intelligence Bureau', schedule: 'content 168h / health 24h' },
 ];
 
 function AgentsTab({ authFetch, toast }: { authFetch: AuthFetchFn; toast: ToastObj }) {
@@ -611,7 +612,7 @@ function LogsTab({ authFetch }: { authFetch: AuthFetchFn }) {
       <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
         <h2 className="text-2xl font-display text-white">Agent Logs</h2>
         <div className="flex gap-2 flex-wrap">
-          {['', 'NATASHA', 'RHODEY', 'VISION', 'PIETRO'].map((f) => (
+          {['', 'NATASHA', 'RHODEY', 'VISION', 'PIETRO', 'WANDA', 'HERMES'].map((f) => (
             <button key={f} onClick={() => setFilter(f)}
               className={`px-3 py-1 text-xs font-sans rounded-lg transition-colors ${
                 filter === f ? 'bg-red-500/20 text-red-400' : 'bg-white/5 text-white/60 hover:text-white hover:bg-white/10'
