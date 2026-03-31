@@ -18,6 +18,7 @@ Endpoints:
   POST /agents/pietro/run                   — manually trigger PIETRO
   POST /agents/wanda/run                    — manually trigger WANDA
   GET  /agents/wanda/violations             — latest WANDA scan results
+  POST /agents/hermes/run                   — manually trigger HERMES
 """
 import logging
 from datetime import datetime, timezone
@@ -599,6 +600,65 @@ def trigger_wanda(
     return {
         "triggered_by": admin.username,
         "run_type": run_type,
+        "max_severity": max_severity,
+        "results": results,
+    }
+
+
+# ---------------------------------------------------------------------------
+# HERMES — SEO Content + Nation Pages (Intelligence Bureau)
+# ---------------------------------------------------------------------------
+
+@router.post("/hermes/run")
+@limiter.limit("5/minute")
+def trigger_hermes(
+    request: Request,
+    admin: User = Depends(_require_admin),
+    run_type: Optional[str] = "generate_all",
+    team: Optional[str] = None,
+):
+    """
+    Manually trigger HERMES.  Accepts run_type: 'generate_all', 'generate_team',
+    'seo_health', 'update_sitemap'.
+    For generate_team, pass team query param (e.g. team=Brazil).
+    """
+    from app.agents.hermes import Hermes
+    hermes = Hermes()
+
+    _valid = {"generate_all", "generate_team", "seo_health", "update_sitemap"}
+
+    results = {}
+
+    if run_type == "generate_all":
+        results["generate_all"] = hermes.run_generate_all()
+    elif run_type == "generate_team":
+        if not team:
+            raise HTTPException(
+                status_code=400,
+                detail="team query param required for generate_team",
+            )
+        results["generate_team"] = hermes.run_generate_team(team)
+    elif run_type == "seo_health":
+        results["seo_health"] = hermes.run_seo_health()
+    elif run_type == "update_sitemap":
+        results["update_sitemap"] = hermes.run_sitemap_update()
+    else:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid run_type: {run_type}. Use one of: {sorted(_valid)}",
+        )
+
+    max_severity = max(r.get("severity", 0) for r in results.values())
+
+    logger.info(
+        "HERMES_MANUAL_TRIGGER by=%s run_type=%s team=%s max_severity=%d",
+        admin.username, run_type, team, max_severity,
+    )
+
+    return {
+        "triggered_by": admin.username,
+        "run_type": run_type,
+        "team": team,
         "max_severity": max_severity,
         "results": results,
     }

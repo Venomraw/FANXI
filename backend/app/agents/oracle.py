@@ -2,15 +2,16 @@
 ORACLE — Intelligence Bureau Manager
 
 Orchestrates all intelligence agents under the Intelligence Bureau.
-Currently manages: VISION (Squad Completion + Scout Reports).
+Currently manages: VISION (Squad Completion + Scout Reports),
+                   HERMES (SEO Content + Nation Pages).
 
-Future agents: JARVIS (live match AI commentator),
-               FRIDAY (nation intel curator).
+Future agents: JARVIS (live match AI commentator).
 """
 import logging
 from typing import Any, Dict, List
 
 from app.agents.vision import Vision
+from app.agents.hermes import Hermes
 
 logger = logging.getLogger("fanxi.agents.oracle")
 
@@ -22,6 +23,7 @@ class Oracle:
 
     def __init__(self) -> None:
         self.vision = Vision()
+        self.hermes = Hermes()
 
     def run_all(self) -> Dict[str, Any]:
         """Execute all Intelligence Bureau agents and return a combined report."""
@@ -62,6 +64,13 @@ class Oracle:
             logger.error("ORACLE: VISION post_match_review failed: %s", exc)
             results["vision_post_match"] = {"error": str(exc)}
 
+        # HERMES — SEO health check
+        try:
+            results["hermes_seo_health"] = self.hermes.run_seo_health()
+        except Exception as exc:
+            logger.error("ORACLE: HERMES seo_health failed: %s", exc)
+            results["hermes_seo_health"] = {"error": str(exc)}
+
         max_sev = max(
             r.get("severity", 0)
             for r in results.values()
@@ -69,7 +78,7 @@ class Oracle:
         ) if results else 0
 
         logger.info(
-            "ORACLE_RUN_ALL agents=1 max_severity=%d", max_sev,
+            "ORACLE_RUN_ALL agents=2 max_severity=%d", max_sev,
         )
 
         return {
@@ -83,4 +92,5 @@ class Oracle:
         """Collect latest reports from all managed agents."""
         return {
             "vision": self.vision.report(limit=limit),
+            "hermes": self.hermes.report(limit=limit),
         }
