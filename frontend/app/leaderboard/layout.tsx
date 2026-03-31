@@ -6,7 +6,14 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Leaderboard | FanXI',
     description: 'Who has the best football IQ? See the global tactical rankings.',
+    url: '/leaderboard',
   },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Leaderboard | FanXI',
+    description: 'Who has the best football IQ? See the global tactical rankings.',
+  },
+  alternates: { canonical: '/leaderboard' },
 };
 
 export default function LeaderboardLayout({ children }: { children: React.ReactNode }) {

@@ -6,7 +6,14 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Nation Intel | FanXI',
     description: 'Squad lists, fixtures, and AI tactical analysis for every World Cup 2026 team.',
+    url: '/nation',
   },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Nation Intel | FanXI',
+    description: 'Squad lists, fixtures, and AI tactical analysis for every World Cup 2026 team.',
+  },
+  alternates: { canonical: '/nation' },
 };
 
 export default function NationLayout({ children }: { children: React.ReactNode }) {

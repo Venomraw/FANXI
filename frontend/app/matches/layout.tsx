@@ -6,7 +6,14 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'WC 2026 Fixtures | FanXI',
     description: 'All 72 World Cup 2026 group stage fixtures. Lock in your prediction before kickoff.',
+    url: '/matches',
   },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'WC 2026 Fixtures | FanXI',
+    description: 'All 72 World Cup 2026 group stage fixtures. Lock in your prediction before kickoff.',
+  },
+  alternates: { canonical: '/matches' },
 };
 
 export default function MatchesLayout({ children }: { children: React.ReactNode }) {

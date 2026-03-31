@@ -6,7 +6,14 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'AI Scout | FanXI',
     description: 'Your AI-powered tactical scout for World Cup 2026.',
+    url: '/ai',
   },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'AI Scout | FanXI',
+    description: 'Your AI-powered tactical scout for World Cup 2026.',
+  },
+  alternates: { canonical: '/ai' },
 };
 
 export default function AiLayout({ children }: { children: React.ReactNode }) {

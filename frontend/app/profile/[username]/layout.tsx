@@ -13,7 +13,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     openGraph: {
       title: `${displayName} | FanXI`,
       description: `${displayName}'s World Cup 2026 predictions and tactical record.`,
+      url: `/profile/${username}`,
     },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${displayName} | FanXI`,
+      description: `${displayName}'s World Cup 2026 predictions and tactical record.`,
+    },
+    alternates: { canonical: `/profile/${username}` },
   };
 }
 

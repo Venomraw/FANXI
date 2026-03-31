@@ -6,7 +6,14 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Build Your XI | FanXI',
     description: 'Predict the lineup. Set your formation. Prove your tactical IQ.',
+    url: '/predict',
   },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Build Your XI | FanXI',
+    description: 'Predict the lineup. Set your formation. Prove your tactical IQ.',
+  },
+  alternates: { canonical: '/predict' },
 };
 
 export default function PredictLayout({ children }: { children: React.ReactNode }) {
