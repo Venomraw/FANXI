@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Script from 'next/script';
+import { useToast } from '@/src/context/ToastContext';
 import {
   WC2026_GROUPS,
   GROUP_KEYS,
@@ -79,6 +80,7 @@ export default function SimulatorPage() {
   const [community, setCommunity] = useState<CommunityStats | null>(null);
   const [showConfetti, setShowConfetti] = useState(false);
   const shareRef = useRef<HTMLDivElement>(null);
+  const { toast } = useToast();
 
   // Restore from localStorage
   useEffect(() => {
@@ -326,30 +328,75 @@ export default function SimulatorPage() {
   // -------------------------------------------
   // Share
   // -------------------------------------------
-  const shareText = useMemo(() => {
+  const finalist = useMemo(() => {
     if (!bracket.final) return '';
-    const info = getTeamInfo(bracket.final);
-    const finalist = bracket.final === finalTeams.teamA ? finalTeams.teamB : finalTeams.teamA;
-    return `I just predicted my World Cup 2026 bracket!\n${info.flag} Champion: ${bracket.final}\nFinal: ${bracket.final} vs ${finalist}\nSimulate yours at fanxi.vercel.app/simulator\n#WC2026 #WorldCup2026 #FanXI`;
+    return bracket.final === finalTeams.teamA ? (finalTeams.teamB ?? '') : (finalTeams.teamA ?? '');
   }, [bracket.final, finalTeams]);
 
-  const shareX = () => {
-    window.open(
-      `https://x.com/intent/tweet?text=${encodeURIComponent(shareText)}`,
-      '_blank',
+  const shareOnX = useCallback(() => {
+    if (!bracket.final) return;
+    const info = getTeamInfo(bracket.final);
+    const text = encodeURIComponent(
+      `I just simulated my World Cup 2026 bracket! \n` +
+      `Champion: ${info.flag} ${bracket.final}\n` +
+      `Final: ${bracket.final} vs ${finalist}\n` +
+      `Simulate yours \n` +
+      `fanxi.vercel.app/simulator\n` +
+      `#WC2026 #WorldCup2026 #FanXI`,
     );
-  };
-
-  const shareWhatsApp = () => {
     window.open(
-      `https://wa.me/?text=${encodeURIComponent(shareText)}`,
+      `https://twitter.com/intent/tweet?text=${text}`,
       '_blank',
+      'noopener,noreferrer',
     );
-  };
+  }, [bracket.final, finalist]);
 
-  const copyLink = async () => {
-    await navigator.clipboard.writeText('https://fanxi.vercel.app/simulator');
-  };
+  const shareOnWhatsApp = useCallback(() => {
+    if (!bracket.final) return;
+    const info = getTeamInfo(bracket.final);
+    const text = encodeURIComponent(
+      `I just simulated my World Cup 2026 bracket! \n` +
+      `Champion: ${info.flag} ${bracket.final}\n` +
+      `Final: ${bracket.final} vs ${finalist}\n` +
+      `Simulate yours: fanxi.vercel.app/simulator\n` +
+      `#WC2026 #WorldCup2026`,
+    );
+    window.open(
+      `https://wa.me/?text=${text}`,
+      '_blank',
+      'noopener,noreferrer',
+    );
+  }, [bracket.final, finalist]);
+
+  const copyLink = useCallback(async () => {
+    try {
+      await navigator.clipboard.writeText('https://fanxi.vercel.app/simulator');
+      toast.success('Link copied to clipboard!');
+    } catch {
+      const el = document.createElement('textarea');
+      el.value = 'https://fanxi.vercel.app/simulator';
+      document.body.appendChild(el);
+      el.select();
+      document.execCommand('copy');
+      document.body.removeChild(el);
+      toast.success('Link copied!');
+    }
+  }, [toast]);
+
+  const handleShare = useCallback(async () => {
+    if (!bracket.final) return;
+    const info = getTeamInfo(bracket.final);
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'My WC2026 Bracket | FanXI',
+          text: `My World Cup 2026 champion: ${info.flag} ${bracket.final}`,
+          url: 'https://fanxi.vercel.app/simulator',
+        });
+        return;
+      } catch { /* user cancelled — fall through */ }
+    }
+  }, [bracket.final]);
 
   const downloadImage = async () => {
     if (!shareRef.current) return;
@@ -728,8 +775,9 @@ export default function SimulatorPage() {
                         Share your bracket
                       </h3>
                       <div className="flex flex-wrap gap-3 justify-center">
-                        <ShareButton label="Share on X" onClick={shareX} />
-                        <ShareButton label="Share on WhatsApp" onClick={shareWhatsApp} />
+                        <ShareButton label="Share" onClick={handleShare} native />
+                        <ShareButton label="Share on X" onClick={shareOnX} />
+                        <ShareButton label="Share on WhatsApp" onClick={shareOnWhatsApp} />
                         <ShareButton label="Copy Link" onClick={copyLink} />
                         <ShareButton label="Download Image" onClick={downloadImage} />
                       </div>
@@ -955,15 +1003,33 @@ function FinalTeamButton({
   );
 }
 
-function ShareButton({ label, onClick }: { label: string; onClick: () => void }) {
+function ShareButton({
+  label,
+  onClick,
+  native,
+}: {
+  label: string;
+  onClick: () => void;
+  native?: boolean;
+}) {
+  const [supported, setSupported] = useState(false);
+
+  useEffect(() => {
+    if (native) setSupported(typeof navigator !== 'undefined' && !!navigator.share);
+  }, [native]);
+
+  // Hide native share button on desktop where Web Share API isn't available
+  if (native && !supported) return null;
+
   return (
     <button
+      type="button"
       onClick={onClick}
-      className="px-5 py-2.5 text-sm font-sans font-semibold transition-all duration-200"
+      className="px-5 py-2.5 text-sm font-sans font-semibold transition-all duration-200 hover:brightness-125"
       style={{
-        background: 'rgba(255,255,255,0.06)',
+        background: native ? 'var(--success)' : 'rgba(255,255,255,0.06)',
         border: '1px solid var(--border)',
-        color: 'var(--text)',
+        color: native ? '#000' : 'var(--text)',
       }}
     >
       {label}
