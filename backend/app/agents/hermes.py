@@ -134,6 +134,8 @@ class Hermes:
         severity = self._max_severity(findings)
         if failed > 10:
             severity = max(severity, 80)
+        elif failed >= 1:
+            severity = max(severity, 60)
 
         result = self._build_result(
             run_type="generate_all",
@@ -354,9 +356,9 @@ class Hermes:
             if not pages:
                 findings.append({
                     "issue": "No nation pages exist yet",
-                    "severity": 80,
+                    "severity": 60,
                 })
-                result = self._build_result("seo_health", 80, findings, actions)
+                result = self._build_result("seo_health", 60, findings, actions)
                 self._save_run(result)
                 return result
 
@@ -415,9 +417,11 @@ class Hermes:
             if thin_count > 0:
                 actions.append(f"Flagged {thin_count} pages with thin content")
 
-        severity = self._max_severity(findings)
-        if thin_count > 10:
-            severity = max(severity, 60)
+        severity = self._calculate_severity(
+            pages_failed=len(pages) == 0,
+            thin_content_count=thin_count,
+            base_severity=self._max_severity(findings),
+        )
 
         result = self._build_result("seo_health", severity, findings, actions)
         result["avg_content_health"] = avg_score
@@ -607,6 +611,31 @@ Return ONLY valid JSON with these exact keys:
     # ------------------------------------------------------------------
     # Helpers — match VISION/NATASHA/RHODEY exactly
     # ------------------------------------------------------------------
+
+    @staticmethod
+    def _calculate_severity(
+        *,
+        pages_failed: bool = False,
+        thin_content_count: int = 0,
+        base_severity: int = 0,
+    ) -> int:
+        """Centralised severity thresholds for HERMES.
+
+        pages_failed > 10  → 80 CRITICAL
+        pages_failed 1-10  → 60 WARNING
+        thin_content > 20  → 40 WARNING
+        thin_content 1-20  → 20 INFO
+        everything OK      → 0  INFO
+        """
+        severity = base_severity
+        # pages_failed flag is used by seo_health (True when zero pages exist)
+        if pages_failed:
+            severity = max(severity, 60)
+        if thin_content_count > 20:
+            severity = max(severity, 40)
+        elif thin_content_count >= 1:
+            severity = max(severity, 20)
+        return severity
 
     @staticmethod
     def _max_severity(findings: List[Dict[str, Any]]) -> int:

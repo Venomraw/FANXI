@@ -387,11 +387,34 @@ function QueueTab({ authFetch, toast }: { authFetch: AuthFetchFn; toast: ToastOb
     } catch { toast.error(`Failed to ${action}`); }
   }
 
+  async function handleRejectAll() {
+    if (!confirm(`Reject all ${items.length} pending items? This cannot be undone.`)) return;
+    let rejected = 0;
+    for (const item of items) {
+      try {
+        const res = await authFetch(`${API}/agents/approval-queue/${item.id}/reject`, { method: 'POST' });
+        if (res.ok) rejected++;
+      } catch { /* continue */ }
+    }
+    toast.success(`Rejected ${rejected} of ${items.length} items`);
+    setItems([]);
+  }
+
   if (loading) return <div className="text-white/60 font-sans">Loading queue...</div>;
 
   return (
     <div>
-      <h2 className="text-2xl font-display text-white mb-6">Approval Queue</h2>
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-2xl font-display text-white">Approval Queue</h2>
+        {items.length > 0 && (
+          <button
+            onClick={handleRejectAll}
+            className="px-4 py-1.5 text-xs font-sans font-semibold rounded-lg bg-red-500/20 text-red-400 hover:bg-red-500/30 transition-colors"
+          >
+            Clear All ({items.length})
+          </button>
+        )}
+      </div>
       {items.length === 0 ? (
         <Card className="text-center py-12">
           <div className="text-green-400 text-lg font-sans">No pending approvals</div>
