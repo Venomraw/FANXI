@@ -9,6 +9,7 @@ const LANGUAGES: LangCode[] = ['EN', 'ES', 'FR', 'PT', 'DE'];
 
 const PUBLIC_LINKS = [
   { label: 'Fixtures',    href: '/matches'     },
+  { label: 'Simulator',   href: '/simulator'   },
   { label: 'Intel',       href: '/nation'      },
   { label: 'AI',          href: '/ai'          },
   { label: 'Leaderboard', href: '/leaderboard' },

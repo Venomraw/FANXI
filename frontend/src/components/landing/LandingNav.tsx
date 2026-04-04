@@ -10,6 +10,7 @@ const LANGUAGES: LangCode[] = ['EN', 'ES', 'FR', 'PT', 'DE'];
 
 const NAV_LINKS = [
   { label: 'Matches',     href: '/matches' },
+  { label: 'Simulator',   href: '/simulator' },
   { label: 'Predict',     href: '/predict', highlight: true },
   { label: 'Leaderboard', href: '/leaderboard' },
   { label: 'Nations',     href: '/nation' },

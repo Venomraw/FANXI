@@ -232,6 +232,13 @@ export default function Home() {
       color: '#C084FC',
       action: () => router.push('/ai'),
     },
+    {
+      icon: '🏆',
+      label: 'Simulator',
+      desc: 'Build your WC 2026 bracket',
+      color: 'var(--success)',
+      action: () => router.push('/simulator'),
+    },
   ];
 
   return (

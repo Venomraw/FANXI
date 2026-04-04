@@ -380,3 +380,20 @@ class InAppNotification(SQLModel, table=True):
     is_read: bool = Field(default=False)
     created_at: datetime = Field(default_factory=datetime.utcnow)
     expires_at: Optional[datetime] = None              # None = never expires
+
+
+# ---------------------------------------------------------------------------
+# Bracket Simulator — public anonymous submissions
+# ---------------------------------------------------------------------------
+
+class SimulatorSubmission(SQLModel, table=True):
+    """
+    Anonymous World Cup 2026 bracket submission from /simulator.
+    No auth required — identified by session_id (random UUID).
+    """
+    id: Optional[int] = Field(default=None, primary_key=True)
+    session_id: str = Field(index=True)
+    champion: str
+    finalist: str
+    semi_finalists: List[str] = Field(default_factory=list, sa_column=Column(JSON))
+    submitted_at: datetime = Field(default_factory=datetime.utcnow)

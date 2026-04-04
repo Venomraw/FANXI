@@ -6,7 +6,7 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import JSONResponse
-from app.api import users, predictions, leagues, teams, intel, squads, matches, ai, cards, news, admin, agents, notifications, nations
+from app.api import users, predictions, leagues, teams, intel, squads, matches, ai, cards, news, admin, agents, notifications, nations, simulator
 from app.websocket import match_ws
 from app import web
 from app.db import init_db, engine
@@ -148,6 +148,7 @@ app.include_router(admin.router)
 app.include_router(agents.router)
 app.include_router(notifications.router)
 app.include_router(nations.router)
+app.include_router(simulator.router)
 
 # WebSocket
 app.include_router(match_ws.router)
