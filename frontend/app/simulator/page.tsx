@@ -9,6 +9,9 @@ import {
   getTeamInfo,
   R32_BRACKET,
 } from '@/src/data/wc2026Groups';
+import BracketShareCard, {
+  type BracketShareCardProps,
+} from '@/src/components/simulator/BracketShareCard';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -79,7 +82,8 @@ export default function SimulatorPage() {
   const [restored, setRestored] = useState(false);
   const [community, setCommunity] = useState<CommunityStats | null>(null);
   const [showConfetti, setShowConfetti] = useState(false);
-  const shareRef = useRef<HTMLDivElement>(null);
+  const [downloading, setDownloading] = useState(false);
+  const bracketCardRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
   // Restore from localStorage
@@ -398,22 +402,54 @@ export default function SimulatorPage() {
     }
   }, [bracket.final]);
 
-  const downloadImage = async () => {
-    if (!shareRef.current) return;
+  // Build matchup arrays for the share card
+  const shareCardProps = useMemo((): BracketShareCardProps | null => {
+    if (!bracket.final) return null;
+    const toMatchup = (
+      matches: { id: string; teamA: string | null; teamB: string | null }[],
+      winners: Record<string, string | null>,
+    ) =>
+      matches.map(m => ({
+        teamA: m.teamA,
+        teamB: m.teamB,
+        winner: winners[m.id] ?? null,
+      }));
+
+    return {
+      r32: toMatchup(r32Matchups, bracket.r32),
+      r16: toMatchup(r16Matchups, bracket.r16),
+      qf: toMatchup(qfMatchups, bracket.qf),
+      sf: toMatchup(sfMatchups, bracket.sf),
+      finalTeamA: finalTeams.teamA,
+      finalTeamB: finalTeams.teamB,
+      champion: bracket.final,
+    };
+  }, [bracket, r32Matchups, r16Matchups, qfMatchups, sfMatchups, finalTeams]);
+
+  const downloadImage = useCallback(async () => {
+    if (!bracketCardRef.current || !bracket.final) return;
+    setDownloading(true);
     try {
       const html2canvas = (await import('html2canvas')).default;
-      const canvas = await html2canvas(shareRef.current, {
-        backgroundColor: '#060A06',
+      const canvas = await html2canvas(bracketCardRef.current, {
         scale: 2,
-        width: 600,
-        height: 315,
+        backgroundColor: '#0a0f1e',
+        useCORS: true,
+        allowTaint: true,
+        width: 1400,
+        height: 800,
       });
       const link = document.createElement('a');
-      link.download = 'fanxi-wc2026-bracket.png';
+      link.download = 'my-wc2026-bracket.png';
       link.href = canvas.toDataURL('image/png');
       link.click();
-    } catch { /* html2canvas optional */ }
-  };
+      toast.success('Bracket image downloaded!');
+    } catch {
+      toast.error('Failed to generate image');
+    } finally {
+      setDownloading(false);
+    }
+  }, [bracket.final, toast]);
 
   // -------------------------------------------
   // Render
@@ -774,43 +810,60 @@ export default function SimulatorPage() {
                       <h3 className="font-display font-semibold text-[20px]">
                         Share your bracket
                       </h3>
+                      {/* Bracket preview (scaled down) */}
+                      {shareCardProps && (
+                        <div
+                          className="mb-4 overflow-hidden mx-auto"
+                          style={{
+                            width: '100%',
+                            maxWidth: 640,
+                            height: 366,
+                            position: 'relative',
+                            borderRadius: 8,
+                            border: '1px solid rgba(255,255,255,0.08)',
+                          }}
+                        >
+                          <div
+                            style={{
+                              transform: 'scale(0.457)',
+                              transformOrigin: 'top left',
+                              width: 1400,
+                              height: 800,
+                              position: 'absolute',
+                              left: 0,
+                              top: 0,
+                            }}
+                          >
+                            <BracketShareCard {...shareCardProps} ref={null} inline />
+                          </div>
+                        </div>
+                      )}
+
                       <div className="flex flex-wrap gap-3 justify-center">
                         <ShareButton label="Share" onClick={handleShare} native />
                         <ShareButton label="Share on X" onClick={shareOnX} />
                         <ShareButton label="Share on WhatsApp" onClick={shareOnWhatsApp} />
                         <ShareButton label="Copy Link" onClick={copyLink} />
-                        <ShareButton label="Download Image" onClick={downloadImage} />
+                        <button
+                          type="button"
+                          onClick={downloadImage}
+                          disabled={downloading || !bracket.final}
+                          className="px-5 py-2.5 text-sm font-sans font-semibold transition-all duration-200 hover:brightness-125"
+                          style={{
+                            background: downloading ? 'rgba(255,255,255,0.03)' : 'rgba(255,255,255,0.06)',
+                            border: '1px solid var(--border)',
+                            color: downloading ? 'var(--muted)' : 'var(--text)',
+                            cursor: downloading ? 'wait' : 'pointer',
+                          }}
+                        >
+                          {downloading ? 'Generating...' : 'Download Bracket'}
+                        </button>
                       </div>
 
-                      {/* Hidden share card for html2canvas */}
-                      <div
-                        ref={shareRef}
-                        className="fixed -left-[9999px] top-0"
-                        style={{
-                          width: 600,
-                          height: 315,
-                          background: '#060A06',
-                          color: '#E8F5E8',
-                          padding: 32,
-                          fontFamily: 'Space Grotesk, sans-serif',
-                        }}
-                      >
-                        <div style={{ fontSize: 14, color: '#5A7A5A', marginBottom: 8 }}>
-                          FanXI &middot; World Cup 2026 Bracket
-                        </div>
-                        <div style={{ fontSize: 32, fontWeight: 600, color: '#FFD23F', marginBottom: 12 }}>
-                          {getTeamInfo(bracket.final).flag} MY CHAMPION: {bracket.final.toUpperCase()}
-                        </div>
-                        <div style={{ fontSize: 16, marginBottom: 8 }}>
-                          Final: {finalTeams.teamA} vs {finalTeams.teamB}
-                        </div>
-                        <div style={{ fontSize: 14, color: '#5A7A5A', marginBottom: 8 }}>
-                          Semi-finalists: {sfMatchups.map(m => bracket.sf[m.id]).join(' | ')}
-                        </div>
-                        <div style={{ fontSize: 14, color: '#5A7A5A', marginTop: 'auto', position: 'absolute', bottom: 32 }}>
-                          fanxi.vercel.app/simulator &middot; #WC2026 #FanXI
-                        </div>
-                      </div>
+                      {/* Off-screen bracket card for html2canvas capture */}
+                      {shareCardProps && (
+                        <BracketShareCard ref={bracketCardRef} {...shareCardProps} />
+                      )}
                     </div>
                   )}
 
