@@ -5,19 +5,20 @@ export interface GroupDef {
   venue: string;
 }
 
+// Official FIFA World Cup 2026 Group Draw — December 5, 2025, Washington D.C.
 export const WC2026_GROUPS: Record<string, GroupDef> = {
-  A: { teams: ['Mexico', 'USA', 'Canada', 'Poland'], venue: 'Various' },
-  B: { teams: ['Brazil', 'Colombia', 'Ecuador', 'Cameroon'], venue: 'Various' },
-  C: { teams: ['Argentina', 'Uruguay', 'Chile', 'Saudi Arabia'], venue: 'Various' },
-  D: { teams: ['France', 'Algeria', 'Tunisia', 'Australia'], venue: 'Various' },
-  E: { teams: ['England', 'Netherlands', 'Serbia', 'Iran'], venue: 'Various' },
-  F: { teams: ['Germany', 'Croatia', 'Czech Republic', 'Morocco'], venue: 'Various' },
-  G: { teams: ['Spain', 'Portugal', 'Turkey', 'South Korea'], venue: 'Various' },
-  H: { teams: ['Belgium', 'Switzerland', 'Japan', 'Ghana'], venue: 'Various' },
-  I: { teams: ['Italy', 'Romania', 'Ukraine', 'Senegal'], venue: 'Various' },
-  J: { teams: ['Paraguay', 'Venezuela', 'Peru', 'Nigeria'], venue: 'Various' },
-  K: { teams: ['Costa Rica', 'Honduras', 'Panama', 'Egypt'], venue: 'Various' },
-  L: { teams: ['Qatar', 'New Zealand', 'South Africa', 'DR Congo'], venue: 'Various' },
+  A: { teams: ['Mexico', 'South Korea', 'South Africa', 'Czechia'], venue: 'Various' },
+  B: { teams: ['Canada', 'Switzerland', 'Qatar', 'Bosnia and Herzegovina'], venue: 'Various' },
+  C: { teams: ['Brazil', 'Morocco', 'Scotland', 'Haiti'], venue: 'Various' },
+  D: { teams: ['USA', 'Paraguay', 'Australia', 'Türkiye'], venue: 'Various' },
+  E: { teams: ['Germany', 'Ivory Coast', 'Ecuador', 'Curaçao'], venue: 'Various' },
+  F: { teams: ['Netherlands', 'Japan', 'Sweden', 'Tunisia'], venue: 'Various' },
+  G: { teams: ['Belgium', 'Egypt', 'Iran', 'New Zealand'], venue: 'Various' },
+  H: { teams: ['Spain', 'Cape Verde', 'Saudi Arabia', 'Uruguay'], venue: 'Various' },
+  I: { teams: ['France', 'Senegal', 'Iraq', 'Norway'], venue: 'Various' },
+  J: { teams: ['Argentina', 'Algeria', 'Austria', 'Jordan'], venue: 'Various' },
+  K: { teams: ['Portugal', 'Colombia', 'Uzbekistan', 'DR Congo'], venue: 'Various' },
+  L: { teams: ['England', 'Croatia', 'Panama', 'Ghana'], venue: 'Various' },
 };
 
 export const GROUP_KEYS = Object.keys(WC2026_GROUPS) as string[];
@@ -28,22 +29,25 @@ for (const t of WC2026_TEAMS) {
   teamByName.set(t.name, t);
   teamByName.set(t.shortName, t);
 }
-// Aliases for teams in speculative draw not in WC2026_TEAMS
+// Aliases for qualified teams not in the base WC2026_TEAMS array in teamColors.ts
 const ALIASES: Record<string, Partial<WCTeam>> = {
-  'Algeria':        { name: 'Algeria',       shortName: 'ALG', flag: '\u{1F1E9}\u{1F1FF}', primary: '#006233', accent: '#FFFFFF', text: '#ffffff' },
-  'Chile':          { name: 'Chile',         shortName: 'CHI', flag: '\u{1F1E8}\u{1F1F1}', primary: '#D52B1E', accent: '#0033A0', text: '#ffffff' },
-  'Czech Republic': { name: 'Czech Republic',shortName: 'CZE', flag: '\u{1F1E8}\u{1F1FF}', primary: '#D7141A', accent: '#11457E', text: '#ffffff' },
-  'Bolivia':        { name: 'Bolivia',       shortName: 'BOL', flag: '\u{1F1E7}\u{1F1F4}', primary: '#007A33', accent: '#FFD700', text: '#ffffff' },
-  'Romania':        { name: 'Romania',       shortName: 'ROU', flag: '\u{1F1F7}\u{1F1F4}', primary: '#002B7F', accent: '#FCD116', text: '#ffffff' },
-  'Ukraine':        { name: 'Ukraine',       shortName: 'UKR', flag: '\u{1F1FA}\u{1F1E6}', primary: '#005BBB', accent: '#FFD500', text: '#ffffff' },
-  'Peru':           { name: 'Peru',          shortName: 'PER', flag: '\u{1F1F5}\u{1F1EA}', primary: '#D91023', accent: '#FFFFFF', text: '#ffffff' },
-  'Tunisia':        { name: 'Tunisia',       shortName: 'TUN', flag: '\u{1F1F9}\u{1F1F3}', primary: '#E70013', accent: '#FFFFFF', text: '#ffffff' },
-  'Venezuela':      { name: 'Venezuela',     shortName: 'VEN', flag: '\u{1F1FB}\u{1F1EA}', primary: '#CF0921', accent: '#003087', text: '#ffffff' },
-  'Indonesia':      { name: 'Indonesia',     shortName: 'IDN', flag: '\u{1F1EE}\u{1F1E9}', primary: '#CE1126', accent: '#FFFFFF', text: '#ffffff' },
-  'Iraq':           { name: 'Iraq',          shortName: 'IRQ', flag: '\u{1F1EE}\u{1F1F6}', primary: '#007A3D', accent: '#CE1126', text: '#ffffff' },
-  'Poland':         { name: 'Poland',        shortName: 'POL', flag: '\u{1F1F5}\u{1F1F1}', primary: '#DC143C', accent: '#FFFFFF', text: '#ffffff' },
-  'Turkey':         { name: 'Turkey',        shortName: 'TUR', flag: '\u{1F1F9}\u{1F1F7}', primary: '#E30A17', accent: '#FFFFFF', text: '#ffffff' },
-  'Paraguay':       { name: 'Paraguay',      shortName: 'PAR', flag: '\u{1F1F5}\u{1F1FE}', primary: '#DA121A', accent: '#0038A8', text: '#ffffff' },
+  // UEFA new qualifiers
+  'Czechia':                    { name: 'Czechia',                    shortName: 'CZE', flag: '\u{1F1E8}\u{1F1FF}', primary: '#D7141A', accent: '#11457E', text: '#ffffff' },
+  'Bosnia and Herzegovina':     { name: 'Bosnia and Herzegovina',     shortName: 'BIH', flag: '\u{1F1E7}\u{1F1E6}', primary: '#002395', accent: '#FFD23F', text: '#ffffff' },
+  'Norway':                     { name: 'Norway',                     shortName: 'NOR', flag: '\u{1F1F3}\u{1F1F4}', primary: '#BA0C2F', accent: '#00205B', text: '#ffffff' },
+  'Sweden':                     { name: 'Sweden',                     shortName: 'SWE', flag: '\u{1F1F8}\u{1F1EA}', primary: '#006AA7', accent: '#FECC02', text: '#ffffff' },
+  // CAF
+  'Algeria':                    { name: 'Algeria',                    shortName: 'ALG', flag: '\u{1F1E9}\u{1F1FF}', primary: '#006233', accent: '#FFFFFF', text: '#ffffff' },
+  'Ivory Coast':                { name: 'Ivory Coast',                shortName: 'CIV', flag: '\u{1F1E8}\u{1F1EE}', primary: '#F77F00', accent: '#009E60', text: '#ffffff' },
+  'Cape Verde':                 { name: 'Cape Verde',                 shortName: 'CPV', flag: '\u{1F1E8}\u{1F1FB}', primary: '#003893', accent: '#CF2028', text: '#ffffff' },
+  'Tunisia':                    { name: 'Tunisia',                    shortName: 'TUN', flag: '\u{1F1F9}\u{1F1F3}', primary: '#E70013', accent: '#FFFFFF', text: '#ffffff' },
+  // CONMEBOL
+  'Paraguay':                   { name: 'Paraguay',                   shortName: 'PAR', flag: '\u{1F1F5}\u{1F1FE}', primary: '#DA121A', accent: '#0038A8', text: '#ffffff' },
+  // CONCACAF
+  'Haiti':                      { name: 'Haiti',                      shortName: 'HAI', flag: '\u{1F1ED}\u{1F1F9}', primary: '#00209F', accent: '#D21034', text: '#ffffff' },
+  'Curaçao':                    { name: 'Curaçao',                    shortName: 'CUW', flag: '\u{1F1E8}\u{1F1FC}', primary: '#002B7F', accent: '#FFD23F', text: '#ffffff' },
+  // AFC
+  'Iraq':                       { name: 'Iraq',                       shortName: 'IRQ', flag: '\u{1F1EE}\u{1F1F6}', primary: '#007A3D', accent: '#CE1126', text: '#ffffff' },
 };
 
 export interface TeamInfo {

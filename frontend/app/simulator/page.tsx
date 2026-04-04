@@ -421,18 +421,6 @@ export default function SimulatorPage() {
               </button>
             </div>
 
-            {/* Disclaimer */}
-            <div
-              className="mb-6 px-4 py-3 text-sm"
-              style={{
-                background: 'rgba(255,210,63,0.08)',
-                border: '1px solid rgba(255,210,63,0.25)',
-                color: 'var(--gold)',
-              }}
-            >
-              Groups are predicted — official draw TBC. Update your bracket when draw is confirmed.
-            </div>
-
             {/* Progress */}
             <div className="flex items-center gap-2 mb-2">
               {STEPS.map((s, i) => (
