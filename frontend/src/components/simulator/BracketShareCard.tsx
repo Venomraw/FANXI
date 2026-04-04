@@ -25,35 +25,36 @@ export interface BracketShareCardProps {
 }
 
 // ---------------------------------------------------------------------------
-// Constants
+// Constants — 1600x900 (16:9)
 // ---------------------------------------------------------------------------
 
-const W = 1400;
-const H = 800;
-const BG = '#0a0f1e';
-const PILL_BG = 'rgba(255,255,255,0.08)';
-const PILL_BORDER = 'rgba(255,255,255,0.15)';
-const WINNER_BG = 'rgba(220,38,38,0.25)';
-const WINNER_BORDER = '#dc2626';
-const CHAMP_BORDER = '#f59e0b';
-const MUTED = 'rgba(255,255,255,0.35)';
-const TEXT = '#e8f0e8';
-const LINE_COLOR = 'rgba(255,255,255,0.15)';
+const W = 1600;
+const H = 900;
+
+// Pill sizing
+const PILL_W = 140;
+const PILL_H = 28;
+const MATCH_GAP = 4;
+const MATCH_H = PILL_H * 2 + MATCH_GAP;
+
+// 9 columns: R32 R16 QF SF FINAL SF QF R16 R32
+const COL_X = [24, 192, 352, 502, 660, 828, 978, 1138, 1306];
+const FINAL_COL = 4;
 
 const ROUND_LABELS = ['R32', 'R16', 'QF', 'SF', 'FINAL', 'SF', 'QF', 'R16', 'R32'];
 
-// Pill sizing
-const PILL_W = 120;
-const PILL_H = 22;
-const MATCH_GAP = 4; // gap between teamA and teamB pill
-const MATCH_H = PILL_H * 2 + MATCH_GAP; // 48px per matchup
+// Truncated display names for long team names
+const SHORT_NAMES: Record<string, string> = {
+  'Bosnia and Herzegovina': 'Bosnia & Herz.',
+  'Ivory Coast': "Côte d'Ivoire",
+};
 
-// Column x positions (9 columns: R32 R16 QF SF FINAL SF QF R16 R32)
-const COL_X = [20, 170, 310, 440, 580, 720, 850, 990, 1140];
-const FINAL_COL = 4; // center column index
+function displayName(team: string): string {
+  return SHORT_NAMES[team] ?? team;
+}
 
 // ---------------------------------------------------------------------------
-// Helper: compute Y positions for matches in each round
+// Helpers
 // ---------------------------------------------------------------------------
 
 function distributeY(count: number, totalH: number, topOffset: number): number[] {
@@ -64,18 +65,18 @@ function distributeY(count: number, totalH: number, topOffset: number): number[]
 }
 
 // ---------------------------------------------------------------------------
-// Sub-components (inline, rendered to DOM for html2canvas)
+// TeamPill — premium design
 // ---------------------------------------------------------------------------
 
 function TeamPill({
   team,
   isWinner,
-  isChampion,
+  isLoser,
   style,
 }: {
   team: string | null;
   isWinner: boolean;
-  isChampion?: boolean;
+  isLoser: boolean;
   style: React.CSSProperties;
 }) {
   if (!team) {
@@ -85,14 +86,15 @@ function TeamPill({
           ...style,
           width: PILL_W,
           height: PILL_H,
-          background: 'rgba(255,255,255,0.03)',
-          border: `1px solid rgba(255,255,255,0.06)`,
+          background: 'rgba(255,255,255,0.02)',
+          border: '1px solid rgba(255,255,255,0.05)',
           borderRadius: 4,
           display: 'flex',
           alignItems: 'center',
-          padding: '0 6px',
-          fontSize: 10,
-          color: 'rgba(255,255,255,0.15)',
+          padding: '0 8px',
+          fontSize: 11,
+          color: 'rgba(255,255,255,0.12)',
+          fontFamily: 'system-ui, -apple-system, sans-serif',
         }}
       >
         TBD
@@ -101,8 +103,6 @@ function TeamPill({
   }
 
   const info = getTeamInfo(team);
-  const bg = isChampion ? 'rgba(245,158,11,0.2)' : isWinner ? WINNER_BG : PILL_BG;
-  const border = isChampion ? CHAMP_BORDER : isWinner ? WINNER_BORDER : PILL_BORDER;
 
   return (
     <div
@@ -110,38 +110,45 @@ function TeamPill({
         ...style,
         width: PILL_W,
         height: PILL_H,
-        background: bg,
-        border: `1px solid ${border}`,
+        background: isWinner ? '#1a1a2e' : isLoser ? '#0d0d1a' : 'rgba(255,255,255,0.06)',
+        border: isWinner
+          ? '1px solid #dc2626'
+          : isLoser
+          ? '1px solid #333'
+          : '1px solid rgba(255,255,255,0.12)',
+        borderLeft: isWinner ? '4px solid #dc2626' : undefined,
         borderRadius: 4,
         display: 'flex',
         alignItems: 'center',
-        gap: 4,
-        padding: '0 6px',
-        fontSize: 10,
+        gap: 5,
+        padding: '0 8px',
+        fontSize: 13,
         fontFamily: 'system-ui, -apple-system, sans-serif',
-        color: TEXT,
-        boxShadow: isChampion
-          ? `0 0 12px rgba(245,158,11,0.3)`
-          : isWinner
-          ? `0 0 8px rgba(220,38,38,0.2)`
-          : 'none',
+        fontWeight: isWinner ? 700 : 400,
+        color: isLoser ? 'rgba(255,255,255,0.35)' : '#eee',
+        boxShadow: isWinner ? '0 0 10px rgba(220,38,38,0.15)' : 'none',
         overflow: 'hidden',
         whiteSpace: 'nowrap',
+        boxSizing: 'border-box',
       }}
     >
-      <span style={{ flexShrink: 0 }}>{info.flag}</span>
+      <span style={{ flexShrink: 0, fontSize: 15, lineHeight: 1 }}>{info.flag}</span>
       <span
         style={{
           overflow: 'hidden',
           textOverflow: 'ellipsis',
-          fontWeight: isWinner || isChampion ? 600 : 400,
+          textDecoration: isLoser ? 'line-through' : 'none',
         }}
       >
-        {info.shortName}
+        {displayName(team)}
       </span>
     </div>
   );
 }
+
+// ---------------------------------------------------------------------------
+// MatchBlock
+// ---------------------------------------------------------------------------
 
 function MatchBlock({
   matchup,
@@ -150,19 +157,22 @@ function MatchBlock({
 }: {
   matchup: Matchup;
   x: number;
-  y: number; // center Y
+  y: number;
 }) {
   const topY = y - MATCH_H / 2;
+  const hasResult = !!matchup.winner;
   return (
     <>
       <TeamPill
         team={matchup.teamA}
-        isWinner={!!matchup.winner && matchup.winner === matchup.teamA}
+        isWinner={hasResult && matchup.winner === matchup.teamA}
+        isLoser={hasResult && matchup.winner !== matchup.teamA}
         style={{ position: 'absolute', left: x, top: topY }}
       />
       <TeamPill
         team={matchup.teamB}
-        isWinner={!!matchup.winner && matchup.winner === matchup.teamB}
+        isWinner={hasResult && matchup.winner === matchup.teamB}
+        isLoser={hasResult && matchup.winner !== matchup.teamB}
         style={{ position: 'absolute', left: x, top: topY + PILL_H + MATCH_GAP }}
       />
     </>
@@ -170,35 +180,52 @@ function MatchBlock({
 }
 
 // ---------------------------------------------------------------------------
-// SVG connector lines
+// SVG connector lines — winner path red, loser path dim
 // ---------------------------------------------------------------------------
 
-function ConnectorLines({
-  positions,
-}: {
-  positions: {
-    from: { x: number; y: number }; // center-right of source matchup
-    to: { x: number; y: number };   // center-left of target matchup
-  }[];
-}) {
+interface ConnectorDef {
+  from: { x: number; y: number };
+  to: { x: number; y: number };
+  isWinnerPath: boolean;
+}
+
+function ConnectorLines({ lines }: { lines: ConnectorDef[] }) {
   return (
     <svg
       width={W}
       height={H}
       style={{ position: 'absolute', left: 0, top: 0, pointerEvents: 'none' }}
     >
-      {positions.map((p, i) => {
-        const midX = (p.from.x + p.to.x) / 2;
-        return (
-          <path
-            key={i}
-            d={`M${p.from.x},${p.from.y} H${midX} V${p.to.y} H${p.to.x}`}
-            fill="none"
-            stroke={LINE_COLOR}
-            strokeWidth={1}
-          />
-        );
-      })}
+      {/* Draw loser paths first (behind) */}
+      {lines
+        .filter(l => !l.isWinnerPath)
+        .map((p, i) => {
+          const midX = (p.from.x + p.to.x) / 2;
+          return (
+            <path
+              key={`l-${i}`}
+              d={`M${p.from.x},${p.from.y} H${midX} V${p.to.y} H${p.to.x}`}
+              fill="none"
+              stroke="rgba(255,255,255,0.06)"
+              strokeWidth={1}
+            />
+          );
+        })}
+      {/* Winner paths on top */}
+      {lines
+        .filter(l => l.isWinnerPath)
+        .map((p, i) => {
+          const midX = (p.from.x + p.to.x) / 2;
+          return (
+            <path
+              key={`w-${i}`}
+              d={`M${p.from.x},${p.from.y} H${midX} V${p.to.y} H${p.to.x}`}
+              fill="none"
+              stroke="rgba(220,38,38,0.4)"
+              strokeWidth={2}
+            />
+          );
+        })}
     </svg>
   );
 }
@@ -212,7 +239,6 @@ const BracketShareCard = forwardRef<HTMLDivElement, BracketShareCardProps>(
     { r32, r16, qf, sf, finalTeamA, finalTeamB, champion, inline },
     ref,
   ) {
-    // Split rounds into left (0-7) and right (8-15) halves
     const leftR32 = r32.slice(0, 8);
     const rightR32 = r32.slice(8, 16);
     const leftR16 = r16.slice(0, 4);
@@ -222,10 +248,9 @@ const BracketShareCard = forwardRef<HTMLDivElement, BracketShareCardProps>(
     const leftSF = sf.slice(0, 1);
     const rightSF = sf.slice(1, 2);
 
-    const TOP = 60; // below round labels
-    const AREA_H = H - 20; // bottom padding
+    const TOP = 80;
+    const AREA_H = H - 24;
 
-    // Y positions for each side's rounds
     const leftR32Y = distributeY(8, AREA_H, TOP);
     const rightR32Y = distributeY(8, AREA_H, TOP);
     const leftR16Y = distributeY(4, AREA_H, TOP);
@@ -234,84 +259,117 @@ const BracketShareCard = forwardRef<HTMLDivElement, BracketShareCardProps>(
     const rightQFY = distributeY(2, AREA_H, TOP);
     const leftSFY = distributeY(1, AREA_H, TOP);
     const rightSFY = distributeY(1, AREA_H, TOP);
-    const finalY = (AREA_H + TOP) / 2 - 40;
+    const finalY = (AREA_H + TOP) / 2 - 50;
 
-    // Build connector lines
-    const connectors: { from: { x: number; y: number }; to: { x: number; y: number } }[] = [];
+    // -------------------------------------------
+    // Build connector lines with winner tracking
+    // -------------------------------------------
+    const lines: ConnectorDef[] = [];
 
-    // Left side: R32 → R16
+    // Helper: does a matchup's winner equal a specific team?
+    const isWin = (matchups: Matchup[], idx: number, side: 'A' | 'B'): boolean => {
+      const m = matchups[idx];
+      if (!m?.winner) return false;
+      return side === 'A' ? m.winner === m.teamA : m.winner === m.teamB;
+    };
+
+    // Left R32→R16
     for (let i = 0; i < 4; i++) {
-      connectors.push({
+      lines.push({
         from: { x: COL_X[0] + PILL_W + 4, y: leftR32Y[i * 2] },
         to: { x: COL_X[1] - 4, y: leftR16Y[i] },
+        isWinnerPath: isWin(leftR32, i * 2, 'A') || isWin(leftR32, i * 2, 'B'),
       });
-      connectors.push({
+      lines.push({
         from: { x: COL_X[0] + PILL_W + 4, y: leftR32Y[i * 2 + 1] },
         to: { x: COL_X[1] - 4, y: leftR16Y[i] },
+        isWinnerPath: isWin(leftR32, i * 2 + 1, 'A') || isWin(leftR32, i * 2 + 1, 'B'),
       });
     }
-    // Left: R16 → QF
+    // Left R16→QF
     for (let i = 0; i < 2; i++) {
-      connectors.push({
+      lines.push({
         from: { x: COL_X[1] + PILL_W + 4, y: leftR16Y[i * 2] },
         to: { x: COL_X[2] - 4, y: leftQFY[i] },
+        isWinnerPath: !!leftR16[i * 2]?.winner,
       });
-      connectors.push({
+      lines.push({
         from: { x: COL_X[1] + PILL_W + 4, y: leftR16Y[i * 2 + 1] },
         to: { x: COL_X[2] - 4, y: leftQFY[i] },
+        isWinnerPath: !!leftR16[i * 2 + 1]?.winner,
       });
     }
-    // Left: QF → SF
-    connectors.push({
+    // Left QF→SF
+    lines.push({
       from: { x: COL_X[2] + PILL_W + 4, y: leftQFY[0] },
       to: { x: COL_X[3] - 4, y: leftSFY[0] },
+      isWinnerPath: !!leftQF[0]?.winner,
     });
-    connectors.push({
+    lines.push({
       from: { x: COL_X[2] + PILL_W + 4, y: leftQFY[1] },
       to: { x: COL_X[3] - 4, y: leftSFY[0] },
+      isWinnerPath: !!leftQF[1]?.winner,
     });
-    // Left: SF → Final
-    connectors.push({
+    // Left SF→Final
+    lines.push({
       from: { x: COL_X[3] + PILL_W + 4, y: leftSFY[0] },
       to: { x: COL_X[4] - 4, y: finalY + PILL_H / 2 },
+      isWinnerPath: !!leftSF[0]?.winner,
     });
 
-    // Right side: R32 → R16 (mirrored — from left edge of pill)
+    // Right R32→R16
     for (let i = 0; i < 4; i++) {
-      connectors.push({
+      lines.push({
         from: { x: COL_X[8] - 4, y: rightR32Y[i * 2] },
         to: { x: COL_X[7] + PILL_W + 4, y: rightR16Y[i] },
+        isWinnerPath: !!rightR32[i * 2]?.winner,
       });
-      connectors.push({
+      lines.push({
         from: { x: COL_X[8] - 4, y: rightR32Y[i * 2 + 1] },
         to: { x: COL_X[7] + PILL_W + 4, y: rightR16Y[i] },
+        isWinnerPath: !!rightR32[i * 2 + 1]?.winner,
       });
     }
-    // Right: R16 → QF
+    // Right R16→QF
     for (let i = 0; i < 2; i++) {
-      connectors.push({
+      lines.push({
         from: { x: COL_X[7] - 4, y: rightR16Y[i * 2] },
         to: { x: COL_X[6] + PILL_W + 4, y: rightQFY[i] },
+        isWinnerPath: !!rightR16[i * 2]?.winner,
       });
-      connectors.push({
+      lines.push({
         from: { x: COL_X[7] - 4, y: rightR16Y[i * 2 + 1] },
         to: { x: COL_X[6] + PILL_W + 4, y: rightQFY[i] },
+        isWinnerPath: !!rightR16[i * 2 + 1]?.winner,
       });
     }
-    // Right: QF → SF
-    connectors.push({
+    // Right QF→SF
+    lines.push({
       from: { x: COL_X[6] - 4, y: rightQFY[0] },
       to: { x: COL_X[5] + PILL_W + 4, y: rightSFY[0] },
+      isWinnerPath: !!rightQF[0]?.winner,
     });
-    connectors.push({
+    lines.push({
       from: { x: COL_X[6] - 4, y: rightQFY[1] },
       to: { x: COL_X[5] + PILL_W + 4, y: rightSFY[0] },
+      isWinnerPath: !!rightQF[1]?.winner,
     });
-    // Right: SF → Final
-    connectors.push({
+    // Right SF→Final
+    lines.push({
       from: { x: COL_X[5] - 4, y: rightSFY[0] },
       to: { x: COL_X[4] + PILL_W + 4, y: finalY + PILL_H + MATCH_GAP + PILL_H / 2 },
+      isWinnerPath: !!rightSF[0]?.winner,
     });
+
+    // -------------------------------------------
+    // Render
+    // -------------------------------------------
+
+    const champInfo = champion ? getTeamInfo(champion) : null;
+    const champW = 220;
+    const champH = 100;
+    const champX = COL_X[FINAL_COL] + (PILL_W - champW) / 2;
+    const champY = finalY + MATCH_H + 24;
 
     return (
       <div
@@ -322,142 +380,198 @@ const BracketShareCard = forwardRef<HTMLDivElement, BracketShareCardProps>(
           top: inline ? undefined : 0,
           width: W,
           height: H,
-          background: BG,
-          color: TEXT,
+          // Radial gradient background
+          background: 'radial-gradient(ellipse at center, #0f1729 0%, #050810 100%)',
+          color: '#eee',
           fontFamily: 'system-ui, -apple-system, sans-serif',
           overflow: 'hidden',
         }}
       >
-        {/* Round labels */}
+        {/* Subtle grid overlay */}
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            background:
+              'repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(255,255,255,0.02) 40px, rgba(255,255,255,0.02) 41px),' +
+              'repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(255,255,255,0.02) 40px, rgba(255,255,255,0.02) 41px)',
+            pointerEvents: 'none',
+          }}
+        />
+
+        {/* ── Header bar ── */}
+        <div
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            height: 44,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: '0 28px',
+            borderBottom: '1px solid rgba(220,38,38,0.3)',
+          }}
+        >
+          <span style={{ fontSize: 18, fontWeight: 700, color: '#fff', letterSpacing: 0.5 }}>
+            FanXI
+          </span>
+          <span style={{ fontSize: 12, fontWeight: 600, letterSpacing: 3, color: '#f59e0b', textTransform: 'uppercase' }}>
+            FIFA World Cup 2026
+          </span>
+          <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.3)' }}>
+            fanxi.vercel.app
+          </span>
+        </div>
+
+        {/* ── Round labels ── */}
         {ROUND_LABELS.map((label, i) => (
           <div
             key={`label-${i}`}
             style={{
               position: 'absolute',
               left: COL_X[i],
-              top: 16,
+              top: 52,
               width: PILL_W,
               textAlign: 'center',
-              fontSize: 10,
-              fontWeight: 600,
-              letterSpacing: 2,
-              color: MUTED,
-              textTransform: 'uppercase',
             }}
           >
-            {label}
+            <span
+              style={{
+                fontSize: 13,
+                fontWeight: 700,
+                letterSpacing: 3,
+                color: '#dc2626',
+                textTransform: 'uppercase',
+              }}
+            >
+              {label}
+            </span>
+            <div
+              style={{
+                marginTop: 4,
+                height: 1,
+                background: 'rgba(220,38,38,0.3)',
+                width: '80%',
+                marginLeft: '10%',
+              }}
+            />
           </div>
         ))}
 
-        {/* Title */}
-        <div
-          style={{
-            position: 'absolute',
-            left: COL_X[FINAL_COL],
-            top: 36,
-            width: PILL_W,
-            textAlign: 'center',
-            fontSize: 8,
-            color: MUTED,
-            letterSpacing: 1,
-          }}
-        >
-          FIFA WORLD CUP 2026
-        </div>
-
         {/* SVG connector lines */}
-        <ConnectorLines positions={connectors} />
+        <ConnectorLines lines={lines} />
 
-        {/* LEFT SIDE */}
-        {/* R32 left (col 0) */}
+        {/* ── LEFT SIDE ── */}
         {leftR32.map((m, i) => (
           <MatchBlock key={`lr32-${i}`} matchup={m} x={COL_X[0]} y={leftR32Y[i]} />
         ))}
-        {/* R16 left (col 1) */}
         {leftR16.map((m, i) => (
           <MatchBlock key={`lr16-${i}`} matchup={m} x={COL_X[1]} y={leftR16Y[i]} />
         ))}
-        {/* QF left (col 2) */}
         {leftQF.map((m, i) => (
           <MatchBlock key={`lqf-${i}`} matchup={m} x={COL_X[2]} y={leftQFY[i]} />
         ))}
-        {/* SF left (col 3) */}
         {leftSF.map((m, i) => (
           <MatchBlock key={`lsf-${i}`} matchup={m} x={COL_X[3]} y={leftSFY[i]} />
         ))}
 
-        {/* FINAL (col 4 — center) */}
+        {/* ── FINAL matchup (center) ── */}
         <div style={{ position: 'absolute', left: COL_X[FINAL_COL], top: finalY }}>
           <TeamPill
             team={finalTeamA}
             isWinner={!!champion && champion === finalTeamA}
-            isChampion={!!champion && champion === finalTeamA}
+            isLoser={!!champion && champion !== finalTeamA}
             style={{ position: 'relative' }}
           />
           <div style={{ height: MATCH_GAP }} />
           <TeamPill
             team={finalTeamB}
             isWinner={!!champion && champion === finalTeamB}
-            isChampion={!!champion && champion === finalTeamB}
+            isLoser={!!champion && champion !== finalTeamB}
             style={{ position: 'relative' }}
           />
         </div>
 
-        {/* RIGHT SIDE */}
-        {/* SF right (col 5) */}
+        {/* Finalist VS label */}
+        {finalTeamA && finalTeamB && (
+          <div
+            style={{
+              position: 'absolute',
+              left: COL_X[FINAL_COL],
+              top: finalY - 22,
+              width: PILL_W,
+              textAlign: 'center',
+              fontSize: 10,
+              fontWeight: 600,
+              letterSpacing: 2,
+              color: 'rgba(255,255,255,0.4)',
+              textTransform: 'uppercase',
+            }}
+          >
+            The Final
+          </div>
+        )}
+
+        {/* ── RIGHT SIDE ── */}
         {rightSF.map((m, i) => (
           <MatchBlock key={`rsf-${i}`} matchup={m} x={COL_X[5]} y={rightSFY[i]} />
         ))}
-        {/* QF right (col 6) */}
         {rightQF.map((m, i) => (
           <MatchBlock key={`rqf-${i}`} matchup={m} x={COL_X[6]} y={rightQFY[i]} />
         ))}
-        {/* R16 right (col 7) */}
         {rightR16.map((m, i) => (
           <MatchBlock key={`rr16-${i}`} matchup={m} x={COL_X[7]} y={rightR16Y[i]} />
         ))}
-        {/* R32 right (col 8) */}
         {rightR32.map((m, i) => (
           <MatchBlock key={`rr32-${i}`} matchup={m} x={COL_X[8]} y={rightR32Y[i]} />
         ))}
 
-        {/* Champion banner */}
-        {champion && (
+        {/* ── Champion box ── */}
+        {champion && champInfo && (
           <div
             style={{
               position: 'absolute',
-              left: COL_X[FINAL_COL] - 20,
-              top: finalY + MATCH_H + 16,
-              width: PILL_W + 40,
-              textAlign: 'center',
-              padding: '8px 0',
-              background: 'rgba(245,158,11,0.12)',
-              border: `1px solid ${CHAMP_BORDER}`,
-              borderRadius: 6,
-              boxShadow: `0 0 20px rgba(245,158,11,0.2)`,
+              left: champX,
+              top: champY,
+              width: champW,
+              height: champH,
+              background: 'linear-gradient(135deg, rgba(245,158,11,0.2), rgba(220,38,38,0.2))',
+              border: '2px solid #f59e0b',
+              borderRadius: 8,
+              boxShadow: '0 0 30px rgba(245,158,11,0.4)',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 6,
             }}
           >
-            <div style={{ fontSize: 8, color: CHAMP_BORDER, letterSpacing: 1.5, marginBottom: 4 }}>
-              WORLD CUP 2026 CHAMPION
-            </div>
-            <div style={{ fontSize: 16, fontWeight: 700 }}>
-              {getTeamInfo(champion).flag} {champion}
+            <span style={{ fontSize: 10, fontWeight: 600, letterSpacing: 3, color: '#f59e0b', textTransform: 'uppercase' }}>
+              World Cup 2026 Champion
+            </span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <span style={{ fontSize: 36, lineHeight: 1 }}>{champInfo.flag}</span>
+              <span style={{ fontSize: 22, fontWeight: 700, color: '#fff' }}>
+                {displayName(champion)}
+              </span>
             </div>
           </div>
         )}
 
-        {/* Branding */}
+        {/* ── Bottom branding ── */}
         <div
           style={{
             position: 'absolute',
-            right: 20,
-            bottom: 12,
-            fontSize: 9,
+            right: 28,
+            bottom: 14,
+            fontSize: 10,
             color: 'rgba(255,255,255,0.2)',
             letterSpacing: 0.5,
           }}
         >
-          fanxi.vercel.app &middot; #WC2026
+          fanxi.vercel.app &middot; #WC2026 #WorldCup2026
         </div>
       </div>
     );

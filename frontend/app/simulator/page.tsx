@@ -432,12 +432,12 @@ export default function SimulatorPage() {
     try {
       const html2canvas = (await import('html2canvas')).default;
       const canvas = await html2canvas(bracketCardRef.current, {
-        scale: 2,
-        backgroundColor: '#0a0f1e',
+        scale: 1.5,
+        backgroundColor: '#050810',
         useCORS: true,
         allowTaint: true,
-        width: 1400,
-        height: 800,
+        width: 1600,
+        height: 900,
       });
       const link = document.createElement('a');
       link.download = 'my-wc2026-bracket.png';
@@ -817,7 +817,7 @@ export default function SimulatorPage() {
                           style={{
                             width: '100%',
                             maxWidth: 640,
-                            height: 366,
+                            height: 360,
                             position: 'relative',
                             borderRadius: 8,
                             border: '1px solid rgba(255,255,255,0.08)',
@@ -825,10 +825,10 @@ export default function SimulatorPage() {
                         >
                           <div
                             style={{
-                              transform: 'scale(0.457)',
+                              transform: 'scale(0.4)',
                               transformOrigin: 'top left',
-                              width: 1400,
-                              height: 800,
+                              width: 1600,
+                              height: 900,
                               position: 'absolute',
                               left: 0,
                               top: 0,
