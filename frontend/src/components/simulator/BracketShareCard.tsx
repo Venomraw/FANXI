@@ -14,10 +14,10 @@ interface Matchup {
 }
 
 export interface BracketShareCardProps {
-  r32: Matchup[];   // 16 matches
-  r16: Matchup[];   // 8 matches
-  qf: Matchup[];    // 4 matches
-  sf: Matchup[];    // 2 matches
+  r32: Matchup[];
+  r16: Matchup[];
+  qf: Matchup[];
+  sf: Matchup[];
   finalTeamA: string | null;
   finalTeamB: string | null;
   champion: string | null;
@@ -25,28 +25,24 @@ export interface BracketShareCardProps {
 }
 
 // ---------------------------------------------------------------------------
-// Constants — 1600x900 (16:9)
+// Constants — 1600x960 (fits all 32 R32 teams)
 // ---------------------------------------------------------------------------
 
 const W = 1600;
-const H = 900;
+const H = 960;
 
-// Pill sizing
 const PILL_W = 140;
-const PILL_H = 28;
-const MATCH_GAP = 4;
-const MATCH_H = PILL_H * 2 + MATCH_GAP;
+const PILL_H = 26;
+const MATCH_GAP = 3;
+const MATCH_H = PILL_H * 2 + MATCH_GAP; // 55
 
-// 9 columns: R32 R16 QF SF FINAL SF QF R16 R32
 const COL_X = [24, 192, 352, 502, 660, 828, 978, 1138, 1306];
 const FINAL_COL = 4;
 
 const ROUND_LABELS = ['R32', 'R16', 'QF', 'SF', 'FINAL', 'SF', 'QF', 'R16', 'R32'];
 
-// Truncated display names for long team names
 const SHORT_NAMES: Record<string, string> = {
   'Bosnia and Herzegovina': 'Bosnia & Herz.',
-  'Ivory Coast': "Côte d'Ivoire",
 };
 
 function displayName(team: string): string {
@@ -65,7 +61,7 @@ function distributeY(count: number, totalH: number, topOffset: number): number[]
 }
 
 // ---------------------------------------------------------------------------
-// TeamPill — premium design
+// TeamPill — fixed 140x26, perfect vertical centering
 // ---------------------------------------------------------------------------
 
 function TeamPill({
@@ -86,13 +82,15 @@ function TeamPill({
           ...style,
           width: PILL_W,
           height: PILL_H,
+          boxSizing: 'border-box',
           background: 'rgba(255,255,255,0.02)',
           border: '1px solid rgba(255,255,255,0.05)',
           borderRadius: 4,
           display: 'flex',
           alignItems: 'center',
-          padding: '0 8px',
+          paddingLeft: 8,
           fontSize: 11,
+          lineHeight: 1,
           color: 'rgba(255,255,255,0.12)',
           fontFamily: 'system-ui, -apple-system, sans-serif',
         }}
@@ -110,34 +108,47 @@ function TeamPill({
         ...style,
         width: PILL_W,
         height: PILL_H,
+        boxSizing: 'border-box',
         background: isWinner ? '#1a1a2e' : isLoser ? '#0d0d1a' : 'rgba(255,255,255,0.06)',
-        border: isWinner
+        border: isLoser
+          ? '1px solid transparent'
+          : isWinner
           ? '1px solid #dc2626'
-          : isLoser
-          ? '1px solid #333'
           : '1px solid rgba(255,255,255,0.12)',
         borderLeft: isWinner ? '4px solid #dc2626' : undefined,
         borderRadius: 4,
         display: 'flex',
         alignItems: 'center',
-        gap: 5,
-        padding: '0 8px',
-        fontSize: 13,
+        paddingLeft: 8,
+        gap: 6,
+        fontSize: 12,
+        fontWeight: isWinner ? 600 : 400,
         fontFamily: 'system-ui, -apple-system, sans-serif',
-        fontWeight: isWinner ? 700 : 400,
-        color: isLoser ? 'rgba(255,255,255,0.35)' : '#eee',
+        lineHeight: 1,
+        color: '#eee',
+        opacity: isLoser ? 0.3 : 1,
         boxShadow: isWinner ? '0 0 10px rgba(220,38,38,0.15)' : 'none',
         overflow: 'hidden',
-        whiteSpace: 'nowrap',
-        boxSizing: 'border-box',
+        whiteSpace: 'nowrap' as const,
       }}
     >
-      <span style={{ flexShrink: 0, fontSize: 15, lineHeight: 1 }}>{info.flag}</span>
+      <span
+        style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          flexShrink: 0,
+          fontSize: 14,
+          lineHeight: 1,
+        }}
+      >
+        {info.flag}
+      </span>
       <span
         style={{
           overflow: 'hidden',
           textOverflow: 'ellipsis',
-          textDecoration: isLoser ? 'line-through' : 'none',
+          maxWidth: 100,
+          lineHeight: 1,
         }}
       >
         {displayName(team)}
@@ -150,15 +161,7 @@ function TeamPill({
 // MatchBlock
 // ---------------------------------------------------------------------------
 
-function MatchBlock({
-  matchup,
-  x,
-  y,
-}: {
-  matchup: Matchup;
-  x: number;
-  y: number;
-}) {
+function MatchBlock({ matchup, x, y }: { matchup: Matchup; x: number; y: number }) {
   const topY = y - MATCH_H / 2;
   const hasResult = !!matchup.winner;
   return (
@@ -180,7 +183,7 @@ function MatchBlock({
 }
 
 // ---------------------------------------------------------------------------
-// SVG connector lines — winner path red, loser path dim
+// SVG connector lines
 // ---------------------------------------------------------------------------
 
 interface ConnectorDef {
@@ -196,7 +199,6 @@ function ConnectorLines({ lines }: { lines: ConnectorDef[] }) {
       height={H}
       style={{ position: 'absolute', left: 0, top: 0, pointerEvents: 'none' }}
     >
-      {/* Draw loser paths first (behind) */}
       {lines
         .filter(l => !l.isWinnerPath)
         .map((p, i) => {
@@ -211,7 +213,6 @@ function ConnectorLines({ lines }: { lines: ConnectorDef[] }) {
             />
           );
         })}
-      {/* Winner paths on top */}
       {lines
         .filter(l => l.isWinnerPath)
         .map((p, i) => {
@@ -248,8 +249,9 @@ const BracketShareCard = forwardRef<HTMLDivElement, BracketShareCardProps>(
     const leftSF = sf.slice(0, 1);
     const rightSF = sf.slice(1, 2);
 
-    const TOP = 80;
-    const AREA_H = H - 24;
+    const TOP = 84;
+    const BOT = 30;
+    const AREA_H = H - BOT;
 
     const leftR32Y = distributeY(8, AREA_H, TOP);
     const rightR32Y = distributeY(8, AREA_H, TOP);
@@ -259,31 +261,24 @@ const BracketShareCard = forwardRef<HTMLDivElement, BracketShareCardProps>(
     const rightQFY = distributeY(2, AREA_H, TOP);
     const leftSFY = distributeY(1, AREA_H, TOP);
     const rightSFY = distributeY(1, AREA_H, TOP);
-    const finalY = (AREA_H + TOP) / 2 - 50;
+    const finalY = (AREA_H + TOP) / 2 - 46;
 
     // -------------------------------------------
-    // Build connector lines with winner tracking
+    // Connector lines
     // -------------------------------------------
     const lines: ConnectorDef[] = [];
-
-    // Helper: does a matchup's winner equal a specific team?
-    const isWin = (matchups: Matchup[], idx: number, side: 'A' | 'B'): boolean => {
-      const m = matchups[idx];
-      if (!m?.winner) return false;
-      return side === 'A' ? m.winner === m.teamA : m.winner === m.teamB;
-    };
 
     // Left R32→R16
     for (let i = 0; i < 4; i++) {
       lines.push({
         from: { x: COL_X[0] + PILL_W + 4, y: leftR32Y[i * 2] },
         to: { x: COL_X[1] - 4, y: leftR16Y[i] },
-        isWinnerPath: isWin(leftR32, i * 2, 'A') || isWin(leftR32, i * 2, 'B'),
+        isWinnerPath: !!leftR32[i * 2]?.winner,
       });
       lines.push({
         from: { x: COL_X[0] + PILL_W + 4, y: leftR32Y[i * 2 + 1] },
         to: { x: COL_X[1] - 4, y: leftR16Y[i] },
-        isWinnerPath: isWin(leftR32, i * 2 + 1, 'A') || isWin(leftR32, i * 2 + 1, 'B'),
+        isWinnerPath: !!leftR32[i * 2 + 1]?.winner,
       });
     }
     // Left R16→QF
@@ -369,7 +364,7 @@ const BracketShareCard = forwardRef<HTMLDivElement, BracketShareCardProps>(
     const champW = 220;
     const champH = 100;
     const champX = COL_X[FINAL_COL] + (PILL_W - champW) / 2;
-    const champY = finalY + MATCH_H + 24;
+    const champY = finalY + MATCH_H + 20;
 
     return (
       <div
@@ -380,14 +375,13 @@ const BracketShareCard = forwardRef<HTMLDivElement, BracketShareCardProps>(
           top: inline ? undefined : 0,
           width: W,
           height: H,
-          // Radial gradient background
           background: 'radial-gradient(ellipse at center, #0f1729 0%, #050810 100%)',
           color: '#eee',
           fontFamily: 'system-ui, -apple-system, sans-serif',
           overflow: 'hidden',
         }}
       >
-        {/* Subtle grid overlay */}
+        {/* Grid overlay */}
         <div
           style={{
             position: 'absolute',
@@ -399,7 +393,7 @@ const BracketShareCard = forwardRef<HTMLDivElement, BracketShareCardProps>(
           }}
         />
 
-        {/* ── Header bar ── */}
+        {/* Header bar */}
         <div
           style={{
             position: 'absolute',
@@ -425,7 +419,7 @@ const BracketShareCard = forwardRef<HTMLDivElement, BracketShareCardProps>(
           </span>
         </div>
 
-        {/* ── Round labels ── */}
+        {/* Round labels */}
         {ROUND_LABELS.map((label, i) => (
           <div
             key={`label-${i}`}
@@ -463,7 +457,7 @@ const BracketShareCard = forwardRef<HTMLDivElement, BracketShareCardProps>(
         {/* SVG connector lines */}
         <ConnectorLines lines={lines} />
 
-        {/* ── LEFT SIDE ── */}
+        {/* LEFT SIDE */}
         {leftR32.map((m, i) => (
           <MatchBlock key={`lr32-${i}`} matchup={m} x={COL_X[0]} y={leftR32Y[i]} />
         ))}
@@ -477,7 +471,7 @@ const BracketShareCard = forwardRef<HTMLDivElement, BracketShareCardProps>(
           <MatchBlock key={`lsf-${i}`} matchup={m} x={COL_X[3]} y={leftSFY[i]} />
         ))}
 
-        {/* ── FINAL matchup (center) ── */}
+        {/* FINAL matchup */}
         <div style={{ position: 'absolute', left: COL_X[FINAL_COL], top: finalY }}>
           <TeamPill
             team={finalTeamA}
@@ -494,13 +488,13 @@ const BracketShareCard = forwardRef<HTMLDivElement, BracketShareCardProps>(
           />
         </div>
 
-        {/* Finalist VS label */}
+        {/* "The Final" label */}
         {finalTeamA && finalTeamB && (
           <div
             style={{
               position: 'absolute',
               left: COL_X[FINAL_COL],
-              top: finalY - 22,
+              top: finalY - 20,
               width: PILL_W,
               textAlign: 'center',
               fontSize: 10,
@@ -508,13 +502,14 @@ const BracketShareCard = forwardRef<HTMLDivElement, BracketShareCardProps>(
               letterSpacing: 2,
               color: 'rgba(255,255,255,0.4)',
               textTransform: 'uppercase',
+              lineHeight: 1,
             }}
           >
             The Final
           </div>
         )}
 
-        {/* ── RIGHT SIDE ── */}
+        {/* RIGHT SIDE */}
         {rightSF.map((m, i) => (
           <MatchBlock key={`rsf-${i}`} matchup={m} x={COL_X[5]} y={rightSFY[i]} />
         ))}
@@ -528,7 +523,7 @@ const BracketShareCard = forwardRef<HTMLDivElement, BracketShareCardProps>(
           <MatchBlock key={`rr32-${i}`} matchup={m} x={COL_X[8]} y={rightR32Y[i]} />
         ))}
 
-        {/* ── Champion box ── */}
+        {/* Champion box */}
         {champion && champInfo && (
           <div
             style={{
@@ -537,6 +532,7 @@ const BracketShareCard = forwardRef<HTMLDivElement, BracketShareCardProps>(
               top: champY,
               width: champW,
               height: champH,
+              boxSizing: 'border-box',
               background: 'linear-gradient(135deg, rgba(245,158,11,0.2), rgba(220,38,38,0.2))',
               border: '2px solid #f59e0b',
               borderRadius: 8,
@@ -545,30 +541,50 @@ const BracketShareCard = forwardRef<HTMLDivElement, BracketShareCardProps>(
               flexDirection: 'column',
               alignItems: 'center',
               justifyContent: 'center',
+              textAlign: 'center',
               gap: 6,
             }}
           >
-            <span style={{ fontSize: 10, fontWeight: 600, letterSpacing: 3, color: '#f59e0b', textTransform: 'uppercase' }}>
+            <span
+              style={{
+                fontSize: 10,
+                fontWeight: 600,
+                letterSpacing: 3,
+                color: '#f59e0b',
+                textTransform: 'uppercase',
+                lineHeight: 1,
+              }}
+            >
               World Cup 2026 Champion
             </span>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <span style={{ fontSize: 36, lineHeight: 1 }}>{champInfo.flag}</span>
-              <span style={{ fontSize: 22, fontWeight: 700, color: '#fff' }}>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 8,
+              }}
+            >
+              <span style={{ display: 'inline-flex', alignItems: 'center', fontSize: 36, lineHeight: 1 }}>
+                {champInfo.flag}
+              </span>
+              <span style={{ fontSize: 22, fontWeight: 700, color: '#fff', lineHeight: 1 }}>
                 {displayName(champion)}
               </span>
             </div>
           </div>
         )}
 
-        {/* ── Bottom branding ── */}
+        {/* Bottom branding */}
         <div
           style={{
             position: 'absolute',
             right: 28,
-            bottom: 14,
+            bottom: 10,
             fontSize: 10,
             color: 'rgba(255,255,255,0.2)',
             letterSpacing: 0.5,
+            lineHeight: 1,
           }}
         >
           fanxi.vercel.app &middot; #WC2026 #WorldCup2026

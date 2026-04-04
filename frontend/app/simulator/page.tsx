@@ -437,7 +437,7 @@ export default function SimulatorPage() {
         useCORS: true,
         allowTaint: true,
         width: 1600,
-        height: 900,
+        height: 960,
       });
       const link = document.createElement('a');
       link.download = 'my-wc2026-bracket.png';
@@ -817,7 +817,7 @@ export default function SimulatorPage() {
                           style={{
                             width: '100%',
                             maxWidth: 640,
-                            height: 360,
+                            height: 384,
                             position: 'relative',
                             borderRadius: 8,
                             border: '1px solid rgba(255,255,255,0.08)',
@@ -828,7 +828,7 @@ export default function SimulatorPage() {
                               transform: 'scale(0.4)',
                               transformOrigin: 'top left',
                               width: 1600,
-                              height: 900,
+                              height: 960,
                               position: 'absolute',
                               left: 0,
                               top: 0,
