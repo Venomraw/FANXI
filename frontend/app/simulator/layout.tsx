@@ -18,12 +18,19 @@ export const metadata: Metadata = {
       'Simulate the FIFA World Cup 2026. Pick winners, predict upsets, share your bracket.',
     url: 'https://fanxi.vercel.app/simulator',
     type: 'website',
+    images: [{
+      url: '/simulator/opengraph-image',
+      width: 1200,
+      height: 630,
+      alt: 'FanXI World Cup 2026 Bracket Simulator',
+    }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'World Cup 2026 Bracket Simulator | FanXI',
     description:
       'Simulate the FIFA World Cup 2026. Pick winners, predict upsets, share your bracket.',
+    images: ['/simulator/opengraph-image'],
   },
   alternates: { canonical: '/simulator' },
 };

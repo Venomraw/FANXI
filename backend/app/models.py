@@ -397,3 +397,21 @@ class SimulatorSubmission(SQLModel, table=True):
     finalist: str
     semi_finalists: List[str] = Field(default_factory=list, sa_column=Column(JSON))
     submitted_at: datetime = Field(default_factory=datetime.utcnow)
+
+
+# ---------------------------------------------------------------------------
+# Shared Brackets — shareable bracket links
+# ---------------------------------------------------------------------------
+
+class SharedBracket(SQLModel, table=True):
+    """
+    Full bracket state saved for sharing via /simulator/share/{share_id}.
+    No auth required — anyone can create and view shared brackets.
+    """
+    id: Optional[int] = Field(default=None, primary_key=True)
+    share_id: str = Field(index=True, unique=True)
+    display_name: str = Field(default="")
+    champion: str
+    finalist: str
+    bracket_data: Dict[str, Any] = Field(default_factory=dict, sa_column=Column(JSON))
+    created_at: datetime = Field(default_factory=datetime.utcnow)

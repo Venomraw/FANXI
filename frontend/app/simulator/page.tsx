@@ -83,6 +83,8 @@ export default function SimulatorPage() {
   const [community, setCommunity] = useState<CommunityStats | null>(null);
   const [showConfetti, setShowConfetti] = useState(false);
   const [downloading, setDownloading] = useState(false);
+  const [shareId, setShareId] = useState<string | null>(null);
+  const [sharing, setSharing] = useState(false);
   const bracketCardRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
@@ -337,70 +339,8 @@ export default function SimulatorPage() {
     return bracket.final === finalTeams.teamA ? (finalTeams.teamB ?? '') : (finalTeams.teamA ?? '');
   }, [bracket.final, finalTeams]);
 
-  const shareOnX = useCallback(() => {
-    if (!bracket.final) return;
-    const info = getTeamInfo(bracket.final);
-    const text = encodeURIComponent(
-      `I just simulated my World Cup 2026 bracket! \n` +
-      `Champion: ${info.flag} ${bracket.final}\n` +
-      `Final: ${bracket.final} vs ${finalist}\n` +
-      `Simulate yours \n` +
-      `fanxi.vercel.app/simulator\n` +
-      `#WC2026 #WorldCup2026 #FanXI`,
-    );
-    window.open(
-      `https://twitter.com/intent/tweet?text=${text}`,
-      '_blank',
-      'noopener,noreferrer',
-    );
-  }, [bracket.final, finalist]);
-
-  const shareOnWhatsApp = useCallback(() => {
-    if (!bracket.final) return;
-    const info = getTeamInfo(bracket.final);
-    const text = encodeURIComponent(
-      `I just simulated my World Cup 2026 bracket! \n` +
-      `Champion: ${info.flag} ${bracket.final}\n` +
-      `Final: ${bracket.final} vs ${finalist}\n` +
-      `Simulate yours: fanxi.vercel.app/simulator\n` +
-      `#WC2026 #WorldCup2026`,
-    );
-    window.open(
-      `https://wa.me/?text=${text}`,
-      '_blank',
-      'noopener,noreferrer',
-    );
-  }, [bracket.final, finalist]);
-
-  const copyLink = useCallback(async () => {
-    try {
-      await navigator.clipboard.writeText('https://fanxi.vercel.app/simulator');
-      toast.success('Link copied to clipboard!');
-    } catch {
-      const el = document.createElement('textarea');
-      el.value = 'https://fanxi.vercel.app/simulator';
-      document.body.appendChild(el);
-      el.select();
-      document.execCommand('copy');
-      document.body.removeChild(el);
-      toast.success('Link copied!');
-    }
-  }, [toast]);
-
-  const handleShare = useCallback(async () => {
-    if (!bracket.final) return;
-    const info = getTeamInfo(bracket.final);
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: 'My WC2026 Bracket | FanXI',
-          text: `My World Cup 2026 champion: ${info.flag} ${bracket.final}`,
-          url: 'https://fanxi.vercel.app/simulator',
-        });
-        return;
-      } catch { /* user cancelled — fall through */ }
-    }
-  }, [bracket.final]);
+  // Reset shareId when bracket changes
+  useEffect(() => { setShareId(null); }, [bracket.final]);
 
   // Build matchup arrays for the share card
   const shareCardProps = useMemo((): BracketShareCardProps | null => {
@@ -425,6 +365,107 @@ export default function SimulatorPage() {
       champion: bracket.final,
     };
   }, [bracket, r32Matchups, r16Matchups, qfMatchups, sfMatchups, finalTeams]);
+
+  const getShareUrl = useCallback(async (cardProps: BracketShareCardProps | null): Promise<string | null> => {
+    // Return cached share URL if available
+    if (shareId) return `https://fanxi.vercel.app/simulator/share/${shareId}`;
+    if (!bracket.final || !cardProps) return null;
+
+    setSharing(true);
+    try {
+      const res = await fetch(`${API}/simulator/share`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          bracket_data: cardProps,
+          champion: bracket.final,
+          finalist,
+        }),
+      });
+      if (!res.ok) throw new Error('Share failed');
+      const data = await res.json();
+      setShareId(data.share_id);
+      return `https://fanxi.vercel.app/simulator/share/${data.share_id}`;
+    } catch {
+      toast.error('Failed to create share link');
+      return null;
+    } finally {
+      setSharing(false);
+    }
+  }, [shareId, bracket.final, finalist, toast]);
+
+  const shareOnX = useCallback(async () => {
+    if (!bracket.final) return;
+    const url = await getShareUrl(shareCardProps);
+    if (!url) return;
+    const info = getTeamInfo(bracket.final);
+    const text = encodeURIComponent(
+      `I just simulated my World Cup 2026 bracket!\n` +
+      `Champion: ${info.flag} ${bracket.final}\n` +
+      `Final: ${bracket.final} vs ${finalist}\n` +
+      `See my full bracket:\n` +
+      `${url}\n` +
+      `#WC2026 #WorldCup2026 #FanXI`,
+    );
+    window.open(
+      `https://twitter.com/intent/tweet?text=${text}`,
+      '_blank',
+      'noopener,noreferrer',
+    );
+  }, [bracket.final, finalist, getShareUrl, shareCardProps]);
+
+  const shareOnWhatsApp = useCallback(async () => {
+    if (!bracket.final) return;
+    const url = await getShareUrl(shareCardProps);
+    if (!url) return;
+    const info = getTeamInfo(bracket.final);
+    const text = encodeURIComponent(
+      `I just simulated my World Cup 2026 bracket!\n` +
+      `Champion: ${info.flag} ${bracket.final}\n` +
+      `Final: ${bracket.final} vs ${finalist}\n` +
+      `See my full bracket: ${url}\n` +
+      `#WC2026 #WorldCup2026`,
+    );
+    window.open(
+      `https://wa.me/?text=${text}`,
+      '_blank',
+      'noopener,noreferrer',
+    );
+  }, [bracket.final, finalist, getShareUrl, shareCardProps]);
+
+  const copyLink = useCallback(async () => {
+    const url = await getShareUrl(shareCardProps);
+    if (!url) return;
+    try {
+      await navigator.clipboard.writeText(url);
+      toast.success('Bracket link copied!');
+    } catch {
+      const el = document.createElement('textarea');
+      el.value = url;
+      document.body.appendChild(el);
+      el.select();
+      document.execCommand('copy');
+      document.body.removeChild(el);
+      toast.success('Link copied!');
+    }
+  }, [toast, getShareUrl, shareCardProps]);
+
+  const handleShare = useCallback(async () => {
+    if (!bracket.final) return;
+    const url = await getShareUrl(shareCardProps);
+    if (!url) return;
+    const info = getTeamInfo(bracket.final);
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'My WC2026 Bracket | FanXI',
+          text: `My World Cup 2026 champion: ${info.flag} ${bracket.final}`,
+          url,
+        });
+        return;
+      } catch { /* user cancelled — fall through */ }
+    }
+  }, [bracket.final, getShareUrl, shareCardProps]);
 
   const downloadImage = useCallback(async () => {
     if (!bracketCardRef.current || !bracket.final) return;
@@ -839,6 +880,11 @@ export default function SimulatorPage() {
                         </div>
                       )}
 
+                      {sharing && (
+                        <p className="text-center font-mono text-xs" style={{ color: 'var(--muted)' }}>
+                          Creating share link...
+                        </p>
+                      )}
                       <div className="flex flex-wrap gap-3 justify-center">
                         <ShareButton label="Share" onClick={handleShare} native />
                         <ShareButton label="Share on X" onClick={shareOnX} />
@@ -1062,7 +1108,7 @@ function ShareButton({
   native,
 }: {
   label: string;
-  onClick: () => void;
+  onClick: () => void | Promise<void>;
   native?: boolean;
 }) {
   const [supported, setSupported] = useState(false);
