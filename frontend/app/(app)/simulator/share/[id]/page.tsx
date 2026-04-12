@@ -5,7 +5,6 @@ import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import BracketShareCard, { type BracketShareCardProps } from '@/src/components/simulator/BracketShareCard';
 import { getTeamInfo } from '@/src/data/wc2026Groups';
-import NavBar from '@/src/components/NavBar';
 
 const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000';
 
@@ -65,7 +64,6 @@ export default function SharedBracketPage() {
   if (loading) {
     return (
       <div className="min-h-screen text-white" style={{ background: 'var(--dark)' }}>
-        <NavBar subtitle="BRACKET" />
         <div className="flex items-center justify-center py-32">
           <div className="flex flex-col items-center gap-4">
             <div className="text-4xl" style={{ animation: 'wakeFloat 1.8s ease-in-out infinite' }}>⚽</div>
@@ -83,7 +81,6 @@ export default function SharedBracketPage() {
   if (error || !data) {
     return (
       <div className="min-h-screen text-white" style={{ background: 'var(--dark)' }}>
-        <NavBar subtitle="BRACKET" />
         <div className="flex items-center justify-center py-32">
           <div className="flex flex-col items-center gap-6 text-center px-6">
             <div className="text-6xl">🏟️</div>
@@ -116,7 +113,6 @@ export default function SharedBracketPage() {
 
   return (
     <div className="min-h-screen text-white" style={{ background: 'var(--dark)' }}>
-      <NavBar subtitle="SHARED BRACKET" />
       <div className="grid-bg opacity-20" />
 
       <div className="max-w-[1200px] mx-auto px-7 py-12 relative z-10">

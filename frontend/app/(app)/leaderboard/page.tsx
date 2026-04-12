@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTheme } from '@/src/context/ThemeContext';
 import { useAuth } from '@/src/context/AuthContext';
-import NavBar from '@/src/components/NavBar';
 
 interface LeaderboardEntry {
   rank: number;
@@ -40,7 +39,6 @@ export default function LeaderboardPage() {
 
   return (
     <div className="min-h-screen text-white relative overflow-hidden" style={{ background: 'var(--dark)' }}>
-      <NavBar subtitle="RANKINGS" />
       <div className="grid-bg opacity-30" />
 
       <div className="max-w-[900px] mx-auto px-7 py-8 relative z-10">

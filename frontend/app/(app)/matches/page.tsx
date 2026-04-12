@@ -3,7 +3,6 @@ import React, { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTheme } from '@/src/context/ThemeContext';
 import { useAuth } from '@/src/context/AuthContext';
-import NavBar from '@/src/components/NavBar';
 import { formatMatchTime, formatMatchDateHeading, getTimezoneLabel } from '@/src/utils/timezone';
 
 // ---------------------------------------------------------------------------
@@ -274,7 +273,6 @@ export default function MatchesPage() {
 
   return (
     <div className="min-h-screen text-white" style={{ background: 'var(--dark)' }}>
-      <NavBar subtitle="FIXTURES" />
       <div className="grid-bg opacity-20" />
 
       <div className="max-w-[1400px] mx-auto px-7 py-12 relative z-10">

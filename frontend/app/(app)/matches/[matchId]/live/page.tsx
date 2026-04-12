@@ -3,7 +3,6 @@ import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { useParams } from 'next/navigation';
 import { useTheme } from '@/src/context/ThemeContext';
 import { useAuth } from '@/src/context/AuthContext';
-import NavBar from '@/src/components/NavBar';
 import ShareCardButton from '@/src/components/ShareCardButton';
 
 const API    = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
@@ -701,7 +700,6 @@ export default function LiveMatchPage() {
   if (!matchState && !connected) {
     return (
       <div className="min-h-screen" style={{ background: 'transparent' }}>
-        <NavBar subtitle="LIVE" />
         <div style={{ maxWidth: 1200, margin: '0 auto', padding: '32px 28px' }}>
           <div className="flex flex-col gap-6">
             <Skeleton h="h-24" />
@@ -732,8 +730,6 @@ export default function LiveMatchPage() {
           primary={primary}
         />
       )}
-
-      <NavBar subtitle={isFinished ? 'FT' : 'LIVE'} />
 
       <div style={{ maxWidth: 1200, margin: '0 auto', padding: '24px 28px 80px' }}>
 

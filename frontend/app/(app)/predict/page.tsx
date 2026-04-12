@@ -2,7 +2,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { Suspense } from 'react';
 import { useRouter } from 'next/navigation';
-import NavBar from '@/src/components/NavBar';
 import PitchBoard from '@/src/components/pitch/PitchBoard';
 import ShareCardButton from '@/src/components/ShareCardButton';
 import { useAuth } from '@/src/context/AuthContext';
@@ -210,8 +209,6 @@ export default function PredictPage() {
 
   return (
     <div className="flex min-h-screen flex-col font-sans" style={{ background: 'transparent', color: 'var(--text)' }}>
-      <NavBar subtitle="PREDICT" />
-
       {/* Page header */}
       <div style={{ background: 'rgba(0,0,0,0.45)', borderBottom: '1px solid var(--border)' }}>
         <div className="max-w-[1400px] mx-auto px-7 py-8">

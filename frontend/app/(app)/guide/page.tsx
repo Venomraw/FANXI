@@ -2,7 +2,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTheme } from '@/src/context/ThemeContext';
-import NavBar from '@/src/components/NavBar';
 
 const NAV_SECTIONS = [
   { id: 'how',     label: 'How to Play', num: '01' },
@@ -151,8 +150,6 @@ export default function GuidePage() {
 
   return (
     <div className="min-h-screen flex flex-col font-sans" style={{ background: 'var(--dark)', color: 'var(--text)' }}>
-
-      <NavBar subtitle="GUIDE" />
 
       {/* ── STICKY SECTION NAV ── */}
       <div

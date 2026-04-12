@@ -4,7 +4,6 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useTheme } from '@/src/context/ThemeContext';
 import { useAuth } from '@/src/context/AuthContext';
-import NavBar from '@/src/components/NavBar';
 import { formatMatchTime } from '@/src/utils/timezone';
 
 // ── Static WC 2026 team list ────────────────────────────────────────────────
@@ -999,8 +998,6 @@ export default function NationPage() {
         @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
         @keyframes fadeIn        { from { opacity: 0; } to { opacity: 1; } }
       `}</style>
-
-      <NavBar subtitle="NATION INTEL" />
 
       {/* ── HERO ──────────────────────────────────────────────────────────── */}
       <div className="relative overflow-hidden"

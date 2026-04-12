@@ -3,7 +3,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import NavBar from '@/src/components/NavBar';
 
 // ── Constants ───────────────────────────────────────────────────────────────
 
@@ -168,13 +167,11 @@ export default function NationPage() {
 
   useEffect(() => { fetchData(); }, [fetchData]);
 
-  if (loading) return <><NavBar /><SkeletonPage /></>;
+  if (loading) return <SkeletonPage />;
 
   if (error || !data) {
     return (
-      <>
-        <NavBar />
-        <div className="w-full max-w-[1200px] mx-auto px-7 py-28 text-center">
+      <div className="w-full max-w-[1200px] mx-auto px-7 py-28 text-center">
           <h1 className="font-display font-semibold text-4xl mb-4" style={{ color: 'var(--text)' }}>
             Nation not found
           </h1>
@@ -192,7 +189,6 @@ export default function NationPage() {
             Browse All Nations
           </Link>
         </div>
-      </>
     );
   }
 
@@ -218,8 +214,6 @@ export default function NationPage() {
 
   return (
     <>
-      <NavBar />
-
       {/* FAQ JSON-LD */}
       {seo?.faq && seo.faq.length > 0 && (
         <script

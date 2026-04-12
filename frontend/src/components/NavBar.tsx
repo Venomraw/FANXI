@@ -20,16 +20,39 @@ const AUTH_LINKS = [
   { label: 'Predict', href: '/predict' },
 ];
 
-interface NavBarProps {
-  subtitle?: string;
+const SUBTITLE_MAP: Record<string, string> = {
+  '/hub': 'HUB',
+  '/matches': 'FIXTURES',
+  '/predict': 'PREDICT',
+  '/leaderboard': 'RANKINGS',
+  '/nation': 'INTEL',
+  '/ai': 'AI',
+  '/guide': 'GUIDE',
+  '/settings': 'SETTINGS',
+  '/simulator': 'SIMULATOR',
+};
+
+function deriveSubtitle(pathname: string): string | null {
+  // Exact match first
+  if (SUBTITLE_MAP[pathname]) return SUBTITLE_MAP[pathname];
+  // Live match pages
+  if (/^\/matches\/\d+\/live/.test(pathname)) return 'LIVE';
+  // Profile pages
+  if (pathname.startsWith('/profile/')) return 'PROFILE';
+  // Nation detail pages
+  if (pathname.startsWith('/nations/')) return 'INTEL';
+  // Simulator share pages
+  if (pathname.startsWith('/simulator/')) return 'SIMULATOR';
+  return null;
 }
 
-export default function NavBar({ subtitle }: NavBarProps) {
+export default function NavBar() {
   const { primary, team, setShowPicker } = useTheme();
   const { user, logout } = useAuth();
   const { lang, setLang, t } = useLanguage();
   const router = useRouter();
   const pathname = usePathname();
+  const subtitle = deriveSubtitle(pathname);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);

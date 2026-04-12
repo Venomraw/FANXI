@@ -1,7 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import NavBar from '@/src/components/NavBar';
 import { useTheme } from '@/src/context/ThemeContext';
 import { useAuth } from '@/src/context/AuthContext';
 import { useToast } from '@/src/context/ToastContext';
@@ -243,8 +242,6 @@ export default function Home() {
 
   return (
     <div className="flex min-h-screen flex-col font-sans" style={{ background: 'transparent', color: 'var(--text)' }}>
-      <NavBar subtitle="HUB" />
-
       {/* Live banner */}
       <LiveBanner matches={liveMatches} onWatch={id => router.push(`/matches/${id}/live`)} />
 

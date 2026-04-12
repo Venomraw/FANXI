@@ -2,7 +2,6 @@
 
 import { useState, useRef, useEffect, KeyboardEvent, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import NavBar from '@/src/components/NavBar';
 import { useAuth } from '@/src/context/AuthContext';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -330,8 +329,6 @@ export default function AIPage() {
 
   return (
     <div className="flex min-h-screen flex-col font-sans" style={{ background: 'transparent', color: 'var(--text)' }}>
-      <NavBar subtitle="AI" />
-
       {/* Page header */}
       <div style={{ background: 'rgba(0,0,0,0.55)', borderBottom: '1px solid var(--border)', backdropFilter: 'blur(24px)' }}>
         <div className="max-w-[1400px] mx-auto px-7 py-6">

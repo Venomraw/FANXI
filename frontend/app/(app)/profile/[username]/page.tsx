@@ -4,7 +4,6 @@ import { useParams, useRouter } from 'next/navigation';
 import { useTheme } from '@/src/context/ThemeContext';
 import { useAuth } from '@/src/context/AuthContext';
 import { formatMatchTime } from '@/src/utils/timezone';
-import NavBar from '@/src/components/NavBar';
 import ShareCardButton from '@/src/components/ShareCardButton';
 
 // ---------------------------------------------------------------------------
@@ -320,7 +319,6 @@ export default function ProfilePage() {
   if (loading) {
     return (
       <div className="min-h-screen" style={{ background: 'transparent' }}>
-        <NavBar subtitle="PROFILE" />
         <div className="flex items-center justify-center h-[60vh]">
           <span className="font-mono text-[12px] uppercase tracking-[3px]" style={{ color: 'var(--muted)' }}>
             Loading scout data...
@@ -333,7 +331,6 @@ export default function ProfilePage() {
   if (notFound || !profile) {
     return (
       <div className="min-h-screen" style={{ background: 'transparent' }}>
-        <NavBar subtitle="PROFILE" />
         <div className="flex flex-col items-center justify-center h-[60vh] gap-6">
           <span className="font-display" style={{ fontSize: '80px', lineHeight: 1 }}>404</span>
           <p className="font-sans font-semibold text-[18px]" style={{ color: 'var(--muted)' }}>
@@ -353,7 +350,6 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen text-white" style={{ background: 'transparent' }}>
-      <NavBar subtitle="PROFILE" />
       <div className="grid-bg opacity-20" />
 
       {/* ── HERO ──────────────────────────────────────────── */}

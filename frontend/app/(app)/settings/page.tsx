@@ -3,7 +3,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/src/context/AuthContext';
 import { useTheme } from '@/src/context/ThemeContext';
-import NavBar from '@/src/components/NavBar';
 
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
@@ -229,8 +228,6 @@ export default function SettingsPage() {
 
   return (
     <div className="min-h-screen" style={{ background: 'transparent' }}>
-      <NavBar subtitle="SETTINGS" />
-
       <div style={{ maxWidth: 720, margin: '0 auto', padding: '48px 28px 80px' }}>
 
         {/* Header */}
