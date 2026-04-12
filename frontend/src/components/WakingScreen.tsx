@@ -116,9 +116,9 @@ export default function WakingScreen({ status, elapsed, onRetry }: Props) {
               <button
                 onClick={() => window.location.reload()}
                 className="font-mono text-xs uppercase tracking-widest transition-all"
-                style={{ color: 'rgba(255,255,255,0.3)' }}
-                onMouseEnter={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.6)')}
-                onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.3)')}
+                style={{ color: 'rgba(255,255,255,0.5)' }}
+                onMouseEnter={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.7)')}
+                onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.5)')}
               >
                 Reload page
               </button>
@@ -167,7 +167,7 @@ export default function WakingScreen({ status, elapsed, onRetry }: Props) {
               {/* Elapsed */}
               <p
                 className="font-mono text-xs uppercase tracking-widest"
-                style={{ color: 'rgba(255,255,255,0.2)' }}
+                style={{ color: 'rgba(255,255,255,0.5)' }}
               >
                 {elapsed}s — Connecting to servers...
               </p>

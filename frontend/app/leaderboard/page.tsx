@@ -90,12 +90,12 @@ export default function LeaderboardPage() {
 
           {loading ? (
             <div className="py-16 text-center font-mono text-sm tracking-normal"
-              style={{ color: 'rgba(255,255,255,0.25)' }}>
+              style={{ color: 'rgba(255,255,255,0.5)' }}>
               Loading scouts...
             </div>
           ) : entries.length === 0 ? (
             <div className="py-16 text-center">
-              <p className="font-mono text-sm" style={{ color: 'rgba(255,255,255,0.3)' }}>
+              <p className="font-mono text-sm" style={{ color: 'rgba(255,255,255,0.5)' }}>
                 No scouts on the board yet.
               </p>
             </div>
@@ -118,7 +118,7 @@ export default function LeaderboardPage() {
                       {RANK_MEDALS[entry.rank]
                         ? <span className="text-xl">{RANK_MEDALS[entry.rank]}</span>
                         : <span className="font-display text-3xl leading-none"
-                            style={{ color: 'rgba(255,255,255,0.2)' }}>{entry.rank}</span>
+                            style={{ color: 'rgba(255,255,255,0.5)' }}>{entry.rank}</span>
                       }
                     </div>
 
@@ -148,7 +148,7 @@ export default function LeaderboardPage() {
                         )}
                       </div>
                       <div className="font-mono text-xs uppercase tracking-widest mt-0.5"
-                        style={{ color: 'rgba(255,255,255,0.3)' }}>
+                        style={{ color: 'rgba(255,255,255,0.5)' }}>
                         {entry.country_allegiance}
                       </div>
                     </div>
@@ -170,7 +170,7 @@ export default function LeaderboardPage() {
         </div>
 
         <p className="text-center font-mono text-xs uppercase tracking-[3px] mt-8 pb-6"
-          style={{ color: 'rgba(255,255,255,0.2)' }}>
+          style={{ color: 'rgba(255,255,255,0.5)' }}>
           Points awarded after each match result is confirmed
         </p>
       </div>

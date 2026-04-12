@@ -125,7 +125,7 @@ function LiveBanner({ matches, onWatch }: {
             >
               <span>{m.home_flag}</span>
               <span>{m.home_team}</span>
-              <span style={{ color: 'rgba(255,255,255,0.35)' }}>vs</span>
+              <span style={{ color: 'rgba(255,255,255,0.5)' }}>vs</span>
               <span>{m.away_team}</span>
               <span>{m.away_flag}</span>
               <span className="font-mono text-xs" style={{ color: 'var(--red)' }}>WATCH →</span>
@@ -365,11 +365,11 @@ export default function Home() {
                   Make Your First Prediction →
                 </button>
                 <div className="flex items-center gap-3 pt-2 border-t" style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
-                  <span className="font-mono text-xs uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.25)' }}>48 nations</span>
+                  <span className="font-mono text-xs uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.5)' }}>48 nations</span>
                   <span style={{ color: 'rgba(255,255,255,0.12)' }}>·</span>
-                  <span className="font-mono text-xs uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.25)' }}>104 matches</span>
+                  <span className="font-mono text-xs uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.5)' }}>104 matches</span>
                   <span style={{ color: 'rgba(255,255,255,0.12)' }}>·</span>
-                  <span className="font-mono text-xs uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.25)' }}>Free to play</span>
+                  <span className="font-mono text-xs uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.5)' }}>Free to play</span>
                 </div>
               </div>
             ) : (
@@ -521,7 +521,7 @@ export default function Home() {
                         <span className="text-2xl">{m.home_flag}</span>
                         <span className="font-display font-semibold text-[14px] text-center leading-tight">{m.home_team}</span>
                       </div>
-                      <span className="font-mono text-xs" style={{ color: 'rgba(255,255,255,0.25)' }}>VS</span>
+                      <span className="font-mono text-xs" style={{ color: 'rgba(255,255,255,0.5)' }}>VS</span>
                       <div className="flex flex-col items-center gap-1 flex-1">
                         <span className="text-2xl">{m.away_flag}</span>
                         <span className="font-display font-semibold text-[14px] text-center leading-tight">{m.away_team}</span>
@@ -612,7 +612,7 @@ export default function Home() {
                       <div className="flex items-center gap-2 flex-1 min-w-0">
                         <span className="text-xl">{p.home_flag || '🏳'}</span>
                         <span className="font-display font-semibold text-[14px] truncate">{p.home_team || `Match #${p.match_id}`}</span>
-                        <span className="font-mono text-xs" style={{ color: 'rgba(255,255,255,0.25)' }}>vs</span>
+                        <span className="font-mono text-xs" style={{ color: 'rgba(255,255,255,0.5)' }}>vs</span>
                         <span className="font-display font-semibold text-[14px] truncate">{p.away_team || ''}</span>
                         <span className="text-xl">{p.away_flag || ''}</span>
                       </div>

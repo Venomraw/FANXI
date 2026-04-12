@@ -119,7 +119,7 @@ function PlayerPicker({
       style={{
         background: 'var(--dark3)',
         borderColor: `color-mix(in srgb, ${primary} 20%, transparent)`,
-        color: value ? 'var(--text)' : 'rgba(255,255,255,0.3)',
+        color: value ? 'var(--text)' : 'rgba(255,255,255,0.5)',
         accentColor: primary,
       }}
     >
@@ -164,7 +164,7 @@ export default function MatchEvents({
           {(['home', 'away'] as const).map((side, i) => (
             <React.Fragment key={side}>
               {i === 1 && (
-                <span className="font-display text-3xl leading-none" style={{ color: 'rgba(255,255,255,0.25)' }}>:</span>
+                <span className="font-display text-3xl leading-none" style={{ color: 'rgba(255,255,255,0.5)' }}>:</span>
               )}
               <div className="flex flex-col items-center gap-2">
                 <span className="font-mono text-xs uppercase tracking-wider" style={{ color: 'var(--muted)' }}>{side}</span>
@@ -271,7 +271,7 @@ export default function MatchEvents({
       {/* ── Sniper Stats ──────────────────────────────── */}
       <div
         className="flex items-center gap-3 px-1"
-        style={{ color: 'rgba(255,255,255,0.2)' }}
+        style={{ color: 'rgba(255,255,255,0.5)' }}
       >
         <div className="flex-1 h-px" style={{ background: 'rgba(255,255,255,0.07)' }} />
         <span className="font-mono text-xs uppercase tracking-[3px]">Sniper Stats</span>

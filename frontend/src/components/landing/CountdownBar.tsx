@@ -84,7 +84,7 @@ export default function CountdownBar() {
           </span>
         </div>
 
-        <span className="text-white/30 font-mono mx-1" style={{ fontSize: '12px' }}>:</span>
+        <span className="text-white/50 font-mono mx-1" style={{ fontSize: '12px' }}>:</span>
 
         {/* Hours */}
         <div className="flex items-baseline gap-1">
@@ -102,7 +102,7 @@ export default function CountdownBar() {
           </span>
         </div>
 
-        <span className="text-white/30 font-mono mx-1" style={{ fontSize: '12px' }}>:</span>
+        <span className="text-white/50 font-mono mx-1" style={{ fontSize: '12px' }}>:</span>
 
         {/* Minutes */}
         <div className="flex items-baseline gap-1">
@@ -120,7 +120,7 @@ export default function CountdownBar() {
           </span>
         </div>
 
-        <span className="text-white/30 font-mono mx-1" style={{ fontSize: '12px' }}>:</span>
+        <span className="text-white/50 font-mono mx-1" style={{ fontSize: '12px' }}>:</span>
 
         {/* Seconds */}
         <div className="flex items-baseline gap-1">

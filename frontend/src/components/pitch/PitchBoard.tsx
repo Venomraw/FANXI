@@ -738,7 +738,7 @@ export default function PitchBoard({ onLockSuccess }: PitchBoardProps = {}) {
                                 <span className="font-mono text-xs font-bold flex-shrink-0" style={{ color: 'var(--red)' }}>OUT</span>
                                 <select value={halfTime.subs[i].out ?? ''} onChange={e => setSub(i, { out: e.target.value || null })}
                                   className="flex-1 px-2 py-1.5 border font-sans font-semibold text-xs focus:outline-none focus:ring-2 focus:ring-red-500/50"
-                                  style={{ background: 'var(--dark3)', borderColor: halfTime.subs[i].out ? 'color-mix(in srgb, var(--red) 25%, transparent)' : 'rgba(255,255,255,0.08)', color: halfTime.subs[i].out ? 'var(--text)' : 'rgba(255,255,255,0.3)' }}>
+                                  style={{ background: 'var(--dark3)', borderColor: halfTime.subs[i].out ? 'color-mix(in srgb, var(--red) 25%, transparent)' : 'rgba(255,255,255,0.08)', color: halfTime.subs[i].out ? 'var(--text)' : 'rgba(255,255,255,0.5)' }}>
                                   <option value="">— XI —</option>
                                   {lineupPlayers.map(p => <option key={p.name} value={p.name}>{p.name}</option>)}
                                 </select>
@@ -748,7 +748,7 @@ export default function PitchBoard({ onLockSuccess }: PitchBoardProps = {}) {
                                 <span className="font-mono text-xs font-bold flex-shrink-0" style={{ color: 'var(--success)' }}>IN</span>
                                 <select value={halfTime.subs[i].in ?? ''} onChange={e => setSub(i, { in: e.target.value || null })}
                                   className="flex-1 px-2 py-1.5 border font-sans font-semibold text-xs focus:outline-none focus:ring-2 focus:ring-red-500/50"
-                                  style={{ background: 'var(--dark3)', borderColor: halfTime.subs[i].in ? 'color-mix(in srgb, var(--success) 40%, transparent)' : 'rgba(255,255,255,0.08)', color: halfTime.subs[i].in ? 'var(--text)' : 'rgba(255,255,255,0.3)' }}>
+                                  style={{ background: 'var(--dark3)', borderColor: halfTime.subs[i].in ? 'color-mix(in srgb, var(--success) 40%, transparent)' : 'rgba(255,255,255,0.08)', color: halfTime.subs[i].in ? 'var(--text)' : 'rgba(255,255,255,0.5)' }}>
                                   <option value="">— Bench —</option>
                                   {benchPlayers.map(p => <option key={p.name} value={p.name}>{p.name}</option>)}
                                 </select>
@@ -874,7 +874,7 @@ export default function PitchBoard({ onLockSuccess }: PitchBoardProps = {}) {
                         style={{
                           background: 'var(--dark3)',
                           borderColor: `color-mix(in srgb, ${primary} 20%, transparent)`,
-                          color: halfTime.nextGoalscorer ? 'var(--text)' : 'rgba(255,255,255,0.3)',
+                          color: halfTime.nextGoalscorer ? 'var(--text)' : 'rgba(255,255,255,0.5)',
                         }}
                       >
                         <option value="">— Pick a player —</option>

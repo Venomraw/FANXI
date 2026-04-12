@@ -710,7 +710,7 @@ export default function ProfilePage() {
               className="border p-5 text-center mt-2 theme-transition"
               style={{ borderColor: 'var(--border)', background: 'var(--dark3)' }}
             >
-              <span className="font-mono text-xs uppercase tracking-[2px]" style={{ color: 'rgba(255,255,255,0.2)' }}>
+              <span className="font-mono text-xs uppercase tracking-[2px]" style={{ color: 'rgba(255,255,255,0.5)' }}>
                 More badges coming soon
               </span>
             </div>
@@ -774,7 +774,7 @@ export default function ProfilePage() {
                   <p className="font-mono text-xs uppercase tracking-[1.5px] mb-2" style={{ color: 'var(--muted)' }}>
                     Formation Heatmap
                   </p>
-                  <p className="font-sans text-[14px]" style={{ color: 'rgba(255,255,255,0.3)' }}>
+                  <p className="font-sans text-[14px]" style={{ color: 'rgba(255,255,255,0.5)' }}>
                     Formation preference tracking coming in the next update
                   </p>
                 </div>

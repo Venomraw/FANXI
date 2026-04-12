@@ -63,7 +63,7 @@ export default function HomePage() {
               className="block"
               style={{ fontSize: 'clamp(52px, 9vw, 96px)' }}
             >
-              <span style={{ color: 'rgba(255,255,255,0.35)' }}>1930</span>
+              <span style={{ color: 'rgba(255,255,255,0.5)' }}>1930</span>
               <span style={{ color: 'var(--landing-text)' }}> &rarr; </span>
               <span className="text-red-600">2026</span>
             </span>

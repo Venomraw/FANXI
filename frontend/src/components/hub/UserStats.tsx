@@ -43,7 +43,7 @@ export default function UserStats() {
       <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b"
         style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
         <span className="font-mono text-xs tracking-[3px] uppercase"
-          style={{ color: 'rgba(255,255,255,0.35)' }}>Your Profile</span>
+          style={{ color: 'rgba(255,255,255,0.5)' }}>Your Profile</span>
         <span className="font-mono text-xs tracking-wider uppercase px-3 py-1 font-bold theme-transition"
           style={{ background: `${rankColor}18`, color: rankColor, border: `1px solid ${rankColor}40` }}>
           {user.rank_title}
@@ -62,7 +62,7 @@ export default function UserStats() {
         <div className="flex-1 min-w-0">
           <p className="text-white font-bold text-xl leading-snug truncate">{user.username}</p>
           <p className="font-mono text-xs tracking-widest uppercase mt-0.5"
-            style={{ color: 'rgba(255,255,255,0.35)' }}>
+            style={{ color: 'rgba(255,255,255,0.5)' }}>
             {user.country_allegiance}
           </p>
         </div>
@@ -74,7 +74,7 @@ export default function UserStats() {
             {pts.toLocaleString()}
           </p>
           <p className="font-mono text-xs tracking-widest uppercase"
-            style={{ color: 'rgba(255,255,255,0.35)' }}>IQ Points</p>
+            style={{ color: 'rgba(255,255,255,0.5)' }}>IQ Points</p>
         </div>
       </div>
 
@@ -83,7 +83,7 @@ export default function UserStats() {
         <div className="flex justify-between font-mono text-xs uppercase tracking-wider mb-2">
           <span className="font-bold" style={{ color: rankColor }}>{currentRank.title}</span>
           {nextRank && (
-            <span style={{ color: 'rgba(255,255,255,0.3)' }}>
+            <span style={{ color: 'rgba(255,255,255,0.5)' }}>
               {nextRank.min - pts} pts to {nextRank.title}
             </span>
           )}

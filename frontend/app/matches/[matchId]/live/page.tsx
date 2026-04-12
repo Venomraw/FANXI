@@ -182,7 +182,7 @@ function MiniPitch({ lineup }: { lineup: Lineup | null | undefined }) {
     for (const n of nums) { result.push(players.slice(idx, idx + n)); idx += n; }
     return result.reverse();
   }, [lineup]);
-  if (!lineup || !rows.length) return <div className="flex items-center justify-center h-48 font-mono text-xs" style={{ color: 'rgba(255,255,255,0.2)' }}>Lineup not yet confirmed</div>;
+  if (!lineup || !rows.length) return <div className="flex items-center justify-center h-48 font-mono text-xs" style={{ color: 'rgba(255,255,255,0.5)' }}>Lineup not yet confirmed</div>;
   return (
     <div className="relative w-full rounded-lg overflow-hidden" style={{ background: 'radial-gradient(ellipse 80% 80% at 50% 50%, rgba(0,200,80,0.12) 0%, transparent 70%), rgba(0,100,40,0.25)', paddingBottom: '75%' }}>
       <div className="absolute inset-0 flex flex-col justify-between py-2 opacity-20 pointer-events-none">
@@ -473,7 +473,7 @@ function ScoreReveal({
               </div>
               <div
                 className="font-display font-semibold"
-                style={{ fontSize: '20px', color: item.pts > 0 ? 'var(--success)' : 'rgba(255,255,255,0.2)' }}
+                style={{ fontSize: '20px', color: item.pts > 0 ? 'var(--success)' : 'rgba(255,255,255,0.5)' }}
               >
                 {item.pts > 0 ? `+${item.pts}` : '—'}
               </div>
@@ -825,7 +825,7 @@ export default function LiveMatchPage() {
           <GlassCard className="p-5 flex flex-col gap-3" style={{ minHeight: 280 }}>
             <h3 className="font-sans font-semibold text-[13px] uppercase tracking-[1.5px]" style={{ color: 'var(--muted)' }}>Live Events</h3>
             {events.length === 0 ? (
-              <p className="font-mono text-xs" style={{ color: 'rgba(255,255,255,0.2)' }}>No events yet</p>
+              <p className="font-mono text-xs" style={{ color: 'rgba(255,255,255,0.5)' }}>No events yet</p>
             ) : (
               <div className="flex flex-col gap-2 overflow-y-auto" style={{ maxHeight: 280 }}>
                 {[...events].reverse().map((evt, i) => (
@@ -865,7 +865,7 @@ export default function LiveMatchPage() {
                 <span className="font-mono text-xs w-10" style={{ color: 'var(--muted)' }}>{momentum.away_pct}%</span>
               </div>
             </div>
-            <p className="font-mono text-xs text-center mt-auto" style={{ color: 'rgba(255,255,255,0.15)' }}>Updates every 60s</p>
+            <p className="font-mono text-xs text-center mt-auto" style={{ color: 'rgba(255,255,255,0.5)' }}>Updates every 60s</p>
           </GlassCard>
         </div>
 
@@ -970,7 +970,7 @@ export default function LiveMatchPage() {
             <span className="font-mono text-xs uppercase tracking-[1px] px-2 py-0.5" style={{ color: 'var(--muted)', border: '1px solid var(--border)' }}>Updates every 10 min</span>
           </div>
           {commentary.length === 0 ? (
-            <p className="font-sans text-[14px]" style={{ color: 'rgba(255,255,255,0.25)' }}>AI commentary will appear here once the match kicks off.</p>
+            <p className="font-sans text-[14px]" style={{ color: 'rgba(255,255,255,0.5)' }}>AI commentary will appear here once the match kicks off.</p>
           ) : (
             <div className="flex flex-col gap-4">
               {[...commentary].reverse().map((c, i) => (

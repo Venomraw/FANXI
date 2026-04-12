@@ -47,7 +47,7 @@ export default function MiniLeaderboard() {
       <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b"
         style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
         <span className="font-mono text-xs tracking-[3px] uppercase"
-          style={{ color: 'rgba(255,255,255,0.35)' }}>Top Scouts</span>
+          style={{ color: 'rgba(255,255,255,0.5)' }}>Top Scouts</span>
         <button onClick={() => router.push('/leaderboard')}
           className="font-mono text-xs tracking-wider uppercase font-bold transition-colors theme-transition"
           style={{ color: primary }}>
@@ -59,7 +59,7 @@ export default function MiniLeaderboard() {
       <div className="flex flex-col divide-y" style={{ borderColor: 'rgba(255,255,255,0.05)' }}>
         {entries.length === 0 ? (
           <p className="px-5 py-6 font-mono text-sm text-center italic"
-            style={{ color: 'rgba(255,255,255,0.25)' }}>
+            style={{ color: 'rgba(255,255,255,0.5)' }}>
             No scouts ranked yet — lock a prediction!
           </p>
         ) : entries.map(e => {
@@ -78,7 +78,7 @@ export default function MiniLeaderboard() {
                 {MEDALS[e.rank]
                   ? <span className="text-lg">{MEDALS[e.rank]}</span>
                   : <span className="font-display text-2xl leading-none"
-                      style={{ color: 'rgba(255,255,255,0.25)' }}>#{e.rank}</span>
+                      style={{ color: 'rgba(255,255,255,0.5)' }}>#{e.rank}</span>
                 }
               </div>
 
@@ -98,7 +98,7 @@ export default function MiniLeaderboard() {
                   )}
                 </p>
                 <p className="font-mono text-xs uppercase tracking-wider truncate"
-                  style={{ color: 'rgba(255,255,255,0.3)' }}>
+                  style={{ color: 'rgba(255,255,255,0.5)' }}>
                   {e.country_allegiance}
                 </p>
               </div>

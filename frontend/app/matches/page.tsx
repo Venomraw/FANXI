@@ -121,7 +121,7 @@ function MatchCard({
           <div className="flex-shrink-0 flex flex-col items-center gap-1">
             <span
               className="font-mono text-xs uppercase tracking-[2px]"
-              style={{ color: 'rgba(255,255,255,0.2)' }}
+              style={{ color: 'rgba(255,255,255,0.5)' }}
             >
               vs
             </span>
@@ -145,7 +145,7 @@ function MatchCard({
             <span className="font-sans text-[13px]" style={{ color: 'var(--muted)' }}>
               {formatMatchTime(match.kickoff)}
             </span>
-            <span className="font-mono text-xs tracking-[0.5px]" style={{ color: 'rgba(255,255,255,0.3)' }}>
+            <span className="font-mono text-xs tracking-[0.5px]" style={{ color: 'rgba(255,255,255,0.5)' }}>
               {match.venue}
             </span>
           </div>
@@ -153,7 +153,7 @@ function MatchCard({
           <div className="flex items-center gap-2 flex-wrap">
             {isPast ? (
               <>
-                <span className="font-mono text-xs uppercase px-4 py-2" style={{ color: 'rgba(255,255,255,0.2)', border: '1px solid var(--border)' }}>
+                <span className="font-mono text-xs uppercase px-4 py-2" style={{ color: 'rgba(255,255,255,0.5)', border: '1px solid var(--border)' }}>
                   Finished
                 </span>
                 <a
@@ -295,7 +295,7 @@ export default function MatchesPage() {
           </h1>
           <p className="font-sans text-[15px]" style={{ color: 'var(--muted)' }}>
             72 group stage matches · 12 groups · June 11 – 27, 2026
-            <span className="font-mono text-xs ml-3" style={{ color: 'rgba(255,255,255,0.25)' }}>
+            <span className="font-mono text-xs ml-3" style={{ color: 'rgba(255,255,255,0.5)' }}>
               · {getTimezoneLabel()}
             </span>
           </p>
@@ -316,7 +316,7 @@ export default function MatchesPage() {
             </button>
           ))}
           <div className="ml-auto flex items-center">
-            <span className="font-mono text-xs uppercase tracking-[1.5px]" style={{ color: 'rgba(255,255,255,0.2)' }}>
+            <span className="font-mono text-xs uppercase tracking-[1.5px]" style={{ color: 'rgba(255,255,255,0.5)' }}>
               {upcomingMatches.length} matches remaining
             </span>
           </div>
@@ -353,7 +353,7 @@ export default function MatchesPage() {
                       {dateLabel}
                     </span>
                     <div className="flex-1 h-px" style={{ background: 'var(--border)' }} />
-                    <span className="font-mono text-xs uppercase tracking-[1.5px]" style={{ color: 'rgba(255,255,255,0.2)' }}>
+                    <span className="font-mono text-xs uppercase tracking-[1.5px]" style={{ color: 'rgba(255,255,255,0.5)' }}>
                       {dayMatches.length} {dayMatches.length === 1 ? 'match' : 'matches'}
                     </span>
                   </div>

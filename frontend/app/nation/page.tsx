@@ -706,7 +706,7 @@ function ArticlePanel({
         @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
         @keyframes fadeIn        { from { opacity: 0; } to { opacity: 1; } }
       `}</style>
-      <div className="fixed inset-0 z-40" style={{ background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)', animation: 'fadeIn 0.2s ease' }} onClick={onClose} />
+      <div className="fixed inset-0 z-40" role="button" tabIndex={0} aria-label="Close article" style={{ background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)', animation: 'fadeIn 0.2s ease' }} onClick={onClose} onKeyDown={e => e.key === 'Enter' && onClose()} />
       <div className="fixed top-0 right-0 bottom-0 z-50 flex flex-col overflow-hidden"
         style={{
           width: 'min(560px, 100vw)',
@@ -735,7 +735,7 @@ function ArticlePanel({
         <div className="flex-1 overflow-y-auto">
           {article.thumbnail && (
             <div className="relative w-full h-64 overflow-hidden">
-              <Image src={article.thumbnail} alt="" fill className="object-cover" unoptimized />
+              <Image src={article.thumbnail} alt={article.title || 'Article thumbnail'} fill className="object-cover" unoptimized />
             </div>
           )}
           <div className="px-6 py-6 flex flex-col gap-5">
@@ -769,7 +769,7 @@ function ArticlePanel({
 // News Card
 function NewsCard({ article, primary, onSelect }: { article: Article; primary: string; onSelect: (a: Article) => void }) {
   return (
-    <div onClick={() => onSelect(article)}
+    <div role="button" tabIndex={0} onClick={() => onSelect(article)} onKeyDown={e => e.key === 'Enter' && onSelect(article)}
       className="group flex flex-col overflow-hidden border transition-all hover:-translate-y-0.5 duration-200 cursor-pointer"
       style={{ background: 'var(--dark3)', borderColor: `color-mix(in srgb, ${primary} 12%, transparent)`, position: 'relative' }}
       onMouseEnter={e => (e.currentTarget.style.borderColor = `color-mix(in srgb, ${primary} 35%, transparent)`)}
@@ -777,7 +777,7 @@ function NewsCard({ article, primary, onSelect }: { article: Article; primary: s
       <div className="absolute top-0 left-0 right-0 h-[2px] transition-opacity opacity-0 group-hover:opacity-100" style={{ background: primary }} />
       {article.thumbnail ? (
         <div className="relative h-48 overflow-hidden">
-          <Image src={article.thumbnail} alt="" fill className="object-cover group-hover:scale-105 transition-transform duration-300" unoptimized />
+          <Image src={article.thumbnail} alt={article.title || 'News thumbnail'} fill className="object-cover group-hover:scale-105 transition-transform duration-300" unoptimized />
         </div>
       ) : (
         <div className="h-48 flex items-center justify-center text-3xl"
@@ -844,7 +844,7 @@ function VideoCard({ video, primary }: { video: Video; primary: string }) {
       onMouseEnter={e => (e.currentTarget.style.borderColor = `color-mix(in srgb, ${primary} 35%, transparent)`)}
       onMouseLeave={e => (e.currentTarget.style.borderColor = `color-mix(in srgb, ${primary} 12%, transparent)`)}>
       <div className="relative h-44 overflow-hidden" style={{ background: 'var(--border)' }}>
-        {video.thumbnail && <Image src={video.thumbnail} alt="" fill className="object-cover group-hover:scale-105 transition-transform duration-300" unoptimized />}
+        {video.thumbnail && <Image src={video.thumbnail} alt={video.title || 'Video thumbnail'} fill className="object-cover group-hover:scale-105 transition-transform duration-300" unoptimized />}
         <div className="absolute top-2 left-2 font-mono text-xs tracking-wider uppercase px-2 py-0.5" style={{ background: 'rgba(0,0,0,0.75)', color: 'white', border: '1px solid rgba(255,255,255,0.15)' }}>
           {video.channel.slice(0, 12)}
         </div>

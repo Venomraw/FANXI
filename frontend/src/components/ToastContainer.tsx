@@ -85,7 +85,7 @@ function ToastItem({ toast, onDismiss }: ToastItemProps) {
         <button
           onClick={e => { e.stopPropagation(); handleDismiss(); }}
           className="flex-shrink-0 font-mono text-xs transition-colors mt-0.5"
-          style={{ color: 'rgba(255,255,255,0.25)' }}
+          style={{ color: 'rgba(255,255,255,0.5)' }}
           onMouseEnter={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.6)')}
           onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.25)')}
           aria-label="Dismiss"
@@ -171,7 +171,7 @@ export default function ToastContainer({ toasts, onDismiss }: ToastContainerProp
                 <p className="flex-1 font-sans text-[13px] leading-snug" style={{ color: 'rgba(255,255,255,0.88)' }}>
                   {t.message}
                 </p>
-                <button onClick={() => onDismiss(t.id)} className="font-mono text-xs" style={{ color: 'rgba(255,255,255,0.3)' }}>✕</button>
+                <button onClick={() => onDismiss(t.id)} className="font-mono text-xs" style={{ color: 'rgba(255,255,255,0.5)' }} aria-label="Dismiss">✕</button>
               </div>
             </div>
           </div>

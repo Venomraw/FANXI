@@ -166,9 +166,9 @@ function TutorialOverlay({ onDone }: { onDone: () => void }) {
               <button
                 onClick={handleSkip}
                 className="font-mono text-xs uppercase tracking-widest px-4 py-3 border transition-all"
-                style={{ borderColor: 'rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.35)' }}
-                onMouseEnter={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.65)')}
-                onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.35)')}
+                style={{ borderColor: 'rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.5)' }}
+                onMouseEnter={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.7)')}
+                onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.5)')}
               >
                 Skip
               </button>

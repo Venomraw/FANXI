@@ -134,7 +134,7 @@ export default function AdminPage() {
   return (
     <div className="min-h-screen bg-[var(--dark)] flex">
       {sidebarOpen && (
-        <div className="fixed inset-0 bg-black/60 z-40 lg:hidden" onClick={() => setSidebarOpen(false)} />
+        <div className="fixed inset-0 bg-black/60 z-40 lg:hidden" role="button" tabIndex={0} aria-label="Close sidebar" onClick={() => setSidebarOpen(false)} onKeyDown={e => e.key === 'Enter' && setSidebarOpen(false)} />
       )}
 
       {/* Sidebar */}
@@ -173,7 +173,7 @@ export default function AdminPage() {
       {/* Main */}
       <main className="flex-1 min-h-screen">
         <div className="lg:hidden flex items-center justify-between p-4 border-b border-white/10">
-          <button onClick={() => setSidebarOpen(true)} className="text-white/60 hover:text-white">
+          <button onClick={() => setSidebarOpen(true)} className="text-white/60 hover:text-white" aria-label="Open menu">
             <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>
           </button>
           <span className="text-red-500 text-xs font-sans font-semibold tracking-normal">ADMIN</span>

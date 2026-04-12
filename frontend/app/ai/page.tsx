@@ -474,9 +474,9 @@ export default function AIPage() {
                   <button
                     onClick={clearChat}
                     className="font-mono text-xs tracking-widest uppercase px-3 py-1.5 transition-all"
-                    style={{ color: 'rgba(255,255,255,0.3)', border: '1px solid var(--border)' }}
+                    style={{ color: 'rgba(255,255,255,0.5)', border: '1px solid var(--border)' }}
                     onMouseEnter={e => { e.currentTarget.style.color = 'var(--red)'; e.currentTarget.style.borderColor = 'rgba(255,45,85,0.3)'; }}
-                    onMouseLeave={e => { e.currentTarget.style.color = 'rgba(255,255,255,0.3)'; e.currentTarget.style.borderColor = 'var(--border)'; }}
+                    onMouseLeave={e => { e.currentTarget.style.color = 'rgba(255,255,255,0.5)'; e.currentTarget.style.borderColor = 'var(--border)'; }}
                   >
                     Clear
                   </button>
@@ -684,7 +684,7 @@ export default function AIPage() {
 
       {/* Footer hint */}
       <div className="text-center pb-4">
-        <span className="font-mono text-xs" style={{ color: 'rgba(255,255,255,0.2)' }}>
+        <span className="font-mono text-xs" style={{ color: 'rgba(255,255,255,0.5)' }}>
           Enter to send · Shift+Enter for new line · Chats saved per mode
         </span>
       </div>

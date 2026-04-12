@@ -321,7 +321,7 @@ export default function NationPage() {
               <div className="font-display font-semibold text-2xl mb-1" style={{ color: 'var(--text)' }}>
                 {stat.value}
               </div>
-              <div className="font-mono text-[11px] uppercase tracking-wider" style={{ color: 'var(--muted)' }}>
+              <div className="font-mono text-xs uppercase tracking-wider" style={{ color: 'var(--muted)' }}>
                 {stat.label}
               </div>
             </div>
@@ -413,7 +413,7 @@ export default function NationPage() {
                         {p.name}
                       </span>
                       <span
-                        className="font-mono text-[11px] px-2 py-0.5 rounded"
+                        className="font-mono text-xs px-2 py-0.5 rounded"
                         style={{
                           color: POS_COLORS[p.position] || 'var(--muted)',
                           background: `color-mix(in srgb, ${POS_COLORS[p.position] || 'var(--muted)'} 10%, transparent)`,
@@ -464,7 +464,7 @@ export default function NationPage() {
             <p className="font-sans text-base leading-relaxed" style={{ color: 'var(--text)', opacity: 0.8 }}>
               {seo.wc2026_outlook}
             </p>
-            <div className="mt-4 font-mono text-[11px]" style={{ color: 'var(--muted)' }}>
+            <div className="mt-4 font-mono text-xs" style={{ color: 'var(--muted)' }}>
               Powered by HERMES + VISION
             </div>
           </section>

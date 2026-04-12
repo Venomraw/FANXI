@@ -383,7 +383,7 @@ export default function OnboardingPage() {
                       }}
                     >
                       <span style={{ fontSize: '22px' }}>{a.emoji}</span>
-                      <span className="font-mono text-[7px] tracking-wide hidden sm:block" style={{ color: 'var(--muted)' }}>{a.label}</span>
+                      <span className="font-mono text-[11px] tracking-wide hidden sm:block" style={{ color: 'var(--muted)' }}>{a.label}</span>
                     </button>
                   ))}
                 </div>

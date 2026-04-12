@@ -324,7 +324,7 @@ export default function LandingNav() {
                     <button
                       onClick={handleLogout}
                       className="w-full flex items-center gap-3 px-4 py-2.5 font-sans font-semibold text-[13px] text-left transition-colors"
-                      style={{ color: 'rgba(255,255,255,0.35)', background: 'none', border: 'none' }}
+                      style={{ color: 'rgba(255,255,255,0.5)', background: 'none', border: 'none' }}
                       onMouseEnter={e => {
                         e.currentTarget.style.color = 'var(--red)';
                         e.currentTarget.style.background = 'rgba(255,45,85,0.06)';

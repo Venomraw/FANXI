@@ -74,7 +74,7 @@ export default function MatchSelector({ selectedId, onSelect }: Props) {
 
             {/* Round */}
             <p className="font-mono text-xs tracking-[2px] uppercase mb-3 truncate theme-transition"
-              style={{ color: active ? primary : 'rgba(255,255,255,0.3)' }}>
+              style={{ color: active ? primary : 'rgba(255,255,255,0.5)' }}>
               {m.round}
             </p>
 
@@ -89,7 +89,7 @@ export default function MatchSelector({ selectedId, onSelect }: Props) {
               </div>
 
               <span className="font-display text-xl px-1 flex-shrink-0 theme-transition"
-                style={{ color: active ? primary : 'rgba(255,255,255,0.2)' }}>
+                style={{ color: active ? primary : 'rgba(255,255,255,0.5)' }}>
                 vs
               </span>
 

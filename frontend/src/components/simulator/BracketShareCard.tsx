@@ -414,7 +414,7 @@ const BracketShareCard = forwardRef<HTMLDivElement, BracketShareCardProps>(
           <span style={{ fontSize: 12, fontWeight: 600, letterSpacing: 3, color: '#f59e0b', textTransform: 'uppercase' }}>
             FIFA World Cup 2026
           </span>
-          <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.3)' }}>
+          <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)' }}>
             fanxi.vercel.app
           </span>
         </div>
@@ -582,7 +582,7 @@ const BracketShareCard = forwardRef<HTMLDivElement, BracketShareCardProps>(
             right: 28,
             bottom: 10,
             fontSize: 10,
-            color: 'rgba(255,255,255,0.2)',
+            color: 'rgba(255,255,255,0.5)',
             letterSpacing: 0.5,
             lineHeight: 1,
           }}
