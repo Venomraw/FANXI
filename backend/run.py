@@ -17,8 +17,16 @@ import uvicorn
 
 DEV_MODE = "--dev" in sys.argv
 WORKERS = 1 if DEV_MODE else int(os.environ.get("FANXI_WORKERS", "4"))
-HOST = os.environ.get("FANXI_HOST", "0.0.0.0")
-PORT = int(os.environ.get("FANXI_PORT", "8000"))
+
+# Bind address is always 0.0.0.0 inside the container. Never read this from
+# env: FANXI_HOST historically held a *public* hostname (e.g. fanxi.app), and
+# passing that to uvicorn DNS-resolves to a non-local IP, causing
+# [Errno 99] cannot assign requested address on Railway/Render.
+HOST = "0.0.0.0"
+
+# Railway / Heroku / Render / Fly inject PORT. Honour it first, then fall back
+# to FANXI_PORT for legacy local setups, then 8000 as a final default.
+PORT = int(os.environ.get("PORT") or os.environ.get("FANXI_PORT") or 8000)
 
 if __name__ == "__main__":
     uvicorn.run(
