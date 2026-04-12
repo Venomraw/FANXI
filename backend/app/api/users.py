@@ -341,6 +341,9 @@ def google_auth_redirect():
 def google_auth_callback(code: str, session: Session = Depends(get_session)):
     """Exchange Google code for user info, find/create user, set cookie, redirect."""
     # 1. Exchange authorisation code for Google access token
+    redirect_uri = settings.google_redirect_uri
+    print(f"[Google OAuth] redirect_uri={redirect_uri}")
+
     with httpx.Client() as client:
         token_res = client.post(
             "https://oauth2.googleapis.com/token",
@@ -348,12 +351,13 @@ def google_auth_callback(code: str, session: Session = Depends(get_session)):
                 "code": code,
                 "client_id": settings.google_client_id,
                 "client_secret": settings.google_client_secret,
-                "redirect_uri": settings.google_redirect_uri,
+                "redirect_uri": redirect_uri,
                 "grant_type": "authorization_code",
             },
         )
         if token_res.status_code != 200:
-            raise HTTPException(status_code=400, detail="Google token exchange failed")
+            print(f"[Google OAuth] token exchange failed: {token_res.status_code} {token_res.text}")
+            raise HTTPException(status_code=400, detail=f"Google token exchange failed: {token_res.json().get('error_description', token_res.text)}")
 
         google_access_token = token_res.json().get("access_token")
 

@@ -393,3 +393,4 @@ def on_startup():
 
     logger.info("HERMES scheduled: content_refresh (168h), seo_health (24h)")
     logger.info("Environment: %s", os.environ.get("FANXI_ENV", "development"))
+    logger.info("Google redirect URI: %s", settings.google_redirect_uri)
