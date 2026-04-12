@@ -17,12 +17,12 @@ export default function WakingScreen({ status, elapsed, onRetry }: Props) {
     return () => clearInterval(id);
   }, []);
 
-  // Progress bar fills over 30 seconds, capped at 98% until ready
-  const progress = Math.min((elapsed / 30) * 100, 98);
+  // Progress bar fills over 10 seconds, capped at 98% until ready
+  const progress = Math.min((elapsed / 10) * 100, 98);
 
   const subMessage =
-    elapsed >= 25 ? 'Nearly ready — this only happens once...' :
-    elapsed >= 10 ? 'Almost there — warming up the engines...' :
+    elapsed >= 7 ? 'Nearly ready — this only happens once...' :
+    elapsed >= 4 ? 'Almost there — warming up the engines...' :
     null;
 
   return (
@@ -169,7 +169,7 @@ export default function WakingScreen({ status, elapsed, onRetry }: Props) {
                 className="font-mono text-xs uppercase tracking-widest"
                 style={{ color: 'rgba(255,255,255,0.2)' }}
               >
-                {elapsed}s — Render free tier wakes in ~30s
+                {elapsed}s — Connecting to servers...
               </p>
             </>
           )}

@@ -72,12 +72,12 @@ export function useBackendReady(): UseBackendReadyReturn {
       if (!cancelled) setStatus(s => s === 'checking' ? 'waking' : s);
     }, 1000);
 
-    // Tick elapsed; timeout after 60 seconds
+    // Tick elapsed; timeout after 10 seconds
     elapsedId = setInterval(() => {
       if (cancelled) return;
       setElapsed(prev => {
         const next = prev + 1;
-        if (next >= 60) {
+        if (next >= 10) {
           setStatus(s => s === 'waking' ? 'timeout' : s);
           cleanup();
         }
