@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
+import { API_URL } from '@/src/lib/api';
 
-const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000';
+const API = API_URL;
 
 const WC2026_SLUGS = [
   'argentina', 'australia', 'belgium', 'bolivia', 'brazil',

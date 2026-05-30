@@ -6,7 +6,7 @@ from fastapi import APIRouter, HTTPException, Query
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from typing import Literal
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from groq import Groq
 import json
 
@@ -141,7 +141,7 @@ async def get_daily_brief(refresh: bool = Query(default=False)):
     Returns a 3-sentence WC 2026 tactical insight.
     Cached for 24 hours; pass ?refresh=true to force regeneration.
     """
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
 
     # Serve from cache if fresh and not forced refresh
     if (

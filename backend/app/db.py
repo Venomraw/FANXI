@@ -141,6 +141,7 @@ def init_db() -> None:
         TeamDB, MatchDB, TeamSquadCache, PasswordResetToken,
         AgentRun, ApprovalQueue, AuthEvent, ScoutReport, VisionCache,
         NudgeLog, InAppNotification,
+        AiCommentary, NationPage, SimulatorSubmission, SharedBracket,
     )
 
     SQLModel.metadata.create_all(engine)

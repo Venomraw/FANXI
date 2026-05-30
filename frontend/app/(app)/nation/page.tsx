@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useTheme } from '@/src/context/ThemeContext';
 import { useAuth } from '@/src/context/AuthContext';
 import { formatMatchTime } from '@/src/utils/timezone';
+import { API_URL } from '@/src/lib/api';
 
 // ── Static WC 2026 team list ────────────────────────────────────────────────
 
@@ -152,7 +153,7 @@ const POS_FILTER_GROUPS: Record<string, string[]> = {
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
 
-const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000';
+const API = API_URL;
 
 function timeAgo(dateStr: string | number): string {
   const date = typeof dateStr === 'number' ? new Date(dateStr * 1000) : new Date(dateStr);

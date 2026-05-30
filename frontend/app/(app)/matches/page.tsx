@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useTheme } from '@/src/context/ThemeContext';
 import { useAuth } from '@/src/context/AuthContext';
 import { formatMatchTime, formatMatchDateHeading, getTimezoneLabel } from '@/src/utils/timezone';
+import { apiFetch } from '@/src/lib/api';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -220,19 +221,16 @@ export default function MatchesPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/matches/all`)
-      .then(r => r.json())
-      .then((data: Match[]) => { setMatches(data); setLoading(false); })
-      .catch(() => setLoading(false));
+    apiFetch<Match[]>('/matches/all')
+      .then(data => { setMatches(data); })
+      .catch(() => {})
+      .finally(() => setLoading(false));
   }, []);
 
   useEffect(() => {
     if (!user) return;
-    fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/predictions/history/${user.id}`)
-      .then(r => r.json())
-      .then((hist: { match_id: number }[]) => {
-        setPredictedIds(new Set(hist.map(h => h.match_id)));
-      })
+    apiFetch<{ match_id: number }[]>(`/predictions/history/${user.id}`)
+      .then(hist => { setPredictedIds(new Set(hist.map(h => h.match_id))); })
       .catch(() => {});
   }, [user]);
 

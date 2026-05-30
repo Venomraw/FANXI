@@ -3,10 +3,9 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
+import { API_URL } from '@/src/lib/api';
 
 // ── Constants ───────────────────────────────────────────────────────────────
-
-const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000';
 
 const POS_COLORS: Record<string, string> = {
   GK: 'var(--gold)',
@@ -151,7 +150,7 @@ export default function NationPage() {
 
   const fetchData = useCallback(async () => {
     try {
-      const res = await fetch(`${API}/nations/${teamSlug}`);
+      const res = await fetch(`${API_URL}/nations/${teamSlug}`);
       if (!res.ok) {
         setError('Nation not found');
         return;

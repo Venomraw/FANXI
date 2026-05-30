@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/src/context/AuthContext';
 import { useTheme } from '@/src/context/ThemeContext';
+import { API_URL } from '@/src/lib/api';
 
 // World Cup 2026 opening match — Jun 11, 2026 20:00 UTC
 const WC_KICKOFF = new Date('2026-06-11T20:00:00Z');
@@ -68,7 +69,7 @@ export default function LoginPage() {
     e.preventDefault();
     setLoading(true); setError('');
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/register`, {
+      const res = await fetch(`${API_URL}/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password, email, country_allegiance: country }),
@@ -440,7 +441,7 @@ export default function LoginPage() {
           </div>
 
           <a
-            href={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/auth/google`}
+            href={`${API_URL}/auth/google`}
             className="w-full flex items-center justify-center gap-3 py-3 font-sans font-semibold text-[13px] border transition-all hover:-translate-y-0.5"
             style={{ borderColor: 'var(--border)', color: 'var(--text)', background: 'transparent' }}
             onMouseEnter={e => {

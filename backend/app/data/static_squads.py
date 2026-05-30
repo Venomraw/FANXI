@@ -74,7 +74,7 @@ STATIC_SQUADS: dict[str, list[dict]] = {
         {"name": "Aymeric Laporte",       "number": 14, "position": "CB"},
         {"name": "Robin Le Normand",      "number": 24, "position": "CB"},
         {"name": "Pau Cubarsí",           "number": 4,  "position": "CB"},
-        {"name": "Marc Cucurella",        "number": 23, "position": "LB"},
+        {"name": "Marc Cucurella",        "number": 15, "position": "LB"},
         {"name": "Alejandro Grimaldo",    "number": 3,  "position": "LB"},
         {"name": "Rodri",                 "number": 16, "position": "CDM"},
         {"name": "Mikel Merino",          "number": 6,  "position": "CM"},

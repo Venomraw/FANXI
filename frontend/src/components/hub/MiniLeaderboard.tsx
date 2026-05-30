@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTheme } from '@/src/context/ThemeContext';
 import { useAuth } from '@/src/context/AuthContext';
+import { API_URL } from '@/src/lib/api';
 
 interface Entry {
   rank: number;
@@ -29,7 +30,7 @@ export default function MiniLeaderboard() {
   const [entries, setEntries] = useState<Entry[]>([]);
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/predictions/leaderboard`)
+    fetch(`${API_URL}/predictions/leaderboard`)
       .then(r => r.json())
       .then(d => setEntries(Array.isArray(d) ? d.slice(0, 5) : []))
       .catch(() => {});

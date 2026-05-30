@@ -3,8 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/src/context/AuthContext';
 import { useTheme } from '@/src/context/ThemeContext';
-
-const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+import { API_URL } from '@/src/lib/api';
 
 const AVATARS = [
   { id: 'football',    emoji: '⚽' },
@@ -175,7 +174,7 @@ export default function SettingsPage() {
     setUsernameStatus('checking');
     const timer = setTimeout(async () => {
       try {
-        const res = await fetch(`${API}/users/check/${encodeURIComponent(username)}`);
+        const res = await fetch(`${API_URL}/users/check/${encodeURIComponent(username)}`);
         const { available } = await res.json();
         setUsernameStatus(available ? 'available' : 'taken');
       } catch {
@@ -193,7 +192,7 @@ export default function SettingsPage() {
 
     setSaving(true);
     try {
-      const res = await authFetch(`${API}/users/me/onboarding`, {
+      const res = await authFetch(`${API_URL}/users/me/onboarding`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

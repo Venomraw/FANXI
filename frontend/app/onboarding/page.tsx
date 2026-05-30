@@ -3,8 +3,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/src/context/AuthContext';
 import { useTheme } from '@/src/context/ThemeContext';
+import { API_URL } from '@/src/lib/api';
 
-const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const API = API_URL;
 
 // ── Data ──────────────────────────────────────────────────────────────────
 

@@ -4,8 +4,8 @@ import { useParams } from 'next/navigation';
 import { useTheme } from '@/src/context/ThemeContext';
 import { useAuth } from '@/src/context/AuthContext';
 import ShareCardButton from '@/src/components/ShareCardButton';
+import { API_URL } from '@/src/lib/api';
 
-const API    = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 const WS_URL = process.env.NEXT_PUBLIC_WS_URL  || 'ws://localhost:8000';
 
 // ---------------------------------------------------------------------------
@@ -606,9 +606,9 @@ export default function LiveMatchPage() {
   const fetchRest = useCallback(async () => {
     try {
       const [lineupsRes, pulseRes, eventsRes] = await Promise.all([
-        fetch(`${API}/matches/${matchId}/lineups`),
-        fetch(`${API}/matches/${matchId}/pulse`),
-        fetch(`${API}/matches/${matchId}/events`),
+        fetch(`${API_URL}/matches/${matchId}/lineups`),
+        fetch(`${API_URL}/matches/${matchId}/pulse`),
+        fetch(`${API_URL}/matches/${matchId}/events`),
       ]);
       if (lineupsRes.ok) setLineups(await lineupsRes.json());
       if (pulseRes.ok)   setPulse(await pulseRes.json());
@@ -617,7 +617,7 @@ export default function LiveMatchPage() {
 
     if (user && token) {
       try {
-        const res = await authFetch(`${API}/predictions/matches/${matchId}/my-score`);
+        const res = await authFetch(`${API_URL}/predictions/matches/${matchId}/my-score`);
         if (res.ok) setMyScore(await res.json());
       } catch { /* not locked */ }
     }
@@ -677,7 +677,7 @@ export default function LiveMatchPage() {
     if (revealData) { setShowReveal(true); return; }
     setRevealLoading(true);
     try {
-      const res = await authFetch(`${API}/predictions/matches/${matchId}/score-reveal`);
+      const res = await authFetch(`${API_URL}/predictions/matches/${matchId}/score-reveal`);
       if (res.ok) {
         const data = await res.json();
         setRevealData(data);

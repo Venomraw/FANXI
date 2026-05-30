@@ -1,7 +1,7 @@
 import re
 import secrets
 import urllib.parse
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 import httpx
 from fastapi import APIRouter, Cookie, Depends, HTTPException, Request, Response, status
@@ -273,7 +273,7 @@ def forgot_password(body: ForgotPasswordRequest, session: Session = Depends(get_
     reset_token = PasswordResetToken(
         user_id=user.id,
         token=raw_token,
-        expires_at=datetime.utcnow() + timedelta(hours=1),
+        expires_at=datetime.now(timezone.utc) + timedelta(hours=1),
     )
     session.add(reset_token)
     session.commit()
@@ -303,7 +303,7 @@ def reset_password(body: ResetPasswordRequest, session: Session = Depends(get_se
     if not token_row or token_row.used:
         raise HTTPException(status_code=400, detail="Invalid or already used reset token.")
 
-    if datetime.utcnow() > token_row.expires_at:
+    if datetime.now(timezone.utc) > token_row.expires_at:
         raise HTTPException(status_code=400, detail="Reset token has expired. Please request a new one.")
 
     user = session.get(User, token_row.user_id)

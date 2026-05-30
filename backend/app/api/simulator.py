@@ -10,7 +10,7 @@ Endpoints:
 import logging
 import secrets
 import time
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Request
@@ -98,7 +98,7 @@ def submit_bracket(
         existing.champion = body.champion
         existing.finalist = body.finalist
         existing.semi_finalists = body.semi_finalists
-        existing.submitted_at = datetime.utcnow()
+        existing.submitted_at = datetime.now(timezone.utc)
         session.add(existing)
     else:
         sub = SimulatorSubmission(

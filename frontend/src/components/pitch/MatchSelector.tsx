@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { useTheme } from '@/src/context/ThemeContext';
 import { formatMatchTime } from '@/src/utils/timezone';
+import { apiFetch } from '@/src/lib/api';
 
 export interface WCMatch {
   id: number;
@@ -26,17 +27,15 @@ export default function MatchSelector({ selectedId, onSelect }: Props) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/matches/upcoming`)
-      .then(r => r.json())
-      .then(d => {
-        const list = Array.isArray(d) ? d : [];
+    apiFetch<WCMatch[]>('/matches/upcoming')
+      .then(list => {
         setMatches(list);
         if (list.length > 0) {
           const preselect = selectedId !== null ? list.find(m => m.id === selectedId) : null;
           onSelect(preselect ?? list[0]);
         }
       })
-      .catch(() => {})
+      .catch(() => { setMatches([]); })
       .finally(() => setLoading(false));
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

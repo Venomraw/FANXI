@@ -5,8 +5,9 @@ import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import BracketShareCard, { type BracketShareCardProps } from '@/src/components/simulator/BracketShareCard';
 import { getTeamInfo } from '@/src/data/wc2026Groups';
+import { API_URL } from '@/src/lib/api';
 
-const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000';
+const API = API_URL;
 
 interface SharedBracketData {
   share_id: string;

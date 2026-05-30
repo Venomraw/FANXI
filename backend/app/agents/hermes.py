@@ -196,7 +196,7 @@ class Hermes:
         if not data:
             raise RuntimeError(f"Groq returned no data for {team}")
 
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
 
         with Session(engine) as session:
             existing = session.exec(
@@ -236,7 +236,7 @@ class Hermes:
     def _save_fallback(self, team: str) -> None:
         """Save fallback template content when Groq fails."""
         slug = team_to_slug(team)
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
 
         fallback_title = f"{team} World Cup 2026 — Squad, Predictions & Tactical Analysis | FanXI"
         fallback_desc = (
@@ -347,7 +347,7 @@ class Hermes:
 
         findings: List[Dict[str, Any]] = []
         actions: List[str] = []
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         stale_cutoff = now - timedelta(days=_STALE_DAYS)
 
         with Session(engine) as session:
@@ -499,7 +499,7 @@ class Hermes:
         """Return HERMES stats for Oracle morning briefing."""
         with Session(engine) as session:
             total = len(session.exec(select(NationPage)).all())
-            now = datetime.utcnow()
+            now = datetime.now(timezone.utc)
             stale_cutoff = now - timedelta(days=_STALE_DAYS)
 
             stale = len(session.exec(

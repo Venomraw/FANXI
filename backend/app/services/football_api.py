@@ -4,7 +4,7 @@ from sqlmodel import Session, select
 from app.models import TeamSquadCache
 import httpx
 from app.db import engine
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from app.config import settings
 
 class FootballAPIError(Exception):
@@ -103,7 +103,7 @@ def get_cached_squad(team_name: str, session: Session) -> list | None:
     statement = select(TeamSquadCache).where(TeamSquadCache.team_name == team_name)
     cache = session.exec(statement).first()
     
-    if cache and cache.expires_at > datetime.utcnow():
+    if cache and cache.expires_at > datetime.now(timezone.utc):
         print(f"⚡ CACHE HIT: Loading {team_name} from local storage.")
         return cache.players_data
     return None
@@ -123,11 +123,11 @@ def fetch_and_cache_squad(team_name: str, team_id: int, session: Session):
     # Save/Update Cache
     cache = session.exec(select(TeamSquadCache).where(TeamSquadCache.team_name == team_name)).first()
     if not cache:
-        cache = TeamSquadCache(team_name=team_name, expires_at=datetime.utcnow() + timedelta(hours=24))
+        cache = TeamSquadCache(team_name=team_name, expires_at=datetime.now(timezone.utc) + timedelta(hours=24))
     
     cache.players_data = players
-    cache.last_updated = datetime.utcnow()
-    cache.expires_at = datetime.utcnow() + timedelta(hours=24)
+    cache.last_updated = datetime.now(timezone.utc)
+    cache.expires_at = datetime.now(timezone.utc) + timedelta(hours=24)
     
     session.add(cache)
     session.commit()

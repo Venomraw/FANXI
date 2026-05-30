@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect, KeyboardEvent, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/src/context/AuthContext';
+import { API_URL } from '@/src/lib/api';
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -260,7 +261,7 @@ export default function AIPage() {
     if (textareaRef.current) textareaRef.current.style.height = 'auto';
 
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/ai/chat/stream`, {
+      const res = await fetch(`${API_URL}/ai/chat/stream`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ mode, messages: newMessages }),

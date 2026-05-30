@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Script from 'next/script';
 import { useToast } from '@/src/context/ToastContext';
+import { apiFetch, API_URL } from '@/src/lib/api';
 import {
   WC2026_GROUPS,
   GROUP_KEYS,
@@ -70,7 +71,7 @@ function getSessionId(): string {
   return id;
 }
 
-const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000';
+const API = API_URL;
 
 // ---------------------------------------------------------------------------
 // Component
@@ -108,9 +109,8 @@ export default function SimulatorPage() {
 
   // Fetch community stats
   useEffect(() => {
-    fetch(`${API}/simulator/community`)
-      .then(r => r.ok ? r.json() : null)
-      .then(d => d && setCommunity(d))
+    apiFetch<CommunityStats>('/simulator/community')
+      .then(d => setCommunity(d))
       .catch(() => {});
   }, [bracket.final]);
 
@@ -300,7 +300,7 @@ export default function SimulatorPage() {
     const finalist =
       team === finalTeams.teamA ? finalTeams.teamB : finalTeams.teamA;
     const semis = sfMatchups.map(m => bracket.sf[m.id]).filter(Boolean) as string[];
-    fetch(`${API}/simulator/submit`, {
+    apiFetch('/simulator/submit', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -373,7 +373,7 @@ export default function SimulatorPage() {
 
     setSharing(true);
     try {
-      const res = await fetch(`${API}/simulator/share`, {
+      const data = await apiFetch<{ share_id: string }>('/simulator/share', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -382,8 +382,6 @@ export default function SimulatorPage() {
           finalist,
         }),
       });
-      if (!res.ok) throw new Error('Share failed');
-      const data = await res.json();
       setShareId(data.share_id);
       return `https://fanxi.vercel.app/simulator/share/${data.share_id}`;
     } catch {

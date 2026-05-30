@@ -1,6 +1,10 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional, List, Dict, Any
 from sqlmodel import SQLModel, Field, JSON, Column
+
+
+def _utcnow() -> datetime:
+    return datetime.now(timezone.utc)
 
 
 # ---------------------------------------------------------------------------
@@ -43,7 +47,7 @@ class MatchPrediction(SQLModel, table=True):
     #           player_carded, shots_on_target, man_of_the_match }
 
     status: str = Field(default="LOCKED")
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=_utcnow)
 
 
 # ---------------------------------------------------------------------------
@@ -152,7 +156,7 @@ class PredictionDB(SQLModel, table=True):
     match_id: int = Field(index=True)
     formation: str                       # e.g. "4-3-3"
     players_csv: str                     # pipe-separated player names
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=_utcnow)
 
 
 # ---------------------------------------------------------------------------
@@ -181,7 +185,7 @@ class AiCommentary(SQLModel, table=True):
     match_id: int = Field(index=True)
     minute: Optional[int] = None
     content: str
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=_utcnow)
 
 
 class TeamSquadCache(SQLModel, table=True):
@@ -192,7 +196,7 @@ class TeamSquadCache(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     team_name: str = Field(index=True, unique=True)
     players_data: Dict[str, Any] = Field(default={}, sa_column=Column(JSON))
-    last_updated: datetime = Field(default_factory=datetime.utcnow)
+    last_updated: datetime = Field(default_factory=_utcnow)
     expires_at: datetime  # Time-based expiration
 
 
@@ -220,7 +224,7 @@ class AgentRun(SQLModel, table=True):
     actions_taken: List[str] = Field(default_factory=list, sa_column=Column(JSON))
     escalated_to_queue: bool = Field(default=False)
     summary: str = Field(default="")
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=_utcnow)
 
 
 class ApprovalQueue(SQLModel, table=True):
@@ -244,7 +248,7 @@ class ApprovalQueue(SQLModel, table=True):
     status: str = Field(default="pending", index=True)  # pending | approved | rejected
     reviewed_by: Optional[str] = None                   # admin username
     reviewed_at: Optional[datetime] = None
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=_utcnow)
 
 
 class AuthEvent(SQLModel, table=True):
@@ -262,7 +266,7 @@ class AuthEvent(SQLModel, table=True):
     country: Optional[str] = None                      # GeoIP resolved (best-effort)
     user_agent: Optional[str] = None
     details: Optional[str] = None                      # extra context
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=_utcnow)
 
 
 class ScoutReport(SQLModel, table=True):
@@ -281,7 +285,7 @@ class ScoutReport(SQLModel, table=True):
     away_team: str
     report_data: Dict[str, Any] = Field(default_factory=dict, sa_column=Column(JSON))
     agent: str = Field(default="VISION")
-    generated_at: datetime = Field(default_factory=datetime.utcnow)
+    generated_at: datetime = Field(default_factory=_utcnow)
     expires_at: datetime                               # generated_at + 24h
 
 
@@ -309,7 +313,7 @@ class VisionCache(SQLModel, table=True):
     away_team: Optional[str] = None
     report_data: Dict[str, Any] = Field(default_factory=dict, sa_column=Column(JSON))
     agent: str = Field(default="VISION")
-    generated_at: datetime = Field(default_factory=datetime.utcnow)
+    generated_at: datetime = Field(default_factory=_utcnow)
     expires_at: Optional[datetime] = None              # None = never expires
 
 
@@ -330,7 +334,7 @@ class NudgeLog(SQLModel, table=True):
     user_id: int = Field(index=True)
     match_id: int = Field(index=True)
     nudge_type: str = Field(default="in_app")          # "in_app" | future: "email", "push"
-    sent_at: datetime = Field(default_factory=datetime.utcnow)
+    sent_at: datetime = Field(default_factory=_utcnow)
     converted: bool = Field(default=False)
     match_kickoff: Optional[datetime] = None
 
@@ -355,8 +359,8 @@ class NationPage(SQLModel, table=True):
     wc2026_outlook: str = Field(default="")                # 100-150 words
     faq_json: List[Dict[str, Any]] = Field(default_factory=list, sa_column=Column(JSON))
     keywords: List[str] = Field(default_factory=list, sa_column=Column(JSON))
-    generated_at: datetime = Field(default_factory=datetime.utcnow)
-    updated_at: datetime = Field(default_factory=datetime.utcnow)
+    generated_at: datetime = Field(default_factory=_utcnow)
+    updated_at: datetime = Field(default_factory=_utcnow)
     agent: str = Field(default="HERMES")
 
 
@@ -378,7 +382,7 @@ class InAppNotification(SQLModel, table=True):
     action_url: str = Field(default="")
     notification_type: str = Field(index=True)         # "prediction_nudge" | "match_starting" | "score_reveal" | "leaderboard_change" | "agent_alert"
     is_read: bool = Field(default=False)
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=_utcnow)
     expires_at: Optional[datetime] = None              # None = never expires
 
 
@@ -396,7 +400,7 @@ class SimulatorSubmission(SQLModel, table=True):
     champion: str
     finalist: str
     semi_finalists: List[str] = Field(default_factory=list, sa_column=Column(JSON))
-    submitted_at: datetime = Field(default_factory=datetime.utcnow)
+    submitted_at: datetime = Field(default_factory=_utcnow)
 
 
 # ---------------------------------------------------------------------------
@@ -414,4 +418,4 @@ class SharedBracket(SQLModel, table=True):
     champion: str
     finalist: str
     bracket_data: Dict[str, Any] = Field(default_factory=dict, sa_column=Column(JSON))
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=_utcnow)

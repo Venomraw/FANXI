@@ -10,6 +10,7 @@ import { useTheme } from '@/src/context/ThemeContext';
 import { useAuth } from '@/src/context/AuthContext';
 import { FORMATIONS, DEFAULT_FORMATION, FormationLayout } from '@/src/data/formations';
 import { WC2026_TEAMS } from '@/src/data/teamColors';
+import { API_URL, apiFetch } from '@/src/lib/api';
 
 function getFlagForTeam(name: string): string {
   const found = WC2026_TEAMS.find(t => t.name.toLowerCase() === name.toLowerCase());
@@ -124,13 +125,14 @@ export default function PitchBoard({ onLockSuccess }: PitchBoardProps = {}) {
   const loadSquad = useCallback(async (teamName: string) => {
     setSquadLoading(true);
     try {
-      const res  = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/squad/${encodeURIComponent(teamName)}`);
-      const data = await res.json();
-      const players: Player[] = (data.players ?? []).map((p: Record<string, unknown>) => ({
+      const data = await apiFetch<{ players?: { name: string; number?: number; position?: string }[] }>(
+        `/squad/${encodeURIComponent(teamName)}`
+      );
+      const players: Player[] = (data.players ?? []).map(p => ({
         name: p.name, number: p.number ?? 0, position: p.position,
       }));
       if (players.length > 0) { setSquad(players); setLineup({}); }
-    } catch { /* keep current */ }
+    } catch { /* keep current squad */ }
     finally { setSquadLoading(false); }
   }, []);
 
@@ -161,11 +163,11 @@ export default function PitchBoard({ onLockSuccess }: PitchBoardProps = {}) {
   const fetchHistory = async () => {
     if (!user) return;
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/predictions/history/${user.id}`, {
+      const data = await apiFetch<PredictionHistory[]>(`/predictions/history/${user.id}`, {
         headers: token ? { Authorization: `Bearer ${token}` } : {},
       });
-      if (res.ok) setHistory(await res.json());
-    } catch { /* swallow */ }
+      setHistory(data);
+    } catch { /* keep existing history */ }
   };
 
   const handleLockSelection = async () => {
@@ -195,28 +197,21 @@ export default function PitchBoard({ onLockSuccess }: PitchBoardProps = {}) {
     };
     try {
       const userId = user?.id ?? 1;
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/predictions/lock/${matchId}?user_id=${userId}`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
-          body: JSON.stringify(finalData),
-        }
-      );
-      if (res.ok) {
-        setLockMsg({ ok: true, text: `🔒 Locked — ${selectedMatch?.home_team ?? 'Match'} vs ${selectedMatch?.away_team ?? '—'}` });
-        fetchHistory();
-        onLockSuccess?.({
-          matchId,
-          homeTeam: selectedMatch?.home_team ?? '',
-          awayTeam: selectedMatch?.away_team ?? '',
-          formation: formation.name,
-        });
-      } else {
-        setLockMsg({ ok: false, text: '❌ Lock failed — try again.' });
-      }
+      await apiFetch(`/predictions/lock/${matchId}?user_id=${userId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+        body: JSON.stringify(finalData),
+      });
+      setLockMsg({ ok: true, text: `🔒 Locked — ${selectedMatch?.home_team ?? 'Match'} vs ${selectedMatch?.away_team ?? '—'}` });
+      fetchHistory();
+      onLockSuccess?.({
+        matchId,
+        homeTeam: selectedMatch?.home_team ?? '',
+        awayTeam: selectedMatch?.away_team ?? '',
+        formation: formation.name,
+      });
     } catch {
-      setLockMsg({ ok: false, text: '❌ Connection error.' });
+      setLockMsg({ ok: false, text: '❌ Lock failed — try again.' });
     }
     setTimeout(() => setLockMsg(null), 4000);
   };

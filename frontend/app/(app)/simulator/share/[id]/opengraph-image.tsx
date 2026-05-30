@@ -5,7 +5,7 @@ export const alt = 'WC2026 Bracket — FanXI';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
-const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000';
+const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000'; // edge runtime — can't import from lib
 
 // Flag emoji lookup for common WC2026 teams (edge runtime can't import full data module)
 const FLAGS: Record<string, string> = {

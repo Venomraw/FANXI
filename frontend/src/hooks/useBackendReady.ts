@@ -1,6 +1,7 @@
 'use client';
 import { useCallback, useEffect, useState } from 'react';
 import { fanxiLog } from '@/src/lib/logger';
+import { API_URL } from '@/src/lib/api';
 
 export type BackendStatus = 'checking' | 'waking' | 'ready' | 'timeout';
 
@@ -22,7 +23,7 @@ export function useBackendReady(): UseBackendReadyReturn {
   }, []);
 
   useEffect(() => {
-    const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000';
+    const API = API_URL;
     let cancelled = false;
     let pingId:    ReturnType<typeof setTimeout>   | undefined = undefined;
     let elapsedId: ReturnType<typeof setInterval>  | undefined = undefined;

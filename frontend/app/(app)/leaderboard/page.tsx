@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTheme } from '@/src/context/ThemeContext';
 import { useAuth } from '@/src/context/AuthContext';
+import { apiFetch } from '@/src/lib/api';
 
 interface LeaderboardEntry {
   rank: number;
@@ -31,10 +32,10 @@ export default function LeaderboardPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/predictions/leaderboard`)
-      .then(r => r.json())
-      .then(data => { setEntries(data); setLoading(false); })
-      .catch(() => setLoading(false));
+    apiFetch<LeaderboardEntry[]>('/predictions/leaderboard')
+      .then(data => { setEntries(data); })
+      .catch(() => {})
+      .finally(() => setLoading(false));
   }, []);
 
   return (

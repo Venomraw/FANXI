@@ -5,6 +5,7 @@ import { useTheme } from '@/src/context/ThemeContext';
 import { useAuth } from '@/src/context/AuthContext';
 import { useToast } from '@/src/context/ToastContext';
 import { formatMatchTime } from '@/src/utils/timezone';
+import { API_URL } from '@/src/lib/api';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -150,8 +151,6 @@ export default function Home() {
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
   const [dataLoading, setDataLoading] = useState(true);
 
-  const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
-
   useEffect(() => {
     if (!isLoading && !user) router.push('/login');
     if (!isLoading && user && !user.onboarding_complete) router.push('/onboarding');
@@ -162,10 +161,10 @@ export default function Home() {
     const load = async () => {
       try {
         const [liveRes, allRes, predRes, lbRes] = await Promise.allSettled([
-          fetch(`${API}/matches/live`).then(r => r.json()),
-          fetch(`${API}/matches/all`).then(r => r.json()),
-          fetch(`${API}/predictions/history/${user.id}`).then(r => r.json()),
-          fetch(`${API}/predictions/leaderboard`).then(r => r.json()),
+          fetch(`${API_URL}/matches/live`).then(r => r.json()),
+          fetch(`${API_URL}/matches/all`).then(r => r.json()),
+          fetch(`${API_URL}/predictions/history/${user.id}`).then(r => r.json()),
+          fetch(`${API_URL}/predictions/leaderboard`).then(r => r.json()),
         ]);
         if (liveRes.status === 'fulfilled') setLiveMatches(Array.isArray(liveRes.value) ? liveRes.value : []);
         if (allRes.status === 'fulfilled') {
@@ -184,7 +183,7 @@ export default function Home() {
     };
     load();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, API]);
+  }, [user]);
 
   useEffect(() => {
     const els = document.querySelectorAll('.reveal');

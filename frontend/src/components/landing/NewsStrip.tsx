@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { API_URL } from '@/src/lib/api';
 
 interface NewsArticle {
   title: string;
@@ -82,8 +83,7 @@ export default function NewsStrip() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000';
-    fetch(`${apiUrl}/news/wc2026`)
+    fetch(`${API_URL}/news/wc2026`)
       .then((r) => {
         if (!r.ok) throw new Error('Failed');
         return r.json() as Promise<NewsArticle[]>;

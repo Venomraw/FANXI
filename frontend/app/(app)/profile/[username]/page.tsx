@@ -5,6 +5,7 @@ import { useTheme } from '@/src/context/ThemeContext';
 import { useAuth } from '@/src/context/AuthContext';
 import { formatMatchTime } from '@/src/utils/timezone';
 import ShareCardButton from '@/src/components/ShareCardButton';
+import { apiFetch, ApiError } from '@/src/lib/api';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -255,28 +256,22 @@ export default function ProfilePage() {
     setLoading(true);
     setNotFound(false);
 
-    fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/users/profile/${encodeURIComponent(username)}`)
-      .then(r => {
-        if (r.status === 404) { setNotFound(true); setLoading(false); return null; }
-        return r.json();
-      })
-      .then((data: PublicProfile | null) => {
-        if (!data) return;
+    apiFetch<PublicProfile>(`/users/profile/${encodeURIComponent(username)}`)
+      .then(data => {
         setProfile(data);
-        // Fetch history + leaderboard in parallel
         return Promise.all([
-          fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/predictions/history/${data.id}`).then(r => r.json()),
-          fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/predictions/leaderboard`).then(r => r.json()),
+          apiFetch<MatchPrediction[]>(`/predictions/history/${data.id}`),
+          apiFetch<LeaderboardEntry[]>('/predictions/leaderboard'),
         ]);
       })
-      .then(results => {
-        if (!results) return;
-        const [hist, lb] = results as [MatchPrediction[], LeaderboardEntry[]];
+      .then(([hist, lb]) => {
         setHistory(hist ?? []);
         setLeaderboard(lb ?? []);
-        setLoading(false);
       })
-      .catch(() => setLoading(false));
+      .catch((err) => {
+        if (err instanceof ApiError && err.status === 404) setNotFound(true);
+      })
+      .finally(() => setLoading(false));
   }, [username]);
 
   const isOwnProfile = authUser?.username === username;
