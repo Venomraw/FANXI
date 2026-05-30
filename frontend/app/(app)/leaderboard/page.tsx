@@ -30,11 +30,12 @@ export default function LeaderboardPage() {
   const router = useRouter();
   const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     apiFetch<LeaderboardEntry[]>('/predictions/leaderboard')
       .then(data => { setEntries(data); })
-      .catch(() => {})
+      .catch(() => { setError(true); })
       .finally(() => setLoading(false));
   }, []);
 
@@ -91,6 +92,15 @@ export default function LeaderboardPage() {
             <div className="py-16 text-center font-mono text-sm tracking-normal"
               style={{ color: 'rgba(255,255,255,0.5)' }}>
               Loading scouts...
+            </div>
+          ) : error ? (
+            <div className="py-16 text-center">
+              <p className="font-sans font-semibold text-[14px] mb-1" style={{ color: 'var(--text)' }}>
+                Failed to load rankings
+              </p>
+              <p className="font-sans text-[13px]" style={{ color: 'var(--muted)' }}>
+                Check your connection and try again.
+              </p>
             </div>
           ) : entries.length === 0 ? (
             <div className="py-16 text-center">

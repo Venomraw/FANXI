@@ -594,6 +594,7 @@ export default function LiveMatchPage() {
   const [myScore,     setMyScore]     = useState<MyScore | null>(null);
   const [commentary,  setCommentary]  = useState<Commentary[]>([]);
   const [scoreFlash,  setScoreFlash]  = useState(false);
+  const [timedOut,    setTimedOut]    = useState(false);
 
   // Reveal state
   const [showReveal,   setShowReveal]   = useState(false);
@@ -602,6 +603,14 @@ export default function LiveMatchPage() {
 
   const wsRef     = useRef<WebSocket | null>(null);
   const prevGoals = useRef<{ home?: number; away?: number }>({});
+
+  // Timeout: if no match data arrives within 10s, show error state
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!matchState && !connected) setTimedOut(true);
+    }, 10000);
+    return () => clearTimeout(timer);
+  }, [matchState, connected]);
 
   const fetchRest = useCallback(async () => {
     try {
@@ -698,6 +707,34 @@ export default function LiveMatchPage() {
   const activeLineup = lineups.home || lineups.away;
 
   if (!matchState && !connected) {
+    if (timedOut) {
+      return (
+        <div className="min-h-screen flex items-center justify-center" style={{ background: 'transparent' }}>
+          <div className="text-center max-w-sm px-6">
+            <p className="font-display font-semibold text-[72px] leading-none mb-3" style={{ color: 'var(--border)' }}>
+              404
+            </p>
+            <h2 className="font-display font-semibold text-[22px] mb-2" style={{ color: 'var(--text)' }}>
+              Match not found
+            </h2>
+            <p className="font-sans text-[14px] mb-6" style={{ color: 'var(--muted)' }}>
+              This match doesn't exist or hasn't started yet.
+            </p>
+            <a
+              href="/matches"
+              className="inline-block font-sans font-semibold text-[13px] px-6 py-3 border transition-all"
+              style={{
+                color: primary,
+                borderColor: `color-mix(in srgb, ${primary} 40%, transparent)`,
+                background: `color-mix(in srgb, ${primary} 8%, transparent)`,
+              }}
+            >
+              View all matches
+            </a>
+          </div>
+        </div>
+      );
+    }
     return (
       <div className="min-h-screen" style={{ background: 'transparent' }}>
         <div style={{ maxWidth: 1200, margin: '0 auto', padding: '32px 28px' }}>

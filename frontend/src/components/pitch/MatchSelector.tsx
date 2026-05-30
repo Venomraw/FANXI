@@ -51,6 +51,17 @@ export default function MatchSelector({ selectedId, onSelect }: Props) {
     );
   }
 
+  if (matches.length === 0) {
+    return (
+      <div className="flex items-center gap-3 py-4 px-3">
+        <span className="text-lg">📋</span>
+        <p className="font-sans text-[13px]" style={{ color: 'var(--muted)' }}>
+          No upcoming matches available right now.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="flex gap-2 overflow-x-auto pb-1 custom-scrollbar">
       {matches.map(m => {

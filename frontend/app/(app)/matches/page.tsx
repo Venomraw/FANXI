@@ -219,11 +219,12 @@ export default function MatchesPage() {
   const [matches, setMatches] = useState<Match[]>([]);
   const [predictedIds, setPredictedIds] = useState<Set<number>>(new Set());
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     apiFetch<Match[]>('/matches/all')
       .then(data => { setMatches(data); })
-      .catch(() => {})
+      .catch(() => { setError(true); })
       .finally(() => setLoading(false));
   }, []);
 
@@ -324,6 +325,28 @@ export default function MatchesPage() {
             <span className="font-mono text-[12px] uppercase tracking-[3px]" style={{ color: 'var(--muted)' }}>
               Loading fixtures...
             </span>
+          </div>
+        )}
+
+        {error && !loading && (
+          <div className="py-20 text-center">
+            <div
+              className="inline-flex items-center gap-3 px-6 py-4 border"
+              style={{
+                borderColor: 'color-mix(in srgb, var(--red) 25%, transparent)',
+                background: 'color-mix(in srgb, var(--red) 5%, transparent)',
+              }}
+            >
+              <span className="text-lg">⚠</span>
+              <div className="text-left">
+                <p className="font-sans font-semibold text-[14px]" style={{ color: 'var(--text)' }}>
+                  Failed to load fixtures
+                </p>
+                <p className="font-sans text-[13px]" style={{ color: 'var(--muted)' }}>
+                  Check your connection and try again.
+                </p>
+              </div>
+            </div>
           </div>
         )}
 
