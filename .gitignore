@@ -19,3 +19,9 @@ backend/generated_cards/
 # OS Specific junk
 .DS_Store
 Thumbs.db
+
+# Playwright E2E artifacts
+frontend/test-results/
+frontend/playwright-report/
+frontend/blob-report/
+frontend/.last-run.json
