@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/src/context/AuthContext';
 import { useTheme } from '@/src/context/ThemeContext';
 import { API_URL } from '@/src/lib/api';
+import { sanitizeNext } from '@/src/lib/redirect';
 
 // World Cup 2026 opening match — Jun 11, 2026 20:00 UTC
 const WC_KICKOFF = new Date('2026-06-11T20:00:00Z');
@@ -58,7 +59,7 @@ export default function LoginPage() {
     try {
       const err = await login(username, password);
       if (err) { setError(err); setLoading(false); }
-      else router.push('/');
+      else router.push(sanitizeNext(new URLSearchParams(window.location.search).get('next')));
     } catch {
       setError('Connection error — is the server running?');
       setLoading(false);
@@ -82,7 +83,7 @@ export default function LoginPage() {
       }
       const err = await login(username, password);
       if (err) { setError(err); setLoading(false); }
-      else router.push('/');
+      else router.push(sanitizeNext(new URLSearchParams(window.location.search).get('next')));
     } catch {
       setError('Connection error — is the server running?');
       setLoading(false);
