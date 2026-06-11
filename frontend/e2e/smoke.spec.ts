@@ -1,8 +1,13 @@
 import { test, expect } from '@playwright/test';
 
 /**
- * Smoke coverage for public (non-auth-gated) routes. These must render
- * without redirecting to /login and without a client-side crash.
+ * Smoke coverage for genuinely public routes — pages that render for a
+ * logged-out visitor and never redirect to /login.
+ *
+ * NOTE: /nation and /ai are intentionally NOT here. Despite living outside the
+ * (protected) group, both have their own page-level guard that redirects
+ * logged-out users to /login (nation/page.tsx, ai/page.tsx). They are covered
+ * as "self-guarded" routes in auth.spec.ts instead.
  */
 const PUBLIC_ROUTES = [
   '/',
@@ -11,7 +16,7 @@ const PUBLIC_ROUTES = [
   '/leaderboard',
   '/guide',
   '/matches',
-  '/nation',
+  '/nations/argentina',
   '/forgot-password',
 ];
 
@@ -21,10 +26,13 @@ test.describe('public routes render', () => {
       const errors: string[] = [];
       page.on('pageerror', (e) => errors.push(e.message));
 
-      const res = await page.goto(route, { waitUntil: 'domcontentloaded' });
+      const res = await page.goto(route, { waitUntil: 'networkidle' });
       expect(res?.status(), `HTTP status for ${route}`).toBeLessThan(400);
 
-      // Public routes must NOT be bounced to login by middleware.
+      // Let any client-side guard (which fires after the silent /auth/refresh
+      // resolves) have its chance, so this assertion is not a timing fluke.
+      await page.waitForTimeout(1500);
+
       if (route !== '/login') {
         expect(page.url(), `${route} should not redirect to /login`).not.toContain('/login');
       }

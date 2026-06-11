@@ -23,13 +23,26 @@ test.describe('auth gate (client-side guard)', () => {
 
 test.describe('public routes are NOT over-guarded', () => {
   // Regression guard: the (protected) layout must wrap ONLY protected routes.
-  // Public/SEO routes under (app) must stay reachable while logged out.
-  for (const route of ['/matches', '/nation', '/ai']) {
+  // These genuinely public routes must stay reachable while logged out.
+  // We wait for networkidle + a settle window so a stray redirect WOULD be
+  // caught (asserting too early was a false-positive trap).
+  for (const route of ['/matches', '/leaderboard', '/simulator', '/guide']) {
     test(`logged-out user can load ${route} (no redirect to /login)`, async ({ page }) => {
-      await page.goto(route, { waitUntil: 'domcontentloaded' });
-      // Give any (incorrect) client-side guard a chance to fire before asserting.
-      await page.waitForTimeout(1500);
+      await page.goto(route, { waitUntil: 'networkidle' });
+      await page.waitForTimeout(2000);
       expect(page.url(), `${route} should stay reachable when logged out`).not.toContain('/login');
+    });
+  }
+});
+
+test.describe('self-guarded routes redirect logged-out users', () => {
+  // /nation and /ai are NOT in the (protected) group, but each page guards
+  // itself (nation/page.tsx, ai/page.tsx) and sends anonymous users to /login.
+  // This documents that intended behaviour so it does not silently change.
+  for (const route of ['/nation', '/ai']) {
+    test(`logged-out user visiting ${route} is redirected to /login`, async ({ page }) => {
+      await page.goto(route, { waitUntil: 'networkidle' });
+      await expect(page).toHaveURL(/\/login/, { timeout: 10_000 });
     });
   }
 });
